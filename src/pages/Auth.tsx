@@ -9,7 +9,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { toast } from "@/hooks/use-toast";
 import { Toaster } from "@/components/ui/toaster";
-import { Loader2, Mail, Lock, User, ArrowLeft } from "lucide-react";
+import { Loader2, Mail, Lock, User, ChevronLeft } from "lucide-react";
 import { z } from "zod";
 
 const emailSchema = z.string().trim().email({ message: "Invalid email address" });
@@ -131,52 +131,19 @@ const Auth = () => {
       {/* Animated Background */}
       <AnimatedBackground />
       
-      {/* Left side - Branding */}
-      <div className="hidden lg:flex lg:w-1/2 relative z-10 flex-col justify-between p-12">
-        <Link to="/" className="inline-flex items-center gap-2 text-muted-foreground hover:text-foreground transition-colors">
-          <ArrowLeft className="w-4 h-4" />
-          <span className="text-sm">Back to home</span>
+      {/* Left side - Logo Only */}
+      <div className="hidden lg:flex lg:w-1/2 relative z-10 flex-col items-center justify-center p-12">
+        <Link to="/" className="hover:opacity-80 transition-opacity">
+          <SignalLogo size="xl" />
         </Link>
-        
-        <div className="space-y-8">
-          <SignalLogo size="lg" />
-          <div className="space-y-4 max-w-md">
-            <h2 className="text-4xl font-display font-bold text-foreground leading-tight">
-              Connect with top tech talent worldwide
-            </h2>
-            <p className="text-lg text-muted-foreground">
-              Join thousands of professionals who trust Signal to discover opportunities and build meaningful careers.
-            </p>
-          </div>
-          
-          {/* Stats */}
-          <div className="flex gap-8">
-            <div>
-              <p className="text-3xl font-display font-bold text-primary">10K+</p>
-              <p className="text-sm text-muted-foreground">Active Talent</p>
-            </div>
-            <div>
-              <p className="text-3xl font-display font-bold text-primary">500+</p>
-              <p className="text-sm text-muted-foreground">Companies</p>
-            </div>
-            <div>
-              <p className="text-3xl font-display font-bold text-primary">95%</p>
-              <p className="text-sm text-muted-foreground">Match Rate</p>
-            </div>
-          </div>
-        </div>
-        
-        <p className="text-muted-foreground text-sm">
-          © {new Date().getFullYear()} Signal. All rights reserved.
-        </p>
       </div>
 
       {/* Right side - Auth Form */}
       <div className="w-full lg:w-1/2 relative z-10 flex flex-col min-h-screen">
         {/* Mobile header */}
         <header className="lg:hidden p-6 flex items-center justify-between">
-          <Link to="/" className="inline-flex items-center gap-2 text-muted-foreground hover:text-foreground transition-colors">
-            <ArrowLeft className="w-4 h-4" />
+          <Link to="/" className="inline-flex items-center gap-1 text-muted-foreground hover:text-foreground transition-colors">
+            <ChevronLeft className="w-4 h-4" />
             <span className="text-sm">Back</span>
           </Link>
           <SignalLogo size="sm" />
