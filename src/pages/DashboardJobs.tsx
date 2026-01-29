@@ -4,9 +4,10 @@ import { useNavigate } from "react-router-dom";
 import { DashboardLayout } from "@/components/DashboardLayout";
 import { GlassPanel } from "@/components/ui/GlassPanel";
 import { SignalButton } from "@/components/ui/SignalButton";
-import { Briefcase, Search, Filter, MapPin, Clock, Building2, ChevronRight, Loader2, Send, CheckCircle, X, Plus } from "lucide-react";
+import { Briefcase, Search, Filter, MapPin, Clock, Building2, ChevronRight, Loader2, Send, CheckCircle, X, Plus, ChevronDown } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { supabase } from "@/integrations/supabase/client";
 import { formatDistanceToNow } from "date-fns";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -14,6 +15,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, Di
 import { useApplyToJob, useApplicationStatus, statusColors, statusLabels } from "@/hooks/useJobApplications";
 import { toast } from "@/hooks/use-toast";
 import { cn } from "@/lib/utils";
+import { FilterPill } from "@/components/ui/FilterPill";
 
 interface Job {
   id: string;
@@ -124,8 +126,13 @@ const JobCard = ({ job, userId, onApply }: { job: Job; userId: string | undefine
   );
 };
 
+const jobTypes = ["Full-time", "Part-time", "Contract", "Freelance", "Internship"] as const;
+
 const DashboardJobs = () => {
   const [searchQuery, setSearchQuery] = useState("");
+  const [selectedTypes, setSelectedTypes] = useState<string[]>([]);
+  const [selectedLocation, setSelectedLocation] = useState("");
+  const [showFilters, setShowFilters] = useState(false);
   const [userId, setUserId] = useState<string | undefined>();
   const [selectedJob, setSelectedJob] = useState<Job | null>(null);
   const [coverLetter, setCoverLetter] = useState("");
@@ -154,11 +161,33 @@ const DashboardJobs = () => {
     },
   });
 
-  const filteredJobs = jobs?.filter((job) =>
-    job.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    job.company.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    job.location.toLowerCase().includes(searchQuery.toLowerCase())
-  );
+  // Get unique locations from jobs
+  const locations = [...new Set(jobs?.map(job => job.location) || [])].sort();
+
+  const toggleType = (type: string) => {
+    setSelectedTypes(prev => 
+      prev.includes(type) ? prev.filter(t => t !== type) : [...prev, type]
+    );
+  };
+
+  const clearFilters = () => {
+    setSelectedTypes([]);
+    setSelectedLocation("");
+  };
+
+  const activeFilterCount = selectedTypes.length + (selectedLocation ? 1 : 0);
+
+  const filteredJobs = jobs?.filter((job) => {
+    const matchesSearch = 
+      job.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      job.company.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      job.location.toLowerCase().includes(searchQuery.toLowerCase());
+    
+    const matchesType = selectedTypes.length === 0 || selectedTypes.includes(job.type);
+    const matchesLocation = !selectedLocation || job.location === selectedLocation;
+
+    return matchesSearch && matchesType && matchesLocation;
+  });
 
   const handleApplyClick = (job: Job) => {
     setSelectedJob(job);
@@ -216,20 +245,106 @@ const DashboardJobs = () => {
         </div>
 
         {/* Search & Filters */}
-        <div className="flex flex-col sm:flex-row gap-4 mb-6">
-          <div className="relative flex-1">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
-            <Input 
-              placeholder="Search jobs, companies, or keywords..." 
-              className="pl-10 bg-muted/30 border-border/30"
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-            />
+        <div className="space-y-4 mb-6">
+          <div className="flex flex-col sm:flex-row gap-4">
+            <div className="relative flex-1">
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+              <Input 
+                placeholder="Search jobs, companies, or keywords..." 
+                className="pl-10 bg-muted/30 border-border/30"
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+              />
+            </div>
+            <SignalButton 
+              variant={showFilters ? "primary" : "outline"} 
+              className="gap-2"
+              onClick={() => setShowFilters(!showFilters)}
+            >
+              <Filter className="w-4 h-4" />
+              Filters
+              {activeFilterCount > 0 && (
+                <span className="ml-1 px-1.5 py-0.5 text-xs rounded-full bg-primary-foreground text-primary">
+                  {activeFilterCount}
+                </span>
+              )}
+            </SignalButton>
           </div>
-          <SignalButton variant="outline" className="gap-2">
-            <Filter className="w-4 h-4" />
-            Filters
-          </SignalButton>
+
+          {/* Filter Panel */}
+          {showFilters && (
+            <GlassPanel className="p-4 space-y-4">
+              <div className="flex items-center justify-between">
+                <h3 className="text-sm font-medium text-foreground">Filters</h3>
+                {activeFilterCount > 0 && (
+                  <button 
+                    onClick={clearFilters}
+                    className="text-xs text-muted-foreground hover:text-primary transition-colors"
+                  >
+                    Clear all
+                  </button>
+                )}
+              </div>
+
+              {/* Job Type Pills */}
+              <div className="space-y-2">
+                <label className="text-xs text-muted-foreground uppercase tracking-wide">Job Type</label>
+                <div className="flex flex-wrap gap-2">
+                  {jobTypes.map((type) => (
+                    <FilterPill
+                      key={type}
+                      label={type}
+                      active={selectedTypes.includes(type)}
+                      onToggle={() => toggleType(type)}
+                      removable
+                      onRemove={() => toggleType(type)}
+                    />
+                  ))}
+                </div>
+              </div>
+
+              {/* Location Select */}
+              <div className="space-y-2">
+                <label className="text-xs text-muted-foreground uppercase tracking-wide">Location</label>
+                <Select value={selectedLocation} onValueChange={setSelectedLocation}>
+                  <SelectTrigger className="w-full sm:w-64 bg-muted/30 border-border/30">
+                    <MapPin className="w-4 h-4 mr-2 text-muted-foreground" />
+                    <SelectValue placeholder="All locations" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="">All locations</SelectItem>
+                    {locations.map((loc) => (
+                      <SelectItem key={loc} value={loc}>{loc}</SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+            </GlassPanel>
+          )}
+
+          {/* Active Filters Summary */}
+          {activeFilterCount > 0 && !showFilters && (
+            <div className="flex flex-wrap items-center gap-2">
+              <span className="text-xs text-muted-foreground">Active filters:</span>
+              {selectedTypes.map((type) => (
+                <FilterPill
+                  key={type}
+                  label={type}
+                  active
+                  removable
+                  onRemove={() => toggleType(type)}
+                />
+              ))}
+              {selectedLocation && (
+                <FilterPill
+                  label={selectedLocation}
+                  active
+                  removable
+                  onRemove={() => setSelectedLocation("")}
+                />
+              )}
+            </div>
+          )}
         </div>
 
         {/* Job Listings */}
