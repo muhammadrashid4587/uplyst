@@ -25,7 +25,8 @@ import {
   Settings, 
   LogOut,
   Star,
-  Search
+  Search,
+  ChevronRight
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
@@ -63,101 +64,184 @@ export function DashboardSidebar({ user }: DashboardSidebarProps) {
   const isActive = (path: string) => location.pathname === path;
 
   return (
-    <Sidebar collapsible="icon" className="border-r border-border/30">
-      <SidebarHeader className="border-b border-border/30 p-4">
-        <div className={cn("flex items-center gap-3", collapsed && "justify-center")}>
+    <Sidebar collapsible="icon" className="border-r border-border/20 bg-card/50 backdrop-blur-xl">
+      <SidebarHeader className="border-b border-border/20 p-4">
+        <div className={cn("flex items-center gap-3 transition-all duration-300", collapsed && "justify-center")}>
           {!collapsed ? (
             <SignalLogo size="sm" />
           ) : (
-            <div className="w-8 h-8 rounded-lg bg-primary/20 flex items-center justify-center">
-              <span className="font-display text-primary font-bold text-sm">S</span>
+            <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-primary/20 to-accent/20 flex items-center justify-center border border-primary/20 shadow-lg shadow-primary/10">
+              <span className="font-display text-primary font-bold text-base">S</span>
             </div>
           )}
         </div>
       </SidebarHeader>
 
-      <SidebarContent className="px-2 py-4">
+      <SidebarContent className="px-3 py-4">
         {/* Search */}
         {!collapsed && (
-          <div className="px-2 mb-4">
-            <div className="flex items-center gap-2 px-3 py-2 rounded-lg bg-muted/50 border border-border/30 text-muted-foreground text-sm">
-              <Search className="w-4 h-4" />
-              <span>Search...</span>
+          <div className="px-1 mb-6">
+            <div className="flex items-center gap-2.5 px-3.5 py-2.5 rounded-xl bg-muted/30 border border-border/20 text-muted-foreground text-sm cursor-pointer hover:bg-muted/50 hover:border-primary/20 transition-all duration-200 group">
+              <Search className="w-4 h-4 group-hover:text-primary transition-colors" />
+              <span className="group-hover:text-foreground transition-colors">Search...</span>
+              <kbd className="ml-auto text-xs bg-background/50 px-1.5 py-0.5 rounded border border-border/30">⌘K</kbd>
             </div>
           </div>
         )}
 
         {/* Main Navigation */}
         <SidebarGroup>
-          <SidebarGroupLabel className={cn(collapsed && "sr-only")}>Main</SidebarGroupLabel>
+          <SidebarGroupLabel className={cn(
+            "text-xs uppercase tracking-wider text-muted-foreground/70 font-semibold mb-2 px-2",
+            collapsed && "sr-only"
+          )}>
+            Main
+          </SidebarGroupLabel>
           <SidebarGroupContent>
-            <SidebarMenu>
-              {mainNavItems.map((item) => (
-                <SidebarMenuItem key={item.title}>
-                  <SidebarMenuButton
-                    asChild
-                    isActive={isActive(item.url)}
-                    tooltip={item.title}
-                  >
-                    <NavLink 
-                      to={item.url} 
-                      end 
-                      className="flex items-center gap-3"
-                      activeClassName="bg-primary/10 text-primary"
+            <SidebarMenu className="space-y-1">
+              {mainNavItems.map((item) => {
+                const active = isActive(item.url);
+                return (
+                  <SidebarMenuItem key={item.title}>
+                    <SidebarMenuButton
+                      asChild
+                      isActive={active}
+                      tooltip={item.title}
+                      className="p-0"
                     >
-                      <item.icon className="w-5 h-5" />
-                      {!collapsed && <span>{item.title}</span>}
-                    </NavLink>
-                  </SidebarMenuButton>
-                </SidebarMenuItem>
-              ))}
+                      <NavLink 
+                        to={item.url} 
+                        end 
+                        className={cn(
+                          "flex items-center gap-3 px-3 py-2.5 rounded-xl transition-all duration-200 group relative overflow-hidden",
+                          active 
+                            ? "bg-gradient-to-r from-primary/15 to-primary/5 text-primary shadow-sm" 
+                            : "text-muted-foreground hover:text-foreground hover:bg-muted/40"
+                        )}
+                        activeClassName=""
+                      >
+                        {/* Active indicator bar */}
+                        {active && (
+                          <div className="absolute left-0 top-1/2 -translate-y-1/2 w-1 h-6 bg-primary rounded-r-full" />
+                        )}
+                        
+                        {/* Hover glow effect */}
+                        <div className={cn(
+                          "absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none",
+                          !active && "bg-gradient-to-r from-primary/5 to-transparent"
+                        )} />
+                        
+                        <item.icon className={cn(
+                          "w-5 h-5 transition-all duration-200 relative z-10",
+                          active ? "text-primary" : "group-hover:text-primary group-hover:scale-110"
+                        )} />
+                        
+                        {!collapsed && (
+                          <>
+                            <span className={cn(
+                              "font-medium relative z-10 transition-colors",
+                              active ? "text-primary" : ""
+                            )}>
+                              {item.title}
+                            </span>
+                            <ChevronRight className={cn(
+                              "w-4 h-4 ml-auto opacity-0 -translate-x-2 transition-all duration-200 relative z-10",
+                              active ? "opacity-100 translate-x-0 text-primary" : "group-hover:opacity-50 group-hover:translate-x-0"
+                            )} />
+                          </>
+                        )}
+                      </NavLink>
+                    </SidebarMenuButton>
+                  </SidebarMenuItem>
+                );
+              })}
             </SidebarMenu>
           </SidebarGroupContent>
         </SidebarGroup>
 
         {/* Account Navigation */}
-        <SidebarGroup className="mt-4">
-          <SidebarGroupLabel className={cn(collapsed && "sr-only")}>Account</SidebarGroupLabel>
+        <SidebarGroup className="mt-6">
+          <SidebarGroupLabel className={cn(
+            "text-xs uppercase tracking-wider text-muted-foreground/70 font-semibold mb-2 px-2",
+            collapsed && "sr-only"
+          )}>
+            Account
+          </SidebarGroupLabel>
           <SidebarGroupContent>
-            <SidebarMenu>
-              {accountNavItems.map((item) => (
-                <SidebarMenuItem key={item.title}>
-                  <SidebarMenuButton
-                    asChild
-                    isActive={isActive(item.url)}
-                    tooltip={item.title}
-                  >
-                    <NavLink 
-                      to={item.url} 
-                      end 
-                      className="flex items-center gap-3"
-                      activeClassName="bg-primary/10 text-primary"
+            <SidebarMenu className="space-y-1">
+              {accountNavItems.map((item) => {
+                const active = isActive(item.url);
+                return (
+                  <SidebarMenuItem key={item.title}>
+                    <SidebarMenuButton
+                      asChild
+                      isActive={active}
+                      tooltip={item.title}
+                      className="p-0"
                     >
-                      <item.icon className="w-5 h-5" />
-                      {!collapsed && <span>{item.title}</span>}
-                    </NavLink>
-                  </SidebarMenuButton>
-                </SidebarMenuItem>
-              ))}
+                      <NavLink 
+                        to={item.url} 
+                        end 
+                        className={cn(
+                          "flex items-center gap-3 px-3 py-2.5 rounded-xl transition-all duration-200 group relative overflow-hidden",
+                          active 
+                            ? "bg-gradient-to-r from-primary/15 to-primary/5 text-primary shadow-sm" 
+                            : "text-muted-foreground hover:text-foreground hover:bg-muted/40"
+                        )}
+                        activeClassName=""
+                      >
+                        {active && (
+                          <div className="absolute left-0 top-1/2 -translate-y-1/2 w-1 h-6 bg-primary rounded-r-full" />
+                        )}
+                        
+                        <div className={cn(
+                          "absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none",
+                          !active && "bg-gradient-to-r from-primary/5 to-transparent"
+                        )} />
+                        
+                        <item.icon className={cn(
+                          "w-5 h-5 transition-all duration-200 relative z-10",
+                          active ? "text-primary" : "group-hover:text-primary group-hover:scale-110"
+                        )} />
+                        
+                        {!collapsed && (
+                          <>
+                            <span className={cn(
+                              "font-medium relative z-10 transition-colors",
+                              active ? "text-primary" : ""
+                            )}>
+                              {item.title}
+                            </span>
+                            <ChevronRight className={cn(
+                              "w-4 h-4 ml-auto opacity-0 -translate-x-2 transition-all duration-200 relative z-10",
+                              active ? "opacity-100 translate-x-0 text-primary" : "group-hover:opacity-50 group-hover:translate-x-0"
+                            )} />
+                          </>
+                        )}
+                      </NavLink>
+                    </SidebarMenuButton>
+                  </SidebarMenuItem>
+                );
+              })}
             </SidebarMenu>
           </SidebarGroupContent>
         </SidebarGroup>
       </SidebarContent>
 
-      <SidebarFooter className="border-t border-border/30 p-4">
-        {/* User Profile */}
+      <SidebarFooter className="border-t border-border/20 p-3">
+        {/* User Profile Card */}
         <div className={cn(
-          "flex items-center gap-3 mb-3",
-          collapsed && "justify-center"
+          "flex items-center gap-3 p-2.5 rounded-xl bg-muted/20 border border-border/20 mb-2 transition-all duration-200 hover:bg-muted/40 hover:border-primary/20 cursor-pointer group",
+          collapsed && "justify-center p-2"
         )}>
           {userAvatar ? (
             <img 
               src={userAvatar} 
               alt={userName}
-              className="w-9 h-9 rounded-full border border-border/50"
+              className="w-9 h-9 rounded-full border-2 border-primary/20 group-hover:border-primary/40 transition-colors"
             />
           ) : (
-            <div className="w-9 h-9 rounded-full bg-primary/20 flex items-center justify-center">
+            <div className="w-9 h-9 rounded-full bg-gradient-to-br from-primary/20 to-accent/20 flex items-center justify-center border border-primary/20 group-hover:border-primary/40 transition-colors">
               <UserIcon className="w-5 h-5 text-primary" />
             </div>
           )}
@@ -169,15 +253,18 @@ export function DashboardSidebar({ user }: DashboardSidebarProps) {
           )}
         </div>
 
-        {/* Sign Out */}
-        <SidebarMenuButton
+        {/* Sign Out Button */}
+        <button
           onClick={handleSignOut}
-          tooltip="Sign Out"
-          className="w-full justify-start text-muted-foreground hover:text-destructive hover:bg-destructive/10"
+          className={cn(
+            "w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-muted-foreground transition-all duration-200 group relative overflow-hidden",
+            "hover:text-destructive hover:bg-destructive/10 hover:border-destructive/20",
+            collapsed && "justify-center"
+          )}
         >
-          <LogOut className="w-5 h-5" />
-          {!collapsed && <span className="ml-3">Sign Out</span>}
-        </SidebarMenuButton>
+          <LogOut className="w-5 h-5 transition-transform duration-200 group-hover:scale-110 group-hover:-translate-x-0.5" />
+          {!collapsed && <span className="font-medium">Sign Out</span>}
+        </button>
       </SidebarFooter>
     </Sidebar>
   );
