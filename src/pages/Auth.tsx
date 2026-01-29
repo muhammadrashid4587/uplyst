@@ -255,16 +255,16 @@ const Auth = () => {
         <main className="flex-1 flex items-center justify-center px-8 lg:px-16 py-12">
           <div className="w-full max-w-sm space-y-8">
             {/* Signal wordmark */}
-            <div className="text-center lg:text-left animate-slide-up-1">
+            <div className="text-center animate-slide-up-1">
               <Link to="/" className="inline-block hover:opacity-80 transition-opacity">
-                <span className="font-display text-3xl font-bold tracking-tight bg-gradient-to-r from-primary via-accent to-primary bg-clip-text text-transparent">
+                <span className="font-display text-5xl font-bold tracking-tight bg-gradient-to-r from-primary via-accent to-primary bg-clip-text text-transparent">
                   Signal
                 </span>
               </Link>
             </div>
 
             {/* Header text */}
-            <div className="space-y-2 lg:text-left text-center animate-slide-up-2">
+            <div className="space-y-2 text-center animate-slide-up-2">
               <h1 className="text-2xl font-display font-bold text-foreground">
                 {isLogin ? "Welcome back" : "Create your account"}
               </h1>
