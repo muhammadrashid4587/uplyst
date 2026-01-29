@@ -26,7 +26,8 @@ import {
   LogOut,
   Star,
   Search,
-  ChevronRight
+  ChevronRight,
+  FileText
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useUnreadCounts } from "@/hooks/useUnreadCounts";
@@ -47,6 +48,7 @@ export function DashboardSidebar({ user, onSearchClick }: DashboardSidebarProps)
   const mainNavItems = [
     { title: "Dashboard", url: "/dashboard", icon: LayoutDashboard, badge: null as number | null },
     { title: "Browse Jobs", url: "/dashboard/jobs", icon: Briefcase, badge: null as number | null },
+    { title: "My Applications", url: "/dashboard/applications", icon: FileText, badge: null as number | null },
     { title: "Saved", url: "/dashboard/saved", icon: Star, badge: null as number | null },
     { title: "Messages", url: "/dashboard/messages", icon: MessageSquare, badge: counts.messages > 0 ? counts.messages : null },
     { title: "Notifications", url: "/dashboard/notifications", icon: Bell, badge: counts.notifications > 0 ? counts.notifications : null },
