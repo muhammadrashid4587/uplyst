@@ -9,9 +9,13 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Progress } from "@/components/ui/progress";
-import { User as UserIcon, Camera, MapPin, Briefcase, Link as LinkIcon, Save, Loader2, Trash2 } from "lucide-react";
+import { Badge } from "@/components/ui/badge";
+import { 
+  User as UserIcon, Camera, MapPin, Briefcase, Link as LinkIcon, 
+  Save, Loader2, Trash2, Plus, X, Calendar, Building2, GraduationCap 
+} from "lucide-react";
 import { toast } from "@/hooks/use-toast";
-import { useProfile, profileSchema } from "@/hooks/useProfile";
+import { useProfile, profileSchema, Experience } from "@/hooks/useProfile";
 import { useAvatarUpload } from "@/hooks/useAvatarUpload";
 
 const DashboardProfile = () => {
@@ -21,6 +25,9 @@ const DashboardProfile = () => {
   const [location, setLocation] = useState("");
   const [title, setTitle] = useState("");
   const [website, setWebsite] = useState("");
+  const [skills, setSkills] = useState<string[]>([]);
+  const [newSkill, setNewSkill] = useState("");
+  const [experience, setExperience] = useState<Experience[]>([]);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const { profile, isLoading, updateProfile } = useProfile(user?.id);
@@ -42,6 +49,8 @@ const DashboardProfile = () => {
       setLocation(profile.location || "");
       setTitle(profile.title || "");
       setWebsite(profile.website || "");
+      setSkills(profile.skills || []);
+      setExperience(profile.experience || []);
     }
   }, [profile]);
 
@@ -79,6 +88,52 @@ const DashboardProfile = () => {
     }
   };
 
+  // Skills management
+  const addSkill = () => {
+    const trimmed = newSkill.trim();
+    if (trimmed && skills.length < 20 && !skills.includes(trimmed)) {
+      setSkills([...skills, trimmed]);
+      setNewSkill("");
+    }
+  };
+
+  const removeSkill = (skillToRemove: string) => {
+    setSkills(skills.filter(s => s !== skillToRemove));
+  };
+
+  const handleSkillKeyDown = (e: React.KeyboardEvent) => {
+    if (e.key === "Enter") {
+      e.preventDefault();
+      addSkill();
+    }
+  };
+
+  // Experience management
+  const addExperience = () => {
+    if (experience.length >= 10) return;
+    const newExp: Experience = {
+      id: crypto.randomUUID(),
+      title: "",
+      company: "",
+      location: "",
+      startDate: "",
+      endDate: "",
+      current: false,
+      description: "",
+    };
+    setExperience([...experience, newExp]);
+  };
+
+  const updateExperience = (id: string, field: keyof Experience, value: string | boolean) => {
+    setExperience(experience.map(exp => 
+      exp.id === id ? { ...exp, [field]: value } : exp
+    ));
+  };
+
+  const removeExperience = (id: string) => {
+    setExperience(experience.filter(exp => exp.id !== id));
+  };
+
   const handleSave = async () => {
     try {
       // Validate with zod
@@ -88,6 +143,8 @@ const DashboardProfile = () => {
         location: location || undefined,
         title: title || undefined,
         website: website || undefined,
+        skills: skills.length > 0 ? skills : undefined,
+        experience: experience.filter(exp => exp.title && exp.company),
       });
 
       await updateProfile.mutateAsync(validated);
@@ -285,6 +342,200 @@ const DashboardProfile = () => {
                 />
                 <p className="text-xs text-muted-foreground text-right">{bio.length}/500</p>
               </div>
+            </div>
+          )}
+        </GlassPanel>
+
+        {/* Skills Section */}
+        <GlassPanel className="p-6 mb-6">
+          <h2 className="text-lg font-semibold text-foreground mb-4 flex items-center gap-2">
+            <GraduationCap className="w-5 h-5 text-primary" />
+            Skills
+          </h2>
+          {isLoading ? (
+            <div className="flex flex-wrap gap-2">
+              {[...Array(5)].map((_, i) => (
+                <Skeleton key={i} className="h-7 w-20 rounded-full" />
+              ))}
+            </div>
+          ) : (
+            <div className="space-y-4">
+              <div className="flex flex-wrap gap-2">
+                {skills.map((skill) => (
+                  <Badge 
+                    key={skill} 
+                    variant="secondary" 
+                    className="px-3 py-1 text-sm flex items-center gap-1.5"
+                  >
+                    {skill}
+                    <button
+                      type="button"
+                      onClick={() => removeSkill(skill)}
+                      className="hover:text-destructive transition-colors"
+                    >
+                      <X className="w-3 h-3" />
+                    </button>
+                  </Badge>
+                ))}
+              </div>
+              {skills.length < 20 && (
+                <div className="flex gap-2">
+                  <Input
+                    value={newSkill}
+                    onChange={(e) => setNewSkill(e.target.value)}
+                    onKeyDown={handleSkillKeyDown}
+                    placeholder="Add a skill (e.g. React, Python, Design)"
+                    className="bg-muted/30 border-border/30 max-w-xs"
+                    maxLength={50}
+                  />
+                  <SignalButton 
+                    variant="outline" 
+                    size="sm" 
+                    onClick={addSkill}
+                    disabled={!newSkill.trim()}
+                  >
+                    <Plus className="w-4 h-4" />
+                  </SignalButton>
+                </div>
+              )}
+              <p className="text-xs text-muted-foreground">{skills.length}/20 skills</p>
+            </div>
+          )}
+        </GlassPanel>
+
+        {/* Experience Section */}
+        <GlassPanel className="p-6 mb-6">
+          <div className="flex items-center justify-between mb-4">
+            <h2 className="text-lg font-semibold text-foreground flex items-center gap-2">
+              <Briefcase className="w-5 h-5 text-primary" />
+              Experience
+            </h2>
+            {experience.length < 10 && (
+              <SignalButton variant="outline" size="sm" onClick={addExperience} className="gap-1">
+                <Plus className="w-4 h-4" />
+                Add Experience
+              </SignalButton>
+            )}
+          </div>
+          {isLoading ? (
+            <div className="space-y-4">
+              {[...Array(2)].map((_, i) => (
+                <div key={i} className="p-4 border border-border/30 rounded-lg space-y-3">
+                  <Skeleton className="h-5 w-48" />
+                  <Skeleton className="h-4 w-32" />
+                  <Skeleton className="h-4 w-24" />
+                </div>
+              ))}
+            </div>
+          ) : experience.length === 0 ? (
+            <div className="text-center py-8 text-muted-foreground">
+              <Briefcase className="w-10 h-10 mx-auto mb-3 opacity-50" />
+              <p>No experience added yet</p>
+              <p className="text-sm">Add your work history to showcase your background</p>
+            </div>
+          ) : (
+            <div className="space-y-4">
+              {experience.map((exp, index) => (
+                <div key={exp.id} className="p-4 border border-border/30 rounded-lg space-y-4">
+                  <div className="flex items-start justify-between gap-4">
+                    <div className="flex-1 grid sm:grid-cols-2 gap-4">
+                      <div className="space-y-2">
+                        <Label>Job Title *</Label>
+                        <Input
+                          value={exp.title}
+                          onChange={(e) => updateExperience(exp.id, "title", e.target.value)}
+                          placeholder="e.g. Senior Developer"
+                          className="bg-muted/30 border-border/30"
+                          maxLength={100}
+                        />
+                      </div>
+                      <div className="space-y-2">
+                        <Label>Company *</Label>
+                        <div className="relative">
+                          <Building2 className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+                          <Input
+                            value={exp.company}
+                            onChange={(e) => updateExperience(exp.id, "company", e.target.value)}
+                            placeholder="Company name"
+                            className="pl-10 bg-muted/30 border-border/30"
+                            maxLength={100}
+                          />
+                        </div>
+                      </div>
+                      <div className="space-y-2">
+                        <Label>Location</Label>
+                        <div className="relative">
+                          <MapPin className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+                          <Input
+                            value={exp.location || ""}
+                            onChange={(e) => updateExperience(exp.id, "location", e.target.value)}
+                            placeholder="City, Country"
+                            className="pl-10 bg-muted/30 border-border/30"
+                            maxLength={100}
+                          />
+                        </div>
+                      </div>
+                      <div className="flex gap-4">
+                        <div className="space-y-2 flex-1">
+                          <Label>Start Date</Label>
+                          <div className="relative">
+                            <Calendar className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+                            <Input
+                              type="month"
+                              value={exp.startDate}
+                              onChange={(e) => updateExperience(exp.id, "startDate", e.target.value)}
+                              className="pl-10 bg-muted/30 border-border/30"
+                            />
+                          </div>
+                        </div>
+                        <div className="space-y-2 flex-1">
+                          <Label>End Date</Label>
+                          <div className="relative">
+                            <Calendar className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+                            <Input
+                              type="month"
+                              value={exp.current ? "" : exp.endDate || ""}
+                              onChange={(e) => updateExperience(exp.id, "endDate", e.target.value)}
+                              className="pl-10 bg-muted/30 border-border/30"
+                              disabled={exp.current}
+                              placeholder={exp.current ? "Present" : ""}
+                            />
+                          </div>
+                        </div>
+                      </div>
+                      <div className="sm:col-span-2 flex items-center gap-2">
+                        <input
+                          type="checkbox"
+                          id={`current-${exp.id}`}
+                          checked={exp.current}
+                          onChange={(e) => updateExperience(exp.id, "current", e.target.checked)}
+                          className="rounded border-border"
+                        />
+                        <Label htmlFor={`current-${exp.id}`} className="text-sm cursor-pointer">
+                          I currently work here
+                        </Label>
+                      </div>
+                      <div className="sm:col-span-2 space-y-2">
+                        <Label>Description</Label>
+                        <Textarea
+                          value={exp.description || ""}
+                          onChange={(e) => updateExperience(exp.id, "description", e.target.value)}
+                          placeholder="Describe your responsibilities and achievements..."
+                          className="bg-muted/30 border-border/30 min-h-[80px]"
+                          maxLength={500}
+                        />
+                      </div>
+                    </div>
+                    <button
+                      type="button"
+                      onClick={() => removeExperience(exp.id)}
+                      className="p-2 text-muted-foreground hover:text-destructive transition-colors"
+                    >
+                      <Trash2 className="w-5 h-5" />
+                    </button>
+                  </div>
+                </div>
+              ))}
             </div>
           )}
         </GlassPanel>

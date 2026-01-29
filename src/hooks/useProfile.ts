@@ -1,7 +1,19 @@
-import { useState, useEffect } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { z } from "zod";
+
+export const experienceSchema = z.object({
+  id: z.string(),
+  title: z.string().trim().max(100, "Title must be less than 100 characters"),
+  company: z.string().trim().max(100, "Company must be less than 100 characters"),
+  location: z.string().trim().max(100, "Location must be less than 100 characters").optional(),
+  startDate: z.string(),
+  endDate: z.string().optional(),
+  current: z.boolean().default(false),
+  description: z.string().trim().max(500, "Description must be less than 500 characters").optional(),
+});
+
+export type Experience = z.infer<typeof experienceSchema>;
 
 export const profileSchema = z.object({
   display_name: z.string().trim().max(100, "Name must be less than 100 characters").optional(),
@@ -15,6 +27,8 @@ export const profileSchema = z.object({
     )
     .optional(),
   avatar_url: z.string().url().optional().nullable(),
+  skills: z.array(z.string().trim().max(50)).max(20, "Maximum 20 skills").optional(),
+  experience: z.array(experienceSchema).max(10, "Maximum 10 experiences").optional(),
 });
 
 export type ProfileData = z.infer<typeof profileSchema>;
@@ -28,6 +42,8 @@ export interface Profile {
   location: string | null;
   bio: string | null;
   website: string | null;
+  skills: string[] | null;
+  experience: Experience[] | null;
   created_at: string;
   updated_at: string;
 }
