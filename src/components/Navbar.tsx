@@ -90,6 +90,11 @@ export const Navbar = () => {
           <div className="hidden lg:flex items-center gap-4">
             {user ? (
               <>
+                <Link to="/dashboard">
+                  <SignalButton variant="primary" size="sm" className="font-display uppercase tracking-wider">
+                    Dashboard
+                  </SignalButton>
+                </Link>
                 <span className="text-sm text-foreground font-medium">
                   {user.user_metadata?.full_name || user.email?.split('@')[0]}
                 </span>
