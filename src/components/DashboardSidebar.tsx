@@ -32,6 +32,7 @@ import { cn } from "@/lib/utils";
 
 interface DashboardSidebarProps {
   user: User | null;
+  onSearchClick?: () => void;
 }
 
 const mainNavItems = [
@@ -47,7 +48,7 @@ const accountNavItems = [
   { title: "Settings", url: "/dashboard/settings", icon: Settings },
 ];
 
-export function DashboardSidebar({ user }: DashboardSidebarProps) {
+export function DashboardSidebar({ user, onSearchClick }: DashboardSidebarProps) {
   const navigate = useNavigate();
   const location = useLocation();
   const { state } = useSidebar();
@@ -81,11 +82,14 @@ export function DashboardSidebar({ user }: DashboardSidebarProps) {
         {/* Search */}
         {!collapsed && (
           <div className="px-1 mb-6">
-            <div className="flex items-center gap-2.5 px-3.5 py-2.5 rounded-xl bg-muted/30 border border-border/20 text-muted-foreground text-sm cursor-pointer hover:bg-muted/50 hover:border-primary/20 transition-all duration-200 group">
+            <button
+              onClick={onSearchClick}
+              className="w-full flex items-center gap-2.5 px-3.5 py-2.5 rounded-xl bg-muted/30 border border-border/20 text-muted-foreground text-sm cursor-pointer hover:bg-muted/50 hover:border-primary/20 transition-all duration-200 group"
+            >
               <Search className="w-4 h-4 group-hover:text-primary transition-colors" />
               <span className="group-hover:text-foreground transition-colors">Search...</span>
               <kbd className="ml-auto text-xs bg-background/50 px-1.5 py-0.5 rounded border border-border/30">⌘K</kbd>
-            </div>
+            </button>
           </div>
         )}
 
