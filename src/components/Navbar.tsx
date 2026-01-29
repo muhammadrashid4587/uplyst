@@ -1,9 +1,11 @@
 import { useState, useEffect } from "react";
-import { Link, useLocation } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import { cn } from "@/lib/utils";
 import { SignalLogo } from "./SignalLogo";
 import { SignalButton } from "./ui/SignalButton";
 import { Menu, X } from "lucide-react";
+import { supabase } from "@/integrations/supabase/client";
+import { User } from "@supabase/supabase-js";
 
 const navLinks = [
   { href: "/#how-it-works", label: "How it Works" },
@@ -17,7 +19,23 @@ const navLinks = [
 export const Navbar = () => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
+  const [user, setUser] = useState<User | null>(null);
   const location = useLocation();
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    const { data: { subscription } } = supabase.auth.onAuthStateChange(
+      (event, session) => {
+        setUser(session?.user ?? null);
+      }
+    );
+
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      setUser(session?.user ?? null);
+    });
+
+    return () => subscription.unsubscribe();
+  }, []);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -27,6 +45,11 @@ export const Navbar = () => {
     window.addEventListener("scroll", handleScroll, { passive: true });
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
+
+  const handleSignOut = async () => {
+    await supabase.auth.signOut();
+    navigate("/");
+  };
 
   return (
     <nav 
@@ -65,12 +88,29 @@ export const Navbar = () => {
 
           {/* Desktop CTAs */}
           <div className="hidden lg:flex items-center gap-4">
-            <SignalButton variant="ghost" size="sm" className="font-display uppercase tracking-wider">
-              Sign In
-            </SignalButton>
-            <SignalButton variant="primary" size="sm" className="font-display uppercase tracking-wider">
-              Get Started
-            </SignalButton>
+            {user ? (
+              <SignalButton 
+                variant="ghost" 
+                size="sm" 
+                className="font-display uppercase tracking-wider"
+                onClick={handleSignOut}
+              >
+                Sign Out
+              </SignalButton>
+            ) : (
+              <>
+                <Link to="/auth">
+                  <SignalButton variant="ghost" size="sm" className="font-display uppercase tracking-wider">
+                    Sign In
+                  </SignalButton>
+                </Link>
+                <Link to="/auth">
+                  <SignalButton variant="primary" size="sm" className="font-display uppercase tracking-wider">
+                    Get Started
+                  </SignalButton>
+                </Link>
+              </>
+            )}
           </div>
 
           {/* Mobile Menu Button */}
@@ -107,12 +147,32 @@ export const Navbar = () => {
                 </Link>
               ))}
               <div className="flex flex-col gap-3 pt-6 mt-4 border-t border-border/30">
-                <SignalButton variant="ghost" size="md" className="justify-center font-display uppercase tracking-wider">
-                  Sign In
-                </SignalButton>
-                <SignalButton variant="primary" size="md" className="justify-center font-display uppercase tracking-wider">
-                  Get Started
-                </SignalButton>
+                {user ? (
+                  <SignalButton 
+                    variant="ghost" 
+                    size="md" 
+                    className="justify-center font-display uppercase tracking-wider"
+                    onClick={() => {
+                      handleSignOut();
+                      setMobileMenuOpen(false);
+                    }}
+                  >
+                    Sign Out
+                  </SignalButton>
+                ) : (
+                  <>
+                    <Link to="/auth" onClick={() => setMobileMenuOpen(false)}>
+                      <SignalButton variant="ghost" size="md" className="w-full justify-center font-display uppercase tracking-wider">
+                        Sign In
+                      </SignalButton>
+                    </Link>
+                    <Link to="/auth" onClick={() => setMobileMenuOpen(false)}>
+                      <SignalButton variant="primary" size="md" className="w-full justify-center font-display uppercase tracking-wider">
+                        Get Started
+                      </SignalButton>
+                    </Link>
+                  </>
+                )}
               </div>
             </div>
           </div>
