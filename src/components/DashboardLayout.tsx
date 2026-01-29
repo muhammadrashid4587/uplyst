@@ -1,12 +1,14 @@
 import { useState, useEffect, ReactNode } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { User } from "@supabase/supabase-js";
 import { SidebarProvider, SidebarTrigger, SidebarInset } from "@/components/ui/sidebar";
 import { DashboardSidebar } from "./DashboardSidebar";
 import { AnimatedBackground } from "./AnimatedBackground";
 import { SearchCommand, useSearchCommand } from "./SearchCommand";
-import { Bell, Search } from "lucide-react";
+import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
+import { Bell, Search, User as UserIcon } from "lucide-react";
+import { useProfile, Profile } from "@/hooks/useProfile";
 
 interface DashboardLayoutProps {
   children: ReactNode;
@@ -17,6 +19,8 @@ export function DashboardLayout({ children }: DashboardLayoutProps) {
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
   const { open: searchOpen, setOpen: setSearchOpen } = useSearchCommand();
+  
+  const { profile } = useProfile(user?.id);
 
   useEffect(() => {
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
@@ -50,12 +54,15 @@ export function DashboardLayout({ children }: DashboardLayoutProps) {
     );
   }
 
+  const displayName = profile?.display_name || user?.user_metadata?.full_name || user?.email?.split('@')[0] || "User";
+  const avatarUrl = profile?.avatar_url || user?.user_metadata?.avatar_url;
+
   return (
     <SidebarProvider>
       <div className="min-h-screen flex w-full bg-background noise-overlay relative">
         <AnimatedBackground />
         
-        <DashboardSidebar user={user} onSearchClick={() => setSearchOpen(true)} />
+        <DashboardSidebar user={user} profile={profile} onSearchClick={() => setSearchOpen(true)} />
         
         <SidebarInset className="flex-1">
           {/* Top Header Bar */}
@@ -78,6 +85,20 @@ export function DashboardLayout({ children }: DashboardLayoutProps) {
               <Bell className="w-5 h-5 text-muted-foreground" />
               <span className="absolute top-1.5 right-1.5 w-2 h-2 bg-primary rounded-full" />
             </button>
+            
+            {/* User Profile in Header */}
+            <Link 
+              to="/dashboard/profile"
+              className="flex items-center gap-2.5 pl-2 pr-3 py-1.5 rounded-lg hover:bg-muted/50 transition-colors group"
+            >
+              <Avatar className="w-8 h-8 border border-border/30 group-hover:border-primary/30 transition-colors">
+                <AvatarImage src={avatarUrl || undefined} alt={displayName} />
+                <AvatarFallback className="bg-primary/10 text-primary text-sm">
+                  {displayName.charAt(0).toUpperCase()}
+                </AvatarFallback>
+              </Avatar>
+              <span className="text-sm font-medium text-foreground hidden md:block">{displayName}</span>
+            </Link>
           </header>
 
           {/* Main Content */}
