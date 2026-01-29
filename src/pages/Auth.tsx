@@ -137,10 +137,10 @@ const Auth = () => {
         <Auth3DLogo />
       </div>
 
-      {/* Right side - Auth Form */}
-      <div className="w-full lg:w-1/2 relative z-10 flex flex-col min-h-screen">
+      {/* Right side - Auth Section */}
+      <div className="w-full lg:w-1/2 relative z-10 flex flex-col min-h-screen bg-card/80 backdrop-blur-xl border-l border-border/30">
         {/* Mobile header */}
-        <header className="lg:hidden p-6 flex items-center justify-between">
+        <header className="lg:hidden p-6 flex items-center justify-between border-b border-border/20">
           <Link to="/" className="inline-flex items-center gap-1 text-muted-foreground hover:text-foreground transition-colors">
             <ChevronLeft className="w-4 h-4" />
             <span className="text-sm">Back</span>
@@ -149,85 +149,81 @@ const Auth = () => {
         </header>
 
         {/* Form container */}
-        <main className="flex-1 flex items-center justify-center px-6 py-12">
-          <div className="w-full max-w-md space-y-6">
-            {/* Signal wordmark above the form */}
-            <div className="text-center">
+        <main className="flex-1 flex items-center justify-center px-8 lg:px-16 py-12">
+          <div className="w-full max-w-sm space-y-8">
+            {/* Signal wordmark */}
+            <div className="text-center lg:text-left">
               <Link to="/" className="inline-block hover:opacity-80 transition-opacity">
-                <span className="font-display text-4xl font-bold tracking-tight bg-gradient-to-r from-primary via-accent to-primary bg-clip-text text-transparent">
+                <span className="font-display text-3xl font-bold tracking-tight bg-gradient-to-r from-primary via-accent to-primary bg-clip-text text-transparent">
                   Signal
                 </span>
               </Link>
             </div>
 
-            <GlassPanel variant="strong" className="w-full p-8">
-              {/* Logo for mobile */}
-              <div className="lg:hidden text-center mb-6">
-                <SignalLogo size="md" showWordmark={false} />
-              </div>
-              
-              <div className="text-center mb-8">
-                <h1 className="text-3xl font-display font-bold text-foreground mb-2">
-                  {isLogin ? "Welcome Back" : "Join Signal"}
-                </h1>
-                <p className="text-muted-foreground">
-                  {isLogin
-                    ? "Sign in to access your account"
-                    : "Create an account to get started"}
-                </p>
-              </div>
+            {/* Header text */}
+            <div className="space-y-2 lg:text-left text-center">
+              <h1 className="text-2xl font-display font-bold text-foreground">
+                {isLogin ? "Welcome back" : "Create your account"}
+              </h1>
+              <p className="text-muted-foreground text-sm">
+                {isLogin
+                  ? "Enter your credentials to access your account"
+                  : "Get started with Signal today"}
+              </p>
+            </div>
 
+            {/* Form */}
             <form onSubmit={isLogin ? handleLogin : handleSignUp} className="space-y-5">
               {!isLogin && (
                 <div className="space-y-2">
-                  <Label htmlFor="fullName" className="text-foreground">
+                  <Label htmlFor="fullName" className="text-foreground text-sm">
                     Full Name
                   </Label>
                   <div className="relative">
-                    <User className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />
+                    <User className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
                     <Input
                       id="fullName"
                       type="text"
                       placeholder="John Doe"
                       value={fullName}
                       onChange={(e) => setFullName(e.target.value)}
-                      className="pl-10 bg-background/50 border-border/50 focus:border-primary h-12"
+                      className="pl-10 bg-background/50 border-border/50 focus:border-primary h-11"
                     />
                   </div>
                 </div>
               )}
 
               <div className="space-y-2">
-                <Label htmlFor="email" className="text-foreground">
+                <Label htmlFor="email" className="text-foreground text-sm">
                   Email
                 </Label>
                 <div className="relative">
-                  <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />
+                  <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
                   <Input
                     id="email"
                     type="email"
                     placeholder="you@example.com"
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
-                    className="pl-10 bg-background/50 border-border/50 focus:border-primary h-12"
+                    className="pl-10 bg-background/50 border-border/50 focus:border-primary h-11"
                     required
                   />
                 </div>
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="password" className="text-foreground">
+                <Label htmlFor="password" className="text-foreground text-sm">
                   Password
                 </Label>
                 <div className="relative">
-                  <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />
+                  <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
                   <Input
                     id="password"
                     type="password"
                     placeholder="••••••••"
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
-                    className="pl-10 bg-background/50 border-border/50 focus:border-primary h-12"
+                    className="pl-10 bg-background/50 border-border/50 focus:border-primary h-11"
                     required
                   />
                 </div>
@@ -237,11 +233,11 @@ const Auth = () => {
                 type="submit"
                 variant="primary"
                 size="lg"
-                className="w-full justify-center h-12 text-base"
+                className="w-full justify-center h-11 text-sm font-semibold"
                 disabled={loading}
               >
                 {loading ? (
-                  <Loader2 className="w-5 h-5 animate-spin" />
+                  <Loader2 className="w-4 h-4 animate-spin" />
                 ) : isLogin ? (
                   "Sign In"
                 ) : (
@@ -250,7 +246,8 @@ const Auth = () => {
               </SignalButton>
             </form>
 
-            <div className="mt-6 text-center">
+            {/* Toggle login/signup */}
+            <div className="text-center">
               <button
                 type="button"
                 onClick={() => setIsLogin(!isLogin)}
@@ -263,21 +260,20 @@ const Auth = () => {
             </div>
 
             {/* Trust badges */}
-            <div className="mt-8 pt-6 border-t border-border/30">
-              <p className="text-xs text-muted-foreground text-center mb-3">Trusted by professionals at</p>
-              <div className="flex items-center justify-center gap-6 text-muted-foreground/50">
+            <div className="pt-8 border-t border-border/20">
+              <p className="text-xs text-muted-foreground text-center mb-4">Trusted by professionals at</p>
+              <div className="flex items-center justify-center gap-8 text-muted-foreground/40">
                 <span className="text-xs font-semibold tracking-wider">GOOGLE</span>
                 <span className="text-xs font-semibold tracking-wider">META</span>
                 <span className="text-xs font-semibold tracking-wider">STRIPE</span>
               </div>
             </div>
-          </GlassPanel>
           </div>
         </main>
 
-        {/* Mobile footer */}
-        <footer className="lg:hidden p-6 text-center">
-          <p className="text-muted-foreground text-sm">
+        {/* Footer */}
+        <footer className="p-6 text-center border-t border-border/20">
+          <p className="text-muted-foreground text-xs">
             © {new Date().getFullYear()} Signal. All rights reserved.
           </p>
         </footer>
