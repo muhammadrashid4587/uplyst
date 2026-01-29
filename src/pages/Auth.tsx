@@ -190,6 +190,34 @@ const Auth = () => {
               transform: scale(1.1);
             }
           }
+          @keyframes slide-up-fade {
+            0% {
+              opacity: 0;
+              transform: translateY(20px);
+            }
+            100% {
+              opacity: 1;
+              transform: translateY(0);
+            }
+          }
+          .animate-slide-up-1 {
+            animation: slide-up-fade 0.5s ease-out 0.1s both;
+          }
+          .animate-slide-up-2 {
+            animation: slide-up-fade 0.5s ease-out 0.2s both;
+          }
+          .animate-slide-up-3 {
+            animation: slide-up-fade 0.5s ease-out 0.3s both;
+          }
+          .animate-slide-up-4 {
+            animation: slide-up-fade 0.5s ease-out 0.4s both;
+          }
+          .animate-slide-up-5 {
+            animation: slide-up-fade 0.5s ease-out 0.5s both;
+          }
+          .animate-slide-up-6 {
+            animation: slide-up-fade 0.5s ease-out 0.6s both;
+          }
         `}</style>
         {/* Mobile header */}
         <header className="lg:hidden p-6 flex items-center justify-between border-b border-border/20">
@@ -204,7 +232,7 @@ const Auth = () => {
         <main className="flex-1 flex items-center justify-center px-8 lg:px-16 py-12">
           <div className="w-full max-w-sm space-y-8">
             {/* Signal wordmark */}
-            <div className="text-center lg:text-left">
+            <div className="text-center lg:text-left animate-slide-up-1">
               <Link to="/" className="inline-block hover:opacity-80 transition-opacity">
                 <span className="font-display text-3xl font-bold tracking-tight bg-gradient-to-r from-primary via-accent to-primary bg-clip-text text-transparent">
                   Signal
@@ -213,7 +241,7 @@ const Auth = () => {
             </div>
 
             {/* Header text */}
-            <div className="space-y-2 lg:text-left text-center">
+            <div className="space-y-2 lg:text-left text-center animate-slide-up-2">
               <h1 className="text-2xl font-display font-bold text-foreground">
                 {isLogin ? "Welcome back" : "Create your account"}
               </h1>
@@ -225,7 +253,7 @@ const Auth = () => {
             </div>
 
             {/* Form */}
-            <form onSubmit={isLogin ? handleLogin : handleSignUp} className="space-y-5">
+            <form onSubmit={isLogin ? handleLogin : handleSignUp} className="space-y-5 animate-slide-up-3">
               {!isLogin && (
                 <div className="space-y-2">
                   <Label htmlFor="fullName" className="text-foreground text-sm">
@@ -299,7 +327,7 @@ const Auth = () => {
             </form>
 
             {/* Toggle login/signup */}
-            <div className="text-center">
+            <div className="text-center animate-slide-up-4">
               <button
                 type="button"
                 onClick={() => setIsLogin(!isLogin)}
@@ -312,7 +340,7 @@ const Auth = () => {
             </div>
 
             {/* Trust badges */}
-            <div className="pt-8 border-t border-border/20">
+            <div className="pt-8 border-t border-border/20 animate-slide-up-5">
               <p className="text-xs text-muted-foreground text-center mb-4">Trusted by professionals at</p>
               <div className="flex items-center justify-center gap-8 text-muted-foreground/40">
                 <span className="text-xs font-semibold tracking-wider">GOOGLE</span>
