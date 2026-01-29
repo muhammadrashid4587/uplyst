@@ -55,11 +55,17 @@ const JobSkeleton = () => (
 );
 
 const JobCard = ({ job, userId, onApply }: { job: Job; userId: string | undefined; onApply: (job: Job) => void }) => {
+  const navigate = useNavigate();
   const { data: application, isLoading } = useApplicationStatus(job.id, userId);
+
+  const handleCardClick = () => {
+    navigate(`/dashboard/jobs/${job.id}`);
+  };
 
   return (
     <GlassPanel 
       className="p-5 hover:border-primary/30 transition-all cursor-pointer group"
+      onClick={handleCardClick}
     >
       <div className="flex items-start gap-4">
         <div className="w-12 h-12 rounded-xl bg-accent/10 flex items-center justify-center flex-shrink-0">

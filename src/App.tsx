@@ -17,6 +17,7 @@ import DashboardNotifications from "./pages/DashboardNotifications";
 import DashboardProfile from "./pages/DashboardProfile";
 import DashboardSettings from "./pages/DashboardSettings";
 import PostJob from "./pages/PostJob";
+import JobDetail from "./pages/JobDetail";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -36,6 +37,7 @@ const App = () => (
           <Route path="/dashboard" element={<Dashboard />} />
           <Route path="/dashboard/jobs" element={<DashboardJobs />} />
           <Route path="/dashboard/jobs/post" element={<PostJob />} />
+          <Route path="/dashboard/jobs/:id" element={<JobDetail />} />
           <Route path="/dashboard/applications" element={<DashboardApplications />} />
           <Route path="/dashboard/saved" element={<DashboardSaved />} />
           <Route path="/dashboard/messages" element={<DashboardMessages />} />
