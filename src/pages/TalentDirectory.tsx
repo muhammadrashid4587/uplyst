@@ -241,14 +241,14 @@ const TalentDirectory = () => {
 
           {/* Results Grid */}
           {filteredTalent.length > 0 ? (
-            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <div className="grid md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
               {filteredTalent.map((profile, index) => (
                 <div
                   key={profile.id}
                   className="animate-fade-up"
                   style={{ animationDelay: `${index * 50}ms` }}
                 >
-                  <ProfileCard profile={profile} />
+                  <ProfileCard profile={profile} index={index} />
                 </div>
               ))}
             </div>

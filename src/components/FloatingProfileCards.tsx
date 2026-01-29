@@ -5,7 +5,17 @@ import { Badge } from "./ui/SignalBadge";
 import { SignalButton } from "./ui/SignalButton";
 import { mockTalent, TalentProfile } from "@/data/mockTalent";
 import { cn } from "@/lib/utils";
-import { ArrowRight, MapPin, Briefcase, Shield, Clock, Sparkles } from "lucide-react";
+import { ArrowRight, MapPin, Briefcase, Shield, Sparkles } from "lucide-react";
+
+// Placeholder avatar images - in production these would be real profile photos
+const avatarImages = [
+  "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=200&h=200&fit=crop&crop=face",
+  "https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=200&h=200&fit=crop&crop=face",
+  "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=200&h=200&fit=crop&crop=face",
+  "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=200&h=200&fit=crop&crop=face",
+  "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=200&h=200&fit=crop&crop=face",
+  "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=200&h=200&fit=crop&crop=face",
+];
 
 const FloatingProfileCard = ({
   profile,
@@ -17,98 +27,76 @@ const FloatingProfileCard = ({
   isVisible: boolean;
 }) => {
   return (
-    <Link to={`/talent/${profile.id}`}>
-      <GlassPanel
-        hover
-        className={cn(
-          "h-full group cursor-pointer relative overflow-hidden card-3d glow-border",
-          "transition-all duration-700",
-          isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-12"
-        )}
-        style={{ transitionDelay: `${index * 100}ms` }}
-      >
-        {/* Signal Score with pulse */}
-        <div className="absolute top-4 right-4 flex items-center gap-2">
-          <div className="relative">
-            <div className="w-3 h-3 rounded-full bg-primary animate-pulse-glow" />
-            <div className="absolute inset-0 w-3 h-3 rounded-full bg-primary animate-ping opacity-50" />
-          </div>
-          <span className="text-sm font-bold text-primary font-display">{profile.signalScore}</span>
+    <GlassPanel
+      hover
+      className={cn(
+        "h-full group cursor-pointer relative overflow-hidden card-3d glow-border",
+        "transition-all duration-700",
+        isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-12"
+      )}
+      style={{ transitionDelay: `${index * 100}ms` }}
+    >
+      {/* Signal Score Badge */}
+      <div className="absolute top-4 right-4 flex items-center gap-2">
+        <div className="relative">
+          <div className="w-2.5 h-2.5 rounded-full bg-primary animate-pulse-glow" />
         </div>
+        <span className="text-xs font-bold text-primary font-display">{profile.signalScore}</span>
+      </div>
 
-        {/* Header */}
-        <div className="flex items-start gap-4 mb-5">
-          <div className="w-16 h-16 rounded-xl bg-gradient-to-br from-primary/30 to-accent/20 flex items-center justify-center border border-primary/20 group-hover:scale-105 transition-transform duration-300">
-            <span className="text-xl font-display font-bold text-primary">
-              {profile.name.split(" ").map(n => n[0]).join("")}
-            </span>
-          </div>
-          <div className="flex-1 min-w-0">
-            <h3 className="font-display font-bold text-xl text-foreground group-hover:text-primary transition-colors truncate">
-              {profile.name}
-            </h3>
-            <p className="text-muted-foreground text-sm truncate">{profile.title}</p>
-          </div>
+      {/* Profile Image */}
+      <div className="flex flex-col items-center text-center mb-5">
+        <div className="w-20 h-20 rounded-full overflow-hidden border-2 border-primary/30 group-hover:border-primary/60 transition-colors duration-300 mb-4">
+          <img 
+            src={avatarImages[index % avatarImages.length]} 
+            alt={profile.name}
+            className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
+          />
         </div>
+        <h3 className="font-display font-bold text-lg text-foreground group-hover:text-primary transition-colors">
+          {profile.name}
+        </h3>
+        <p className="text-muted-foreground text-sm">{profile.title}</p>
+      </div>
 
-        {/* Domain & Location */}
-        <div className="flex items-center gap-4 text-sm text-muted-foreground mb-5">
-          <span className="flex items-center gap-1.5">
-            <Briefcase className="w-4 h-4 text-primary/60" />
-            {profile.domain}
-          </span>
-          <span className="flex items-center gap-1.5">
-            <MapPin className="w-4 h-4 text-primary/60" />
-            {profile.location.split(",")[0]}
-          </span>
-        </div>
+      {/* Quick Info */}
+      <div className="flex items-center justify-center gap-3 text-xs text-muted-foreground mb-5">
+        <span className="flex items-center gap-1">
+          <Briefcase className="w-3.5 h-3.5 text-primary/60" />
+          {profile.domain}
+        </span>
+        <span className="w-1 h-1 rounded-full bg-border" />
+        <span className="flex items-center gap-1">
+          <MapPin className="w-3.5 h-3.5 text-primary/60" />
+          {profile.location.split(",")[0]}
+        </span>
+      </div>
 
-        {/* Badges */}
-        <div className="flex flex-wrap gap-2 mb-5">
-          <Badge variant="primary" size="md" className="font-display">
-            {profile.yearsExperience}+ Years
+      {/* Verification Badge */}
+      {profile.verified && (
+        <div className="flex justify-center mb-5">
+          <Badge variant="success" size="sm">
+            <Shield className="w-3 h-3 mr-1" />
+            Verified Professional
           </Badge>
-          {profile.verified && (
-            <Badge variant="success" size="md">
-              <Shield className="w-3 h-3 mr-1" />
-              Verified
-            </Badge>
-          )}
-          {profile.recentlyLaidOff && (
-            <Badge variant="warning" size="md">
-              <Clock className="w-3 h-3 mr-1" />
-              Recently Laid Off
-            </Badge>
-          )}
         </div>
+      )}
 
-        {/* Skills */}
-        <div className="flex flex-wrap gap-1.5 mb-5">
-          {profile.skills.slice(0, 4).map((skill) => (
-            <span
-              key={skill}
-              className="px-2.5 py-1 text-xs bg-secondary/60 text-secondary-foreground rounded-md border border-border/30"
-            >
-              {skill}
-            </span>
-          ))}
-          {profile.skills.length > 4 && (
-            <span className="px-2.5 py-1 text-xs text-muted-foreground">
-              +{profile.skills.length - 4} more
-            </span>
-          )}
-        </div>
-
-        {/* CTA - reveals on hover */}
-        <div className="flex items-center text-sm text-primary font-semibold opacity-0 group-hover:opacity-100 transition-all duration-300 translate-y-2 group-hover:translate-y-0">
+      {/* View Profile Button */}
+      <Link to={`/talent/${profile.id}`} className="block">
+        <SignalButton 
+          variant="outline" 
+          size="sm" 
+          className="w-full group-hover:bg-primary group-hover:text-primary-foreground transition-all duration-300"
+        >
           View Profile
           <ArrowRight className="w-4 h-4 ml-2 group-hover:translate-x-1 transition-transform" />
-        </div>
+        </SignalButton>
+      </Link>
 
-        {/* Hover gradient overlay */}
-        <div className="absolute inset-0 bg-gradient-to-t from-primary/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none rounded-lg" />
-      </GlassPanel>
-    </Link>
+      {/* Hover gradient overlay */}
+      <div className="absolute inset-0 bg-gradient-to-t from-primary/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none rounded-lg" />
+    </GlassPanel>
   );
 };
 
