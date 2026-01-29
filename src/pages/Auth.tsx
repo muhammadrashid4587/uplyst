@@ -145,9 +145,52 @@ const Auth = () => {
           backgroundSize: '24px 24px'
         }} />
         
-        {/* Gradient orbs */}
-        <div className="absolute top-0 right-0 w-96 h-96 bg-primary/10 rounded-full blur-3xl pointer-events-none" />
-        <div className="absolute bottom-0 left-0 w-64 h-64 bg-accent/10 rounded-full blur-3xl pointer-events-none" />
+        {/* Gradient orbs with animation */}
+        <div 
+          className="absolute -top-20 -right-20 w-96 h-96 bg-primary/10 rounded-full blur-3xl pointer-events-none"
+          style={{
+            animation: 'float-drift 8s ease-in-out infinite'
+          }}
+        />
+        <div 
+          className="absolute -bottom-16 -left-16 w-64 h-64 bg-accent/10 rounded-full blur-3xl pointer-events-none"
+          style={{
+            animation: 'float-drift 10s ease-in-out infinite reverse'
+          }}
+        />
+        <div 
+          className="absolute top-1/2 right-1/4 w-48 h-48 bg-primary/5 rounded-full blur-3xl pointer-events-none"
+          style={{
+            animation: 'pulse-glow 6s ease-in-out infinite'
+          }}
+        />
+        
+        <style>{`
+          @keyframes float-drift {
+            0%, 100% {
+              transform: translate(0, 0) scale(1);
+            }
+            25% {
+              transform: translate(-10px, 15px) scale(1.05);
+            }
+            50% {
+              transform: translate(5px, -10px) scale(0.95);
+            }
+            75% {
+              transform: translate(-5px, -5px) scale(1.02);
+            }
+          }
+          @keyframes pulse-glow {
+            0%, 100% {
+              opacity: 0.5;
+              transform: scale(1);
+            }
+            50% {
+              opacity: 0.8;
+              transform: scale(1.1);
+            }
+          }
+        `}</style>
         {/* Mobile header */}
         <header className="lg:hidden p-6 flex items-center justify-between border-b border-border/20">
           <Link to="/" className="inline-flex items-center gap-1 text-muted-foreground hover:text-foreground transition-colors">
