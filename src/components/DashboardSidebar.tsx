@@ -29,19 +29,12 @@ import {
   ChevronRight
 } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { useUnreadCounts } from "@/hooks/useUnreadCounts";
 
 interface DashboardSidebarProps {
   user: User | null;
   onSearchClick?: () => void;
 }
-
-const mainNavItems = [
-  { title: "Dashboard", url: "/dashboard", icon: LayoutDashboard, badge: null },
-  { title: "Browse Jobs", url: "/dashboard/jobs", icon: Briefcase, badge: null },
-  { title: "Saved", url: "/dashboard/saved", icon: Star, badge: null },
-  { title: "Messages", url: "/dashboard/messages", icon: MessageSquare, badge: 3 },
-  { title: "Notifications", url: "/dashboard/notifications", icon: Bell, badge: 5 },
-];
 
 const accountNavItems = [
   { title: "Profile", url: "/dashboard/profile", icon: UserIcon },
@@ -49,6 +42,15 @@ const accountNavItems = [
 ];
 
 export function DashboardSidebar({ user, onSearchClick }: DashboardSidebarProps) {
+  const { counts } = useUnreadCounts(user?.id);
+
+  const mainNavItems = [
+    { title: "Dashboard", url: "/dashboard", icon: LayoutDashboard, badge: null as number | null },
+    { title: "Browse Jobs", url: "/dashboard/jobs", icon: Briefcase, badge: null as number | null },
+    { title: "Saved", url: "/dashboard/saved", icon: Star, badge: null as number | null },
+    { title: "Messages", url: "/dashboard/messages", icon: MessageSquare, badge: counts.messages > 0 ? counts.messages : null },
+    { title: "Notifications", url: "/dashboard/notifications", icon: Bell, badge: counts.notifications > 0 ? counts.notifications : null },
+  ];
   const navigate = useNavigate();
   const location = useLocation();
   const { state } = useSidebar();
