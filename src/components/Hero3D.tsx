@@ -12,8 +12,8 @@ export const Hero3D = () => {
 
   return (
     <section className="relative min-h-screen flex items-center overflow-hidden">
-      {/* Animated gradient background */}
-      <div className="absolute inset-0 animated-gradient-bg" />
+      {/* Base gradient */}
+      <div className="absolute inset-0 bg-gradient-to-b from-background via-background/95 to-background" />
 
       {/* Cursor glow effect */}
       <div
@@ -24,40 +24,32 @@ export const Hero3D = () => {
         }}
       />
 
-      {/* Grid pattern with parallax */}
-      <div
-        className="absolute inset-0 grid-pattern-animated opacity-40"
-        style={{ transform: `translateY(${parallaxOffset * 0.5}px)` }}
-      />
-
-      {/* Floating orbs */}
+      {/* Floating orbs with cyan color */}
       <div
         className="absolute top-1/4 left-1/4 w-[500px] h-[500px] rounded-full float-slow"
         style={{
-          background: "radial-gradient(circle, hsl(var(--primary) / 0.15) 0%, transparent 70%)",
+          background: "radial-gradient(circle, hsl(var(--primary) / 0.12) 0%, transparent 70%)",
           transform: `translateY(${-parallaxOffset * 0.8}px)`,
         }}
       />
       <div
         className="absolute bottom-1/4 right-1/4 w-[400px] h-[400px] rounded-full float-delayed"
         style={{
-          background: "radial-gradient(circle, hsl(var(--primary) / 0.1) 0%, transparent 70%)",
+          background: "radial-gradient(circle, hsl(var(--accent) / 0.1) 0%, transparent 70%)",
           transform: `translateY(${-parallaxOffset * 0.5}px)`,
         }}
       />
       <div
         className="absolute top-1/2 right-1/3 w-[300px] h-[300px] rounded-full float"
         style={{
-          background: "radial-gradient(circle, hsl(var(--signal-maroon) / 0.2) 0%, transparent 70%)",
+          background: "radial-gradient(circle, hsl(var(--signal-blue) / 0.15) 0%, transparent 70%)",
           transform: `translateY(${-parallaxOffset * 0.6}px)`,
         }}
       />
 
-      {/* Red accent lines */}
+      {/* Accent lines - now cyan */}
       <div className="absolute top-0 left-0 w-full h-px bg-gradient-to-r from-transparent via-primary/30 to-transparent" />
       <div className="absolute bottom-0 left-0 w-full h-px bg-gradient-to-r from-transparent via-primary/30 to-transparent" />
-      <div className="absolute left-[20%] top-0 h-full w-px bg-gradient-to-b from-transparent via-primary/10 to-transparent" />
-      <div className="absolute right-[20%] top-0 h-full w-px bg-gradient-to-b from-transparent via-primary/10 to-transparent" />
 
       {/* Main content */}
       <div className="container mx-auto px-4 relative z-10">
@@ -127,7 +119,7 @@ export const Hero3D = () => {
               {mockTalent.slice(0, 6).map((profile, i) => (
                 <div
                   key={profile.id}
-                  className="w-12 h-12 rounded-full bg-gradient-to-br from-primary/40 to-signal-maroon/40 border-2 border-background flex items-center justify-center text-sm font-bold text-primary hover:scale-110 hover:z-10 transition-all duration-300 cursor-pointer"
+                  className="w-12 h-12 rounded-full bg-gradient-to-br from-primary/40 to-accent/40 border-2 border-background flex items-center justify-center text-sm font-bold text-primary hover:scale-110 hover:z-10 transition-all duration-300 cursor-pointer"
                   style={{ animationDelay: `${800 + i * 100}ms` }}
                 >
                   {profile.name[0]}
