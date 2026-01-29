@@ -134,7 +134,7 @@ const Auth = () => {
       {/* Left side - Logo Only */}
       <div className="hidden lg:flex lg:w-1/2 relative z-10 flex-col items-center justify-center p-12">
         <Link to="/" className="hover:opacity-80 transition-opacity">
-          <SignalLogo size="xl" />
+          <SignalLogo size="xl" showWordmark={false} className="scale-[2.5]" />
         </Link>
       </div>
 
@@ -151,22 +151,32 @@ const Auth = () => {
 
         {/* Form container */}
         <main className="flex-1 flex items-center justify-center px-6 py-12">
-          <GlassPanel variant="strong" className="w-full max-w-md p-8">
-            {/* Logo for mobile */}
-            <div className="lg:hidden text-center mb-6">
-              <SignalLogo size="md" />
+          <div className="w-full max-w-md space-y-6">
+            {/* Signal wordmark above the form */}
+            <div className="text-center">
+              <Link to="/" className="inline-block hover:opacity-80 transition-opacity">
+                <span className="font-display text-4xl font-bold tracking-tight bg-gradient-to-r from-primary via-accent to-primary bg-clip-text text-transparent">
+                  Signal
+                </span>
+              </Link>
             </div>
-            
-            <div className="text-center mb-8">
-              <h1 className="text-3xl font-display font-bold text-foreground mb-2">
-                {isLogin ? "Welcome Back" : "Join Signal"}
-              </h1>
-              <p className="text-muted-foreground">
-                {isLogin
-                  ? "Sign in to access your account"
-                  : "Create an account to get started"}
-              </p>
-            </div>
+
+            <GlassPanel variant="strong" className="w-full p-8">
+              {/* Logo for mobile */}
+              <div className="lg:hidden text-center mb-6">
+                <SignalLogo size="md" showWordmark={false} />
+              </div>
+              
+              <div className="text-center mb-8">
+                <h1 className="text-3xl font-display font-bold text-foreground mb-2">
+                  {isLogin ? "Welcome Back" : "Join Signal"}
+                </h1>
+                <p className="text-muted-foreground">
+                  {isLogin
+                    ? "Sign in to access your account"
+                    : "Create an account to get started"}
+                </p>
+              </div>
 
             <form onSubmit={isLogin ? handleLogin : handleSignUp} className="space-y-5">
               {!isLogin && (
@@ -263,6 +273,7 @@ const Auth = () => {
               </div>
             </div>
           </GlassPanel>
+          </div>
         </main>
 
         {/* Mobile footer */}
