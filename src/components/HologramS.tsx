@@ -139,33 +139,6 @@ const RotatingS = () => {
   );
 };
 
-// Holographic rings around the S
-const HolographicRings = () => {
-  const ring1Ref = useRef<THREE.Mesh>(null);
-  const ring2Ref = useRef<THREE.Mesh>(null);
-
-  useFrame((state) => {
-    if (ring1Ref.current) {
-      ring1Ref.current.rotation.z = state.clock.elapsedTime * 0.3;
-    }
-    if (ring2Ref.current) {
-      ring2Ref.current.rotation.z = -state.clock.elapsedTime * 0.2;
-    }
-  });
-
-  return (
-    <>
-      <mesh ref={ring1Ref} position={[0, 0, 0]} rotation={[Math.PI / 2, 0, 0]}>
-        <torusGeometry args={[5.5, 0.03, 16, 100]} />
-        <meshBasicMaterial color="#00d4ff" transparent opacity={0.5} />
-      </mesh>
-      <mesh ref={ring2Ref} position={[0, 0, 0]} rotation={[Math.PI / 2.5, 0.3, 0]}>
-        <torusGeometry args={[6, 0.02, 16, 100]} />
-        <meshBasicMaterial color="#0088ff" transparent opacity={0.3} />
-      </mesh>
-    </>
-  );
-};
 
 // Floating data particles orbiting
 const DataParticles = () => {
@@ -226,7 +199,7 @@ export const HologramS = () => {
         <pointLight position={[0, 0, 10]} intensity={1} color="#ffffff" />
         
         <RotatingS />
-        <HolographicRings />
+        
         <DataParticles />
       </Canvas>
     </div>
