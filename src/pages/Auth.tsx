@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { AnimatedBackground } from "@/components/AnimatedBackground";
+import { Auth3DLogo } from "@/components/Auth3DLogo";
 import { GlassPanel } from "@/components/ui/GlassPanel";
 import { SignalButton } from "@/components/ui/SignalButton";
 import { SignalLogo } from "@/components/SignalLogo";
@@ -131,11 +132,9 @@ const Auth = () => {
       {/* Animated Background */}
       <AnimatedBackground />
       
-      {/* Left side - Logo Only */}
-      <div className="hidden lg:flex lg:w-1/2 relative z-10 flex-col items-center justify-center p-12">
-        <Link to="/" className="hover:opacity-80 transition-opacity">
-          <SignalLogo size="xl" showWordmark={false} className="scale-[2.5]" />
-        </Link>
+      {/* Left side - 3D Logo */}
+      <div className="hidden lg:flex lg:w-1/2 relative z-10">
+        <Auth3DLogo />
       </div>
 
       {/* Right side - Auth Form */}
