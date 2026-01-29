@@ -1,9 +1,10 @@
 import { useState, useEffect } from "react";
 import { useQuery } from "@tanstack/react-query";
+import { useNavigate } from "react-router-dom";
 import { DashboardLayout } from "@/components/DashboardLayout";
 import { GlassPanel } from "@/components/ui/GlassPanel";
 import { SignalButton } from "@/components/ui/SignalButton";
-import { Briefcase, Search, Filter, MapPin, Clock, Building2, ChevronRight, Loader2, Send, CheckCircle, X } from "lucide-react";
+import { Briefcase, Search, Filter, MapPin, Clock, Building2, ChevronRight, Loader2, Send, CheckCircle, X, Plus } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { supabase } from "@/integrations/supabase/client";
@@ -130,6 +131,7 @@ const DashboardJobs = () => {
   const [coverLetter, setCoverLetter] = useState("");
   const [applyDialogOpen, setApplyDialogOpen] = useState(false);
 
+  const navigate = useNavigate();
   const applyToJob = useApplyToJob();
 
   useEffect(() => {
@@ -196,11 +198,21 @@ const DashboardJobs = () => {
     <DashboardLayout>
       <div className="p-6 lg:p-8">
         {/* Header */}
-        <div className="mb-8">
-          <h1 className="text-2xl md:text-3xl font-display font-bold text-foreground mb-2">
-            Browse Jobs
-          </h1>
-          <p className="text-muted-foreground">Find your next opportunity</p>
+        <div className="flex items-start justify-between gap-4 mb-8">
+          <div>
+            <h1 className="text-2xl md:text-3xl font-display font-bold text-foreground mb-2">
+              Browse Jobs
+            </h1>
+            <p className="text-muted-foreground">Find your next opportunity</p>
+          </div>
+          <SignalButton 
+            variant="primary" 
+            className="gap-2"
+            onClick={() => navigate("/dashboard/jobs/post")}
+          >
+            <Plus className="w-4 h-4" />
+            Post a Job
+          </SignalButton>
         </div>
 
         {/* Search & Filters */}
