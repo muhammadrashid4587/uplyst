@@ -1,14 +1,16 @@
 import { useState, useEffect, useRef } from "react";
 import { DashboardLayout } from "@/components/DashboardLayout";
 import { GlassPanel } from "@/components/ui/GlassPanel";
-import { MessageSquare, Search, Send, Loader2 } from "lucide-react";
+import { MessageSquare, Search, Send, Loader2, Plus, Users } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { cn } from "@/lib/utils";
 import { supabase } from "@/integrations/supabase/client";
-import { useConversations, useMessages, useSendMessage, Conversation, Message } from "@/hooks/useMessages";
+import { useConversations, useMessages, useSendMessage, useCreateConversation, Message } from "@/hooks/useMessages";
 import { formatDistanceToNow } from "date-fns";
 import { Skeleton } from "@/components/ui/skeleton";
-
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import { useQuery } from "@tanstack/react-query";
+import { toast } from "@/hooks/use-toast";
 const ConversationSkeleton = () => (
   <div className="p-3 rounded-xl">
     <div className="flex items-start gap-3">
@@ -47,17 +49,74 @@ const DashboardMessages = () => {
   const [selectedConversation, setSelectedConversation] = useState<string | null>(null);
   const [newMessage, setNewMessage] = useState("");
   const [searchQuery, setSearchQuery] = useState("");
+  const [newConvoDialogOpen, setNewConvoDialogOpen] = useState(false);
+  const [userSearchQuery, setUserSearchQuery] = useState("");
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
   const { conversations, isLoading: convosLoading } = useConversations(userId);
   const { messages, isLoading: messagesLoading } = useMessages(selectedConversation, userId);
   const sendMessage = useSendMessage();
+  const createConversation = useCreateConversation();
 
   useEffect(() => {
     supabase.auth.getUser().then(({ data }) => {
       setUserId(data.user?.id);
     });
   }, []);
+
+  // Fetch all users for new conversation
+  const { data: allUsers } = useQuery({
+    queryKey: ["users-for-messaging", userId],
+    queryFn: async () => {
+      if (!userId) return [];
+      const { data, error } = await supabase
+        .from("profiles")
+        .select("user_id, display_name, avatar_url")
+        .neq("user_id", userId);
+      if (error) throw error;
+      return data;
+    },
+    enabled: !!userId && newConvoDialogOpen,
+  });
+
+  const filteredUsers = allUsers?.filter((user) =>
+    user.display_name?.toLowerCase().includes(userSearchQuery.toLowerCase())
+  );
+
+  const handleStartConversation = async (otherUserId: string) => {
+    if (!userId) return;
+
+    // Check if conversation already exists
+    const existingConvo = conversations?.find(
+      (c) => c.other_participant?.user_id === otherUserId
+    );
+
+    if (existingConvo) {
+      setSelectedConversation(existingConvo.id);
+      setNewConvoDialogOpen(false);
+      return;
+    }
+
+    try {
+      const newConvo = await createConversation.mutateAsync({
+        currentUserId: userId,
+        otherUserId,
+      });
+      setSelectedConversation(newConvo.id);
+      setNewConvoDialogOpen(false);
+      toast({
+        title: "Conversation started",
+        description: "You can now send messages.",
+      });
+    } catch (error) {
+      console.error("Failed to create conversation:", error);
+      toast({
+        title: "Error",
+        description: "Failed to start conversation. Please try again.",
+        variant: "destructive",
+      });
+    }
+  };
 
   // Auto-scroll to bottom when new messages arrive
   useEffect(() => {
@@ -108,6 +167,56 @@ const DashboardMessages = () => {
         <div className="grid lg:grid-cols-3 gap-6 h-[calc(100%-6rem)]">
           {/* Conversation List */}
           <GlassPanel className="p-4 lg:col-span-1 overflow-hidden flex flex-col">
+            <Dialog open={newConvoDialogOpen} onOpenChange={setNewConvoDialogOpen}>
+              <DialogTrigger asChild>
+                <button className="w-full mb-4 p-3 rounded-xl bg-primary/20 border border-primary/30 text-primary hover:bg-primary/30 transition-colors flex items-center justify-center gap-2">
+                  <Plus className="w-4 h-4" />
+                  <span className="text-sm font-medium">New Conversation</span>
+                </button>
+              </DialogTrigger>
+              <DialogContent className="sm:max-w-md">
+                <DialogHeader>
+                  <DialogTitle>Start a conversation</DialogTitle>
+                </DialogHeader>
+                <div className="space-y-4">
+                  <div className="relative">
+                    <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+                    <Input
+                      placeholder="Search users..."
+                      className="pl-10"
+                      value={userSearchQuery}
+                      onChange={(e) => setUserSearchQuery(e.target.value)}
+                    />
+                  </div>
+                  <div className="max-h-64 overflow-y-auto space-y-2">
+                    {!filteredUsers?.length ? (
+                      <div className="text-center py-8">
+                        <Users className="w-10 h-10 mx-auto mb-3 text-muted-foreground/50" />
+                        <p className="text-muted-foreground text-sm">No users found</p>
+                      </div>
+                    ) : (
+                      filteredUsers.map((user) => (
+                        <button
+                          key={user.user_id}
+                          onClick={() => handleStartConversation(user.user_id)}
+                          disabled={createConversation.isPending}
+                          className="w-full p-3 rounded-xl hover:bg-muted/50 transition-colors flex items-center gap-3 text-left"
+                        >
+                          <div className="w-10 h-10 rounded-full bg-accent/20 flex items-center justify-center flex-shrink-0">
+                            <span className="text-sm font-medium text-accent">
+                              {user.display_name?.charAt(0) || "?"}
+                            </span>
+                          </div>
+                          <span className="font-medium text-foreground">
+                            {user.display_name || "Unknown User"}
+                          </span>
+                        </button>
+                      ))
+                    )}
+                  </div>
+                </div>
+              </DialogContent>
+            </Dialog>
             <div className="relative mb-4">
               <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
               <Input
