@@ -1,8 +1,9 @@
-import { useNavigate, useLocation } from "react-router-dom";
+import { useNavigate, useLocation, Link } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { User } from "@supabase/supabase-js";
 import { SignalLogo } from "./SignalLogo";
 import { NavLink } from "./NavLink";
+import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import {
   Sidebar,
   SidebarContent,
@@ -27,13 +28,16 @@ import {
   Star,
   Search,
   ChevronRight,
-  FileText
+  FileText,
+  MapPin
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useUnreadCounts } from "@/hooks/useUnreadCounts";
+import { Profile } from "@/hooks/useProfile";
 
 interface DashboardSidebarProps {
   user: User | null;
+  profile?: Profile | null;
   onSearchClick?: () => void;
 }
 
@@ -42,7 +46,7 @@ const accountNavItems = [
   { title: "Settings", url: "/dashboard/settings", icon: Settings },
 ];
 
-export function DashboardSidebar({ user, onSearchClick }: DashboardSidebarProps) {
+export function DashboardSidebar({ user, profile, onSearchClick }: DashboardSidebarProps) {
   const { counts } = useUnreadCounts(user?.id);
 
   const mainNavItems = [
@@ -63,8 +67,11 @@ export function DashboardSidebar({ user, onSearchClick }: DashboardSidebarProps)
     navigate("/");
   };
 
-  const userName = user?.user_metadata?.full_name || user?.email?.split('@')[0] || "User";
-  const userAvatar = user?.user_metadata?.avatar_url;
+  // Use profile data first, fallback to auth metadata
+  const userName = profile?.display_name || user?.user_metadata?.full_name || user?.email?.split('@')[0] || "User";
+  const userAvatar = profile?.avatar_url || user?.user_metadata?.avatar_url;
+  const userTitle = profile?.title;
+  const userLocation = profile?.location;
 
   const isActive = (path: string) => location.pathname === path;
 
@@ -252,28 +259,35 @@ export function DashboardSidebar({ user, onSearchClick }: DashboardSidebarProps)
 
       <SidebarFooter className="border-t border-border/20 p-3">
         {/* User Profile Card */}
-        <div className={cn(
-          "flex items-center gap-3 p-2.5 rounded-xl bg-muted/20 border border-border/20 mb-2 transition-all duration-200 hover:bg-muted/40 hover:border-primary/20 cursor-pointer group",
-          collapsed && "justify-center p-2"
-        )}>
-          {userAvatar ? (
-            <img 
-              src={userAvatar} 
-              alt={userName}
-              className="w-9 h-9 rounded-full border-2 border-primary/20 group-hover:border-primary/40 transition-colors"
-            />
-          ) : (
-            <div className="w-9 h-9 rounded-full bg-gradient-to-br from-primary/20 to-accent/20 flex items-center justify-center border border-primary/20 group-hover:border-primary/40 transition-colors">
-              <UserIcon className="w-5 h-5 text-primary" />
-            </div>
+        <Link
+          to="/dashboard/profile"
+          className={cn(
+            "flex items-center gap-3 p-2.5 rounded-xl bg-muted/20 border border-border/20 mb-2 transition-all duration-200 hover:bg-muted/40 hover:border-primary/20 cursor-pointer group",
+            collapsed && "justify-center p-2"
           )}
+        >
+          <Avatar className={cn("w-9 h-9 border-2 border-primary/20 group-hover:border-primary/40 transition-colors", collapsed && "w-8 h-8")}>
+            <AvatarImage src={userAvatar || undefined} alt={userName} />
+            <AvatarFallback className="bg-gradient-to-br from-primary/20 to-accent/20 text-primary font-medium">
+              {userName.charAt(0).toUpperCase()}
+            </AvatarFallback>
+          </Avatar>
           {!collapsed && (
             <div className="flex-1 min-w-0">
               <p className="text-sm font-medium text-foreground truncate">{userName}</p>
-              <p className="text-xs text-muted-foreground truncate">{user?.email}</p>
+              {userTitle ? (
+                <p className="text-xs text-muted-foreground truncate">{userTitle}</p>
+              ) : userLocation ? (
+                <p className="text-xs text-muted-foreground truncate flex items-center gap-1">
+                  <MapPin className="w-3 h-3" />
+                  {userLocation}
+                </p>
+              ) : (
+                <p className="text-xs text-muted-foreground truncate">{user?.email}</p>
+              )}
             </div>
           )}
-        </div>
+        </Link>
 
         {/* Sign Out Button */}
         <button
