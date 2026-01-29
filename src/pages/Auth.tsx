@@ -138,7 +138,16 @@ const Auth = () => {
       </div>
 
       {/* Right side - Auth Section */}
-      <div className="w-full lg:w-1/2 relative z-10 flex flex-col min-h-screen bg-card/80 backdrop-blur-xl border-l border-border/30">
+      <div className="w-full lg:w-1/2 relative z-10 flex flex-col min-h-screen bg-gradient-to-br from-card/90 via-card/70 to-primary/5 backdrop-blur-xl border-l border-border/30 overflow-hidden">
+        {/* Subtle pattern overlay */}
+        <div className="absolute inset-0 opacity-[0.03] pointer-events-none" style={{
+          backgroundImage: `radial-gradient(circle at 1px 1px, currentColor 1px, transparent 0)`,
+          backgroundSize: '24px 24px'
+        }} />
+        
+        {/* Gradient orbs */}
+        <div className="absolute top-0 right-0 w-96 h-96 bg-primary/10 rounded-full blur-3xl pointer-events-none" />
+        <div className="absolute bottom-0 left-0 w-64 h-64 bg-accent/10 rounded-full blur-3xl pointer-events-none" />
         {/* Mobile header */}
         <header className="lg:hidden p-6 flex items-center justify-between border-b border-border/20">
           <Link to="/" className="inline-flex items-center gap-1 text-muted-foreground hover:text-foreground transition-colors">
