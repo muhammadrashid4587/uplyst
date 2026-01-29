@@ -1,10 +1,10 @@
 import { Link } from "react-router-dom";
 import { ArrowRight, Search, Zap } from "lucide-react";
 import { SignalButton } from "./ui/SignalButton";
-import { SignalLogo } from "./SignalLogo";
 import { mockTalent } from "@/data/mockTalent";
 import { useParallax } from "@/hooks/useParallax";
 import { useMouseGlow } from "@/hooks/useMouseGlow";
+import { HologramS } from "./HologramS";
 
 export const Hero3D = () => {
   const parallaxOffset = useParallax(0.3);
@@ -12,8 +12,11 @@ export const Hero3D = () => {
 
   return (
     <section className="relative min-h-screen flex items-center overflow-hidden">
-      {/* Base gradient */}
-      <div className="absolute inset-0 bg-gradient-to-b from-background via-background/95 to-background" />
+      {/* 3D Hologram Background */}
+      <HologramS />
+
+      {/* Base gradient overlay */}
+      <div className="absolute inset-0 bg-gradient-to-b from-background/80 via-background/60 to-background pointer-events-none z-[1]" />
 
       {/* Cursor glow effect */}
       <div
