@@ -36,11 +36,11 @@ interface DashboardSidebarProps {
 }
 
 const mainNavItems = [
-  { title: "Dashboard", url: "/dashboard", icon: LayoutDashboard },
-  { title: "Browse Jobs", url: "/dashboard/jobs", icon: Briefcase },
-  { title: "Saved", url: "/dashboard/saved", icon: Star },
-  { title: "Messages", url: "/dashboard/messages", icon: MessageSquare },
-  { title: "Notifications", url: "/dashboard/notifications", icon: Bell },
+  { title: "Dashboard", url: "/dashboard", icon: LayoutDashboard, badge: null },
+  { title: "Browse Jobs", url: "/dashboard/jobs", icon: Briefcase, badge: null },
+  { title: "Saved", url: "/dashboard/saved", icon: Star, badge: null },
+  { title: "Messages", url: "/dashboard/messages", icon: MessageSquare, badge: 3 },
+  { title: "Notifications", url: "/dashboard/notifications", icon: Bell, badge: 5 },
 ];
 
 const accountNavItems = [
@@ -135,21 +135,35 @@ export function DashboardSidebar({ user, onSearchClick }: DashboardSidebarProps)
                           !active && "bg-gradient-to-r from-primary/5 to-transparent"
                         )} />
                         
-                        <item.icon className={cn(
-                          "w-5 h-5 transition-all duration-200 relative z-10",
-                          active ? "text-primary" : "group-hover:text-primary group-hover:scale-110"
-                        )} />
+                        <div className="relative">
+                          <item.icon className={cn(
+                            "w-5 h-5 transition-all duration-200 relative z-10",
+                            active ? "text-primary" : "group-hover:text-primary group-hover:scale-110"
+                          )} />
+                          {/* Badge for collapsed state */}
+                          {collapsed && item.badge && (
+                            <span className="absolute -top-1.5 -right-1.5 min-w-[18px] h-[18px] flex items-center justify-center text-[10px] font-bold bg-primary text-primary-foreground rounded-full px-1 animate-pulse">
+                              {item.badge > 9 ? '9+' : item.badge}
+                            </span>
+                          )}
+                        </div>
                         
                         {!collapsed && (
                           <>
                             <span className={cn(
-                              "font-medium relative z-10 transition-colors",
+                              "font-medium relative z-10 transition-colors flex-1",
                               active ? "text-primary" : ""
                             )}>
                               {item.title}
                             </span>
+                            {/* Badge for expanded state */}
+                            {item.badge && (
+                              <span className="min-w-[20px] h-5 flex items-center justify-center text-xs font-bold bg-primary text-primary-foreground rounded-full px-1.5 relative z-10">
+                                {item.badge > 9 ? '9+' : item.badge}
+                              </span>
+                            )}
                             <ChevronRight className={cn(
-                              "w-4 h-4 ml-auto opacity-0 -translate-x-2 transition-all duration-200 relative z-10",
+                              "w-4 h-4 opacity-0 -translate-x-2 transition-all duration-200 relative z-10",
                               active ? "opacity-100 translate-x-0 text-primary" : "group-hover:opacity-50 group-hover:translate-x-0"
                             )} />
                           </>
