@@ -89,14 +89,19 @@ export const Navbar = () => {
           {/* Desktop CTAs */}
           <div className="hidden lg:flex items-center gap-4">
             {user ? (
-              <SignalButton 
-                variant="ghost" 
-                size="sm" 
-                className="font-display uppercase tracking-wider"
-                onClick={handleSignOut}
-              >
-                Sign Out
-              </SignalButton>
+              <>
+                <span className="text-sm text-foreground font-medium">
+                  {user.user_metadata?.full_name || user.email?.split('@')[0]}
+                </span>
+                <SignalButton 
+                  variant="ghost" 
+                  size="sm" 
+                  className="font-display uppercase tracking-wider"
+                  onClick={handleSignOut}
+                >
+                  Sign Out
+                </SignalButton>
+              </>
             ) : (
               <>
                 <Link to="/auth">
@@ -148,17 +153,22 @@ export const Navbar = () => {
               ))}
               <div className="flex flex-col gap-3 pt-6 mt-4 border-t border-border/30">
                 {user ? (
-                  <SignalButton 
-                    variant="ghost" 
-                    size="md" 
-                    className="justify-center font-display uppercase tracking-wider"
-                    onClick={() => {
-                      handleSignOut();
-                      setMobileMenuOpen(false);
-                    }}
-                  >
-                    Sign Out
-                  </SignalButton>
+                  <>
+                    <span className="text-sm text-foreground font-medium text-center px-4">
+                      {user.user_metadata?.full_name || user.email?.split('@')[0]}
+                    </span>
+                    <SignalButton 
+                      variant="ghost" 
+                      size="md" 
+                      className="justify-center font-display uppercase tracking-wider"
+                      onClick={() => {
+                        handleSignOut();
+                        setMobileMenuOpen(false);
+                      }}
+                    >
+                      Sign Out
+                    </SignalButton>
+                  </>
                 ) : (
                   <>
                     <Link to="/auth" onClick={() => setMobileMenuOpen(false)}>
