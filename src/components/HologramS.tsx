@@ -55,10 +55,19 @@ const RotatingS = () => {
             // Holographic flicker
             float flicker = sin(time * 8.0) * 0.03 + 0.97;
             
-            // Combine effects - much more visible
-            float alpha = (0.7 + fresnel * 0.3) * scanline * flicker;
+            // Pulsing glow effect - slow breathe
+            float pulse = sin(time * 1.5) * 0.15 + 0.85;
             
-            gl_FragColor = vec4(color, alpha);
+            // Intense glow burst every few seconds
+            float burst = pow(sin(time * 0.8) * 0.5 + 0.5, 3.0) * 0.3;
+            
+            // Combine effects with pulsing
+            float alpha = (0.7 + fresnel * 0.3 + burst) * scanline * flicker * pulse;
+            
+            // Add extra brightness during pulse
+            vec3 finalColor = color + color * burst * 0.5;
+            
+            gl_FragColor = vec4(finalColor, alpha);
           }
         `,
         transparent: true,
@@ -109,7 +118,7 @@ const RotatingS = () => {
             <meshBasicMaterial
               color="#00d4ff"
               transparent
-              opacity={0.3}
+              opacity={0.4}
             />
           </Text3D>
 
