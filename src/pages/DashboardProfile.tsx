@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { User } from "@supabase/supabase-js";
 import { DashboardLayout } from "@/components/DashboardLayout";
@@ -8,9 +8,11 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Skeleton } from "@/components/ui/skeleton";
-import { User as UserIcon, Camera, MapPin, Briefcase, Link as LinkIcon, Save, Loader2 } from "lucide-react";
+import { Progress } from "@/components/ui/progress";
+import { User as UserIcon, Camera, MapPin, Briefcase, Link as LinkIcon, Save, Loader2, Trash2 } from "lucide-react";
 import { toast } from "@/hooks/use-toast";
 import { useProfile, profileSchema } from "@/hooks/useProfile";
+import { useAvatarUpload } from "@/hooks/useAvatarUpload";
 
 const DashboardProfile = () => {
   const [user, setUser] = useState<User | null>(null);
@@ -19,8 +21,10 @@ const DashboardProfile = () => {
   const [location, setLocation] = useState("");
   const [title, setTitle] = useState("");
   const [website, setWebsite] = useState("");
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   const { profile, isLoading, updateProfile } = useProfile(user?.id);
+  const { uploadAvatar, deleteAvatar, isUploading, progress } = useAvatarUpload(user?.id);
 
   useEffect(() => {
     supabase.auth.getSession().then(({ data: { session } }) => {
@@ -43,6 +47,37 @@ const DashboardProfile = () => {
 
   const userName = profile?.display_name || user?.user_metadata?.full_name || user?.email?.split('@')[0] || "User";
   const userAvatar = profile?.avatar_url || user?.user_metadata?.avatar_url;
+
+  const handleFileSelect = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    const avatarUrl = await uploadAvatar(file);
+    if (avatarUrl) {
+      // Update profile with new avatar URL
+      await updateProfile.mutateAsync({ avatar_url: avatarUrl });
+      toast({
+        title: "Photo Updated",
+        description: "Your profile photo has been updated.",
+      });
+    }
+
+    // Reset file input
+    if (fileInputRef.current) {
+      fileInputRef.current.value = "";
+    }
+  };
+
+  const handleRemovePhoto = async () => {
+    const success = await deleteAvatar();
+    if (success) {
+      await updateProfile.mutateAsync({ avatar_url: null });
+      toast({
+        title: "Photo Removed",
+        description: "Your profile photo has been removed.",
+      });
+    }
+  };
 
   const handleSave = async () => {
     try {
@@ -100,9 +135,24 @@ const DashboardProfile = () => {
                   <UserIcon className="w-10 h-10 text-primary" />
                 </div>
               )}
-              <button className="absolute bottom-0 right-0 w-8 h-8 rounded-full bg-primary text-primary-foreground flex items-center justify-center hover:bg-primary/90 transition-colors">
-                <Camera className="w-4 h-4" />
+              <button 
+                onClick={() => fileInputRef.current?.click()}
+                disabled={isUploading}
+                className="absolute bottom-0 right-0 w-8 h-8 rounded-full bg-primary text-primary-foreground flex items-center justify-center hover:bg-primary/90 transition-colors disabled:opacity-50"
+              >
+                {isUploading ? (
+                  <Loader2 className="w-4 h-4 animate-spin" />
+                ) : (
+                  <Camera className="w-4 h-4" />
+                )}
               </button>
+              <input
+                ref={fileInputRef}
+                type="file"
+                accept="image/jpeg,image/png,image/webp,image/gif"
+                onChange={handleFileSelect}
+                className="hidden"
+              />
             </div>
             <div>
               {isLoading ? (
@@ -116,9 +166,35 @@ const DashboardProfile = () => {
                   <p className="text-sm text-muted-foreground">{user?.email}</p>
                 </>
               )}
-              <SignalButton variant="outline" size="sm" className="mt-2">
-                Change Photo
-              </SignalButton>
+              {isUploading && (
+                <div className="mt-2 w-48">
+                  <Progress value={progress} className="h-1" />
+                  <p className="text-xs text-muted-foreground mt-1">Uploading...</p>
+                </div>
+              )}
+              {!isUploading && (
+                <div className="flex gap-2 mt-2">
+                  <SignalButton 
+                    variant="outline" 
+                    size="sm" 
+                    onClick={() => fileInputRef.current?.click()}
+                    disabled={isUploading}
+                  >
+                    {userAvatar ? "Change Photo" : "Upload Photo"}
+                  </SignalButton>
+                  {userAvatar && (
+                    <SignalButton 
+                      variant="outline" 
+                      size="sm" 
+                      onClick={handleRemovePhoto}
+                      disabled={isUploading}
+                      className="text-destructive hover:text-destructive"
+                    >
+                      <Trash2 className="w-4 h-4" />
+                    </SignalButton>
+                  )}
+                </div>
+              )}
             </div>
           </div>
         </GlassPanel>
