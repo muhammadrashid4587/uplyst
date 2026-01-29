@@ -1,12 +1,13 @@
 import { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
-import { Layout } from "@/components/Layout";
 import { GlassPanel } from "@/components/ui/GlassPanel";
 import { SignalButton } from "@/components/ui/SignalButton";
+import { SignalLogo } from "@/components/SignalLogo";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { toast } from "@/hooks/use-toast";
+import { Toaster } from "@/components/ui/toaster";
 import { Loader2, Mail, Lock, User } from "lucide-react";
 import { z } from "zod";
 
@@ -125,8 +126,19 @@ const Auth = () => {
   };
 
   return (
-    <Layout>
-      <div className="min-h-[80vh] flex items-center justify-center px-4 py-12">
+    <div className="min-h-screen bg-background flex flex-col">
+      {/* Subtle background gradient */}
+      <div className="fixed inset-0 bg-gradient-to-br from-primary/5 via-background to-accent/5 pointer-events-none" />
+      
+      {/* Header with logo */}
+      <header className="relative z-10 p-6">
+        <Link to="/" className="inline-block hover:opacity-80 transition-opacity">
+          <SignalLogo size="md" />
+        </Link>
+      </header>
+
+      {/* Main content */}
+      <main className="relative z-10 flex-1 flex items-center justify-center px-4 py-12">
         <GlassPanel variant="strong" className="w-full max-w-md p-8">
           <div className="text-center mb-8">
             <h1 className="text-3xl font-display font-bold text-foreground mb-2">
@@ -224,8 +236,17 @@ const Auth = () => {
             </button>
           </div>
         </GlassPanel>
-      </div>
-    </Layout>
+      </main>
+
+      {/* Footer */}
+      <footer className="relative z-10 p-6 text-center">
+        <p className="text-muted-foreground text-sm">
+          © {new Date().getFullYear()} Signal. All rights reserved.
+        </p>
+      </footer>
+
+      <Toaster />
+    </div>
   );
 };
 
