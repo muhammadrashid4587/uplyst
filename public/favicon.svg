@@ -1,0 +1,55 @@
+<svg width="32" height="32" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- Outer signal arc -->
+  <path
+    d="M8 24C8 15.163 15.163 8 24 8"
+    stroke="#8B2635"
+    stroke-width="2.5"
+    stroke-linecap="round"
+    opacity="0.4"
+  />
+  <!-- Middle signal arc -->
+  <path
+    d="M12 24C12 17.373 17.373 12 24 12"
+    stroke="#8B2635"
+    stroke-width="2.5"
+    stroke-linecap="round"
+    opacity="0.6"
+  />
+  <!-- Inner signal arc -->
+  <path
+    d="M16 24C16 19.582 19.582 16 24 16"
+    stroke="#8B2635"
+    stroke-width="2.5"
+    stroke-linecap="round"
+    opacity="0.8"
+  />
+  <!-- Center beacon dot -->
+  <circle
+    cx="24"
+    cy="24"
+    r="4"
+    fill="#8B2635"
+  />
+  <!-- Lower signal arcs forming S shape -->
+  <path
+    d="M40 24C40 32.837 32.837 40 24 40"
+    stroke="#8B2635"
+    stroke-width="2.5"
+    stroke-linecap="round"
+    opacity="0.4"
+  />
+  <path
+    d="M36 24C36 30.627 30.627 36 24 36"
+    stroke="#8B2635"
+    stroke-width="2.5"
+    stroke-linecap="round"
+    opacity="0.6"
+  />
+  <path
+    d="M32 24C32 28.418 28.418 32 24 32"
+    stroke="#8B2635"
+    stroke-width="2.5"
+    stroke-linecap="round"
+    opacity="0.8"
+  />
+</svg>
