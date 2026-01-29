@@ -1,20 +1,15 @@
 import { useRef, useMemo } from "react";
 import { Canvas, useFrame } from "@react-three/fiber";
-import { Text3D, Center, Float, MeshTransmissionMaterial } from "@react-three/drei";
+import { Text3D, Center, Float } from "@react-three/drei";
 import * as THREE from "three";
 
 const RotatingS = () => {
-  const meshRef = useRef<THREE.Mesh>(null);
-  const glowRef = useRef<THREE.Mesh>(null);
+  const groupRef = useRef<THREE.Group>(null);
 
+  // Rotate on its own Y axis (spinning in place)
   useFrame((state) => {
-    if (meshRef.current) {
-      meshRef.current.rotation.y = state.clock.elapsedTime * 0.3;
-      meshRef.current.rotation.x = Math.sin(state.clock.elapsedTime * 0.2) * 0.1;
-    }
-    if (glowRef.current) {
-      glowRef.current.rotation.y = state.clock.elapsedTime * 0.3;
-      glowRef.current.rotation.x = Math.sin(state.clock.elapsedTime * 0.2) * 0.1;
+    if (groupRef.current) {
+      groupRef.current.rotation.y = state.clock.elapsedTime * 0.4;
     }
   });
 
@@ -24,7 +19,7 @@ const RotatingS = () => {
         uniforms: {
           time: { value: 0 },
           color1: { value: new THREE.Color("#00d4ff") },
-          color2: { value: new THREE.Color("#0066ff") },
+          color2: { value: new THREE.Color("#0088ff") },
         },
         vertexShader: `
           varying vec2 vUv;
@@ -49,19 +44,19 @@ const RotatingS = () => {
           void main() {
             // Fresnel effect for edge glow
             vec3 viewDirection = normalize(cameraPosition - vPosition);
-            float fresnel = pow(1.0 - abs(dot(viewDirection, vNormal)), 2.0);
+            float fresnel = pow(1.0 - abs(dot(viewDirection, vNormal)), 1.5);
             
             // Scanline effect
-            float scanline = sin(vPosition.y * 30.0 + time * 2.0) * 0.1 + 0.9;
+            float scanline = sin(vPosition.y * 20.0 + time * 3.0) * 0.15 + 0.85;
             
             // Gradient between colors
             vec3 color = mix(color1, color2, vUv.y);
             
             // Holographic flicker
-            float flicker = sin(time * 10.0) * 0.05 + 0.95;
+            float flicker = sin(time * 8.0) * 0.03 + 0.97;
             
-            // Combine effects
-            float alpha = (0.4 + fresnel * 0.6) * scanline * flicker;
+            // Combine effects - much more visible
+            float alpha = (0.7 + fresnel * 0.3) * scanline * flicker;
             
             gl_FragColor = vec4(color, alpha);
           }
@@ -79,19 +74,18 @@ const RotatingS = () => {
   });
 
   return (
-    <Float speed={2} rotationIntensity={0.2} floatIntensity={0.5}>
+    <Float speed={1.5} rotationIntensity={0} floatIntensity={0.3}>
       <Center>
-        <group>
+        <group ref={groupRef}>
           {/* Main S with hologram material */}
           <Text3D
-            ref={meshRef}
             font="/fonts/helvetiker_bold.typeface.json"
-            size={3}
-            height={0.5}
+            size={4}
+            height={0.8}
             curveSegments={32}
             bevelEnabled
-            bevelThickness={0.05}
-            bevelSize={0.02}
+            bevelThickness={0.08}
+            bevelSize={0.04}
             bevelOffset={0}
             bevelSegments={8}
           >
@@ -99,16 +93,15 @@ const RotatingS = () => {
             <primitive object={hologramMaterial} attach="material" />
           </Text3D>
 
-          {/* Outer glow S */}
+          {/* Inner glow layer */}
           <Text3D
-            ref={glowRef}
             font="/fonts/helvetiker_bold.typeface.json"
-            size={3.05}
-            height={0.52}
+            size={4}
+            height={0.8}
             curveSegments={32}
             bevelEnabled
-            bevelThickness={0.05}
-            bevelSize={0.03}
+            bevelThickness={0.08}
+            bevelSize={0.04}
             bevelOffset={0}
             bevelSegments={8}
           >
@@ -116,7 +109,27 @@ const RotatingS = () => {
             <meshBasicMaterial
               color="#00d4ff"
               transparent
-              opacity={0.1}
+              opacity={0.3}
+            />
+          </Text3D>
+
+          {/* Outer glow S */}
+          <Text3D
+            font="/fonts/helvetiker_bold.typeface.json"
+            size={4.1}
+            height={0.85}
+            curveSegments={32}
+            bevelEnabled
+            bevelThickness={0.1}
+            bevelSize={0.06}
+            bevelOffset={0}
+            bevelSegments={8}
+          >
+            S
+            <meshBasicMaterial
+              color="#00d4ff"
+              transparent
+              opacity={0.15}
               side={THREE.BackSide}
             />
           </Text3D>
@@ -126,37 +139,47 @@ const RotatingS = () => {
   );
 };
 
-// Holographic ring around the S
-const HolographicRing = () => {
-  const ringRef = useRef<THREE.Mesh>(null);
+// Holographic rings around the S
+const HolographicRings = () => {
+  const ring1Ref = useRef<THREE.Mesh>(null);
+  const ring2Ref = useRef<THREE.Mesh>(null);
 
   useFrame((state) => {
-    if (ringRef.current) {
-      ringRef.current.rotation.z = state.clock.elapsedTime * 0.5;
-      ringRef.current.rotation.x = Math.PI / 2 + Math.sin(state.clock.elapsedTime * 0.3) * 0.1;
+    if (ring1Ref.current) {
+      ring1Ref.current.rotation.z = state.clock.elapsedTime * 0.3;
+    }
+    if (ring2Ref.current) {
+      ring2Ref.current.rotation.z = -state.clock.elapsedTime * 0.2;
     }
   });
 
   return (
-    <mesh ref={ringRef} position={[0, 0, 0]}>
-      <torusGeometry args={[4, 0.02, 16, 100]} />
-      <meshBasicMaterial color="#00d4ff" transparent opacity={0.4} />
-    </mesh>
+    <>
+      <mesh ref={ring1Ref} position={[0, 0, 0]} rotation={[Math.PI / 2, 0, 0]}>
+        <torusGeometry args={[5.5, 0.03, 16, 100]} />
+        <meshBasicMaterial color="#00d4ff" transparent opacity={0.5} />
+      </mesh>
+      <mesh ref={ring2Ref} position={[0, 0, 0]} rotation={[Math.PI / 2.5, 0.3, 0]}>
+        <torusGeometry args={[6, 0.02, 16, 100]} />
+        <meshBasicMaterial color="#0088ff" transparent opacity={0.3} />
+      </mesh>
+    </>
   );
 };
 
-// Floating data particles
+// Floating data particles orbiting
 const DataParticles = () => {
   const particlesRef = useRef<THREE.Points>(null);
 
-  const particleCount = 50;
+  const particleCount = 80;
   const positions = useMemo(() => {
     const pos = new Float32Array(particleCount * 3);
     for (let i = 0; i < particleCount; i++) {
       const angle = (i / particleCount) * Math.PI * 2;
-      const radius = 3.5 + Math.random() * 1;
+      const radius = 4.5 + Math.random() * 2;
+      const height = (Math.random() - 0.5) * 4;
       pos[i * 3] = Math.cos(angle) * radius;
-      pos[i * 3 + 1] = (Math.random() - 0.5) * 3;
+      pos[i * 3 + 1] = height;
       pos[i * 3 + 2] = Math.sin(angle) * radius;
     }
     return pos;
@@ -164,7 +187,7 @@ const DataParticles = () => {
 
   useFrame((state) => {
     if (particlesRef.current) {
-      particlesRef.current.rotation.y = state.clock.elapsedTime * 0.2;
+      particlesRef.current.rotation.y = state.clock.elapsedTime * 0.15;
     }
   });
 
@@ -179,10 +202,10 @@ const DataParticles = () => {
         />
       </bufferGeometry>
       <pointsMaterial
-        size={0.08}
+        size={0.12}
         color="#00d4ff"
         transparent
-        opacity={0.8}
+        opacity={0.9}
         sizeAttenuation
       />
     </points>
@@ -191,18 +214,19 @@ const DataParticles = () => {
 
 export const HologramS = () => {
   return (
-    <div className="absolute inset-0 pointer-events-none z-0 opacity-60">
+    <div className="absolute inset-0 pointer-events-none z-0">
       <Canvas
-        camera={{ position: [0, 0, 10], fov: 50 }}
+        camera={{ position: [0, 0, 12], fov: 50 }}
         dpr={[1, 2]}
         gl={{ antialias: true, alpha: true }}
       >
-        <ambientLight intensity={0.5} />
-        <pointLight position={[10, 10, 10]} intensity={1} color="#00d4ff" />
-        <pointLight position={[-10, -10, -10]} intensity={0.5} color="#0066ff" />
+        <ambientLight intensity={0.8} />
+        <pointLight position={[10, 10, 10]} intensity={1.5} color="#00d4ff" />
+        <pointLight position={[-10, -10, -10]} intensity={0.8} color="#0066ff" />
+        <pointLight position={[0, 0, 10]} intensity={1} color="#ffffff" />
         
         <RotatingS />
-        <HolographicRing />
+        <HolographicRings />
         <DataParticles />
       </Canvas>
     </div>
