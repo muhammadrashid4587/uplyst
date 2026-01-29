@@ -10,7 +10,7 @@ const steps = [
     title: "Create Your Signal Profile",
     description: "Upload your resume and evidence of experience. Add achievements, leadership roles, and notable projects that define your career.",
     icon: Sparkles,
-    color: "from-primary/20 to-signal-maroon/20",
+    color: "from-primary/20 to-accent/20",
   },
   {
     step: "02",
@@ -24,7 +24,7 @@ const steps = [
     title: "Connect Directly",
     description: "Employers search by signal strength and fast-track outreach to verified senior professionals like you.",
     icon: Target,
-    color: "from-signal-maroon/20 to-primary/10",
+    color: "from-accent/20 to-primary/10",
   },
 ];
 

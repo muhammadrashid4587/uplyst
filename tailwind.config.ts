@@ -58,9 +58,9 @@ export default {
           ring: "hsl(var(--sidebar-ring))",
         },
         signal: {
-          red: "hsl(var(--signal-red))",
-          glow: "hsl(var(--signal-red-glow))",
-          maroon: "hsl(var(--signal-maroon))",
+          cyan: "hsl(var(--signal-cyan))",
+          glow: "hsl(var(--signal-cyan-glow))",
+          blue: "hsl(var(--signal-blue))",
         },
       },
       borderRadius: {

@@ -1,55 +1,19 @@
 <svg width="32" height="32" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
-  <!-- Outer signal arc -->
+  <defs>
+    <linearGradient id="sGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#0EA5E9;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#06B6D4;stop-opacity:1" />
+    </linearGradient>
+  </defs>
+  <!-- Stylized S -->
   <path
-    d="M8 24C8 15.163 15.163 8 24 8"
-    stroke="#8B2635"
-    stroke-width="2.5"
+    d="M16 14C16 11.7909 17.7909 10 20 10H28C30.2091 10 32 11.7909 32 14V16C32 18.2091 30.2091 20 28 20H20C17.7909 20 16 21.7909 16 24V24C16 26.2091 17.7909 28 20 28H28C30.2091 28 32 29.7909 32 32V34C32 36.2091 30.2091 38 28 38H20C17.7909 38 16 36.2091 16 34"
+    stroke="url(#sGradient)"
+    stroke-width="4"
     stroke-linecap="round"
-    opacity="0.4"
+    fill="none"
   />
-  <!-- Middle signal arc -->
-  <path
-    d="M12 24C12 17.373 17.373 12 24 12"
-    stroke="#8B2635"
-    stroke-width="2.5"
-    stroke-linecap="round"
-    opacity="0.6"
-  />
-  <!-- Inner signal arc -->
-  <path
-    d="M16 24C16 19.582 19.582 16 24 16"
-    stroke="#8B2635"
-    stroke-width="2.5"
-    stroke-linecap="round"
-    opacity="0.8"
-  />
-  <!-- Center beacon dot -->
-  <circle
-    cx="24"
-    cy="24"
-    r="4"
-    fill="#8B2635"
-  />
-  <!-- Lower signal arcs forming S shape -->
-  <path
-    d="M40 24C40 32.837 32.837 40 24 40"
-    stroke="#8B2635"
-    stroke-width="2.5"
-    stroke-linecap="round"
-    opacity="0.4"
-  />
-  <path
-    d="M36 24C36 30.627 30.627 36 24 36"
-    stroke="#8B2635"
-    stroke-width="2.5"
-    stroke-linecap="round"
-    opacity="0.6"
-  />
-  <path
-    d="M32 24C32 28.418 28.418 32 24 32"
-    stroke="#8B2635"
-    stroke-width="2.5"
-    stroke-linecap="round"
-    opacity="0.8"
-  />
+  <!-- Glow effect dots -->
+  <circle cx="16" cy="14" r="2" fill="#0EA5E9" opacity="0.6"/>
+  <circle cx="32" cy="34" r="2" fill="#06B6D4" opacity="0.6"/>
 </svg>

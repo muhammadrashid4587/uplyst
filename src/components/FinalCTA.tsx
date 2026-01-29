@@ -33,7 +33,7 @@ export const FinalCTA = () => {
           <div
             className="absolute bottom-0 right-1/4 w-[300px] h-[300px] float-delayed"
             style={{
-              background: "radial-gradient(circle, hsl(var(--signal-maroon) / 0.2) 0%, transparent 70%)",
+              background: "radial-gradient(circle, hsl(var(--accent) / 0.2) 0%, transparent 70%)",
             }}
           />
           <div
