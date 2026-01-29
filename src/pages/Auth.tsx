@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
+import { AnimatedBackground } from "@/components/AnimatedBackground";
 import { GlassPanel } from "@/components/ui/GlassPanel";
 import { SignalButton } from "@/components/ui/SignalButton";
 import { SignalLogo } from "@/components/SignalLogo";
@@ -8,7 +9,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { toast } from "@/hooks/use-toast";
 import { Toaster } from "@/components/ui/toaster";
-import { Loader2, Mail, Lock, User } from "lucide-react";
+import { Loader2, Mail, Lock, User, ArrowLeft } from "lucide-react";
 import { z } from "zod";
 
 const emailSchema = z.string().trim().email({ message: "Invalid email address" });
@@ -126,124 +127,184 @@ const Auth = () => {
   };
 
   return (
-    <div className="min-h-screen bg-background flex flex-col">
-      {/* Subtle background gradient */}
-      <div className="fixed inset-0 bg-gradient-to-br from-primary/5 via-background to-accent/5 pointer-events-none" />
+    <div className="min-h-screen bg-background flex noise-overlay">
+      {/* Animated Background */}
+      <AnimatedBackground />
       
-      {/* Header with logo */}
-      <header className="relative z-10 p-6">
-        <Link to="/" className="inline-block hover:opacity-80 transition-opacity">
-          <SignalLogo size="md" />
+      {/* Left side - Branding */}
+      <div className="hidden lg:flex lg:w-1/2 relative z-10 flex-col justify-between p-12">
+        <Link to="/" className="inline-flex items-center gap-2 text-muted-foreground hover:text-foreground transition-colors">
+          <ArrowLeft className="w-4 h-4" />
+          <span className="text-sm">Back to home</span>
         </Link>
-      </header>
-
-      {/* Main content */}
-      <main className="relative z-10 flex-1 flex items-center justify-center px-4 py-12">
-        <GlassPanel variant="strong" className="w-full max-w-md p-8">
-          <div className="text-center mb-8">
-            <h1 className="text-3xl font-display font-bold text-foreground mb-2">
-              {isLogin ? "Welcome Back" : "Join Signal"}
-            </h1>
-            <p className="text-muted-foreground">
-              {isLogin
-                ? "Sign in to access your account"
-                : "Create an account to get started"}
+        
+        <div className="space-y-8">
+          <SignalLogo size="lg" />
+          <div className="space-y-4 max-w-md">
+            <h2 className="text-4xl font-display font-bold text-foreground leading-tight">
+              Connect with top tech talent worldwide
+            </h2>
+            <p className="text-lg text-muted-foreground">
+              Join thousands of professionals who trust Signal to discover opportunities and build meaningful careers.
             </p>
           </div>
-
-          <form onSubmit={isLogin ? handleLogin : handleSignUp} className="space-y-6">
-            {!isLogin && (
-              <div className="space-y-2">
-                <Label htmlFor="fullName" className="text-foreground">
-                  Full Name
-                </Label>
-                <div className="relative">
-                  <User className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />
-                  <Input
-                    id="fullName"
-                    type="text"
-                    placeholder="John Doe"
-                    value={fullName}
-                    onChange={(e) => setFullName(e.target.value)}
-                    className="pl-10 bg-background/50 border-border/50 focus:border-primary"
-                  />
-                </div>
-              </div>
-            )}
-
-            <div className="space-y-2">
-              <Label htmlFor="email" className="text-foreground">
-                Email
-              </Label>
-              <div className="relative">
-                <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />
-                <Input
-                  id="email"
-                  type="email"
-                  placeholder="you@example.com"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  className="pl-10 bg-background/50 border-border/50 focus:border-primary"
-                  required
-                />
-              </div>
+          
+          {/* Stats */}
+          <div className="flex gap-8">
+            <div>
+              <p className="text-3xl font-display font-bold text-primary">10K+</p>
+              <p className="text-sm text-muted-foreground">Active Talent</p>
             </div>
-
-            <div className="space-y-2">
-              <Label htmlFor="password" className="text-foreground">
-                Password
-              </Label>
-              <div className="relative">
-                <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />
-                <Input
-                  id="password"
-                  type="password"
-                  placeholder="••••••••"
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  className="pl-10 bg-background/50 border-border/50 focus:border-primary"
-                  required
-                />
-              </div>
+            <div>
+              <p className="text-3xl font-display font-bold text-primary">500+</p>
+              <p className="text-sm text-muted-foreground">Companies</p>
             </div>
-
-            <SignalButton
-              type="submit"
-              variant="primary"
-              size="lg"
-              className="w-full justify-center"
-              disabled={loading}
-            >
-              {loading ? (
-                <Loader2 className="w-5 h-5 animate-spin" />
-              ) : isLogin ? (
-                "Sign In"
-              ) : (
-                "Create Account"
-              )}
-            </SignalButton>
-          </form>
-
-          <div className="mt-6 text-center">
-            <button
-              type="button"
-              onClick={() => setIsLogin(!isLogin)}
-              className="text-primary hover:text-primary/80 transition-colors text-sm"
-            >
-              {isLogin
-                ? "Don't have an account? Sign up"
-                : "Already have an account? Sign in"}
-            </button>
+            <div>
+              <p className="text-3xl font-display font-bold text-primary">95%</p>
+              <p className="text-sm text-muted-foreground">Match Rate</p>
+            </div>
           </div>
-        </GlassPanel>
-      </main>
-
-      {/* Footer */}
-      <footer className="relative z-10 p-6 text-center">
+        </div>
+        
         <p className="text-muted-foreground text-sm">
           © {new Date().getFullYear()} Signal. All rights reserved.
         </p>
-      </footer>
+      </div>
+
+      {/* Right side - Auth Form */}
+      <div className="w-full lg:w-1/2 relative z-10 flex flex-col min-h-screen">
+        {/* Mobile header */}
+        <header className="lg:hidden p-6 flex items-center justify-between">
+          <Link to="/" className="inline-flex items-center gap-2 text-muted-foreground hover:text-foreground transition-colors">
+            <ArrowLeft className="w-4 h-4" />
+            <span className="text-sm">Back</span>
+          </Link>
+          <SignalLogo size="sm" />
+        </header>
+
+        {/* Form container */}
+        <main className="flex-1 flex items-center justify-center px-6 py-12">
+          <GlassPanel variant="strong" className="w-full max-w-md p-8">
+            {/* Logo for mobile */}
+            <div className="lg:hidden text-center mb-6">
+              <SignalLogo size="md" />
+            </div>
+            
+            <div className="text-center mb-8">
+              <h1 className="text-3xl font-display font-bold text-foreground mb-2">
+                {isLogin ? "Welcome Back" : "Join Signal"}
+              </h1>
+              <p className="text-muted-foreground">
+                {isLogin
+                  ? "Sign in to access your account"
+                  : "Create an account to get started"}
+              </p>
+            </div>
+
+            <form onSubmit={isLogin ? handleLogin : handleSignUp} className="space-y-5">
+              {!isLogin && (
+                <div className="space-y-2">
+                  <Label htmlFor="fullName" className="text-foreground">
+                    Full Name
+                  </Label>
+                  <div className="relative">
+                    <User className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />
+                    <Input
+                      id="fullName"
+                      type="text"
+                      placeholder="John Doe"
+                      value={fullName}
+                      onChange={(e) => setFullName(e.target.value)}
+                      className="pl-10 bg-background/50 border-border/50 focus:border-primary h-12"
+                    />
+                  </div>
+                </div>
+              )}
+
+              <div className="space-y-2">
+                <Label htmlFor="email" className="text-foreground">
+                  Email
+                </Label>
+                <div className="relative">
+                  <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />
+                  <Input
+                    id="email"
+                    type="email"
+                    placeholder="you@example.com"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    className="pl-10 bg-background/50 border-border/50 focus:border-primary h-12"
+                    required
+                  />
+                </div>
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="password" className="text-foreground">
+                  Password
+                </Label>
+                <div className="relative">
+                  <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />
+                  <Input
+                    id="password"
+                    type="password"
+                    placeholder="••••••••"
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    className="pl-10 bg-background/50 border-border/50 focus:border-primary h-12"
+                    required
+                  />
+                </div>
+              </div>
+
+              <SignalButton
+                type="submit"
+                variant="primary"
+                size="lg"
+                className="w-full justify-center h-12 text-base"
+                disabled={loading}
+              >
+                {loading ? (
+                  <Loader2 className="w-5 h-5 animate-spin" />
+                ) : isLogin ? (
+                  "Sign In"
+                ) : (
+                  "Create Account"
+                )}
+              </SignalButton>
+            </form>
+
+            <div className="mt-6 text-center">
+              <button
+                type="button"
+                onClick={() => setIsLogin(!isLogin)}
+                className="text-primary hover:text-primary/80 transition-colors text-sm"
+              >
+                {isLogin
+                  ? "Don't have an account? Sign up"
+                  : "Already have an account? Sign in"}
+              </button>
+            </div>
+
+            {/* Trust badges */}
+            <div className="mt-8 pt-6 border-t border-border/30">
+              <p className="text-xs text-muted-foreground text-center mb-3">Trusted by professionals at</p>
+              <div className="flex items-center justify-center gap-6 text-muted-foreground/50">
+                <span className="text-xs font-semibold tracking-wider">GOOGLE</span>
+                <span className="text-xs font-semibold tracking-wider">META</span>
+                <span className="text-xs font-semibold tracking-wider">STRIPE</span>
+              </div>
+            </div>
+          </GlassPanel>
+        </main>
+
+        {/* Mobile footer */}
+        <footer className="lg:hidden p-6 text-center">
+          <p className="text-muted-foreground text-sm">
+            © {new Date().getFullYear()} Signal. All rights reserved.
+          </p>
+        </footer>
+      </div>
 
       <Toaster />
     </div>
