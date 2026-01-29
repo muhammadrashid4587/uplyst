@@ -10,6 +10,7 @@ import EmployerPortal from "./pages/EmployerPortal";
 import Auth from "./pages/Auth";
 import Dashboard from "./pages/Dashboard";
 import DashboardJobs from "./pages/DashboardJobs";
+import DashboardApplications from "./pages/DashboardApplications";
 import DashboardSaved from "./pages/DashboardSaved";
 import DashboardMessages from "./pages/DashboardMessages";
 import DashboardNotifications from "./pages/DashboardNotifications";
@@ -33,6 +34,7 @@ const App = () => (
           <Route path="/auth" element={<Auth />} />
           <Route path="/dashboard" element={<Dashboard />} />
           <Route path="/dashboard/jobs" element={<DashboardJobs />} />
+          <Route path="/dashboard/applications" element={<DashboardApplications />} />
           <Route path="/dashboard/saved" element={<DashboardSaved />} />
           <Route path="/dashboard/messages" element={<DashboardMessages />} />
           <Route path="/dashboard/notifications" element={<DashboardNotifications />} />
