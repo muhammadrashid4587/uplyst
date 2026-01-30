@@ -211,6 +211,28 @@ export const HologramS = () => {
         
         <DataParticles />
       </Canvas>
+      
+      {/* Smooth fade edges - vignette overlay */}
+      <div 
+        className="absolute inset-0 pointer-events-none"
+        style={{
+          background: `
+            radial-gradient(ellipse 80% 70% at 50% 50%, transparent 30%, hsl(var(--background) / 0.4) 60%, hsl(var(--background)) 100%)
+          `,
+        }}
+      />
+      {/* Additional edge fade for smoother blending */}
+      <div 
+        className="absolute inset-0 pointer-events-none"
+        style={{
+          background: `
+            linear-gradient(to top, hsl(var(--background)) 0%, transparent 15%),
+            linear-gradient(to bottom, hsl(var(--background)) 0%, transparent 10%),
+            linear-gradient(to left, hsl(var(--background)) 0%, transparent 20%),
+            linear-gradient(to right, hsl(var(--background)) 0%, transparent 20%)
+          `,
+        }}
+      />
     </div>
   );
 };
