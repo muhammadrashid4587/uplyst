@@ -8,10 +8,12 @@ import { TrustSection } from "@/components/TrustSection";
 import { PricingSection } from "@/components/PricingSection";
 import { FAQSection } from "@/components/FAQSection";
 import { FinalCTA } from "@/components/FinalCTA";
+import { CustomCursor } from "@/components/CustomCursor";
 
 const Index = () => {
   return (
     <Layout>
+      <CustomCursor />
       <Hero3D />
       <AnimatedStats />
       <AnimatedTimeline />
