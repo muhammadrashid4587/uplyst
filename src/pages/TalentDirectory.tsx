@@ -7,6 +7,7 @@ import { FilterPill } from "@/components/ui/FilterPill";
 import { ProfileCard } from "@/components/ProfileCard";
 import { mockTalent, TalentProfile } from "@/data/mockTalent";
 import { Input } from "@/components/ui/input";
+import { TalentChatbot } from "@/components/TalentChatbot";
 import {
   Select,
   SelectContent,
@@ -266,6 +267,8 @@ const TalentDirectory = () => {
           )}
         </div>
       </section>
+
+      <TalentChatbot />
     </Layout>
   );
 };
