@@ -1,6 +1,9 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { z } from "zod";
+import { 
+  AvailabilityStatus, WorkStyle, LeadershipLevel, SeniorityLevel, UserRole 
+} from "@/types";
 
 export const experienceSchema = z.object({
   id: z.string(),
@@ -14,6 +17,16 @@ export const experienceSchema = z.object({
 });
 
 export type Experience = z.infer<typeof experienceSchema>;
+
+export const notableProjectSchema = z.object({
+  id: z.string(),
+  title: z.string().trim().max(100),
+  description: z.string().trim().max(500),
+  url: z.string().url().optional().or(z.literal("")),
+  impact: z.string().trim().max(200).optional(),
+});
+
+export type NotableProject = z.infer<typeof notableProjectSchema>;
 
 export const profileSchema = z.object({
   display_name: z.string().trim().max(100, "Name must be less than 100 characters").optional(),
@@ -29,6 +42,27 @@ export const profileSchema = z.object({
   avatar_url: z.string().url().optional().nullable(),
   skills: z.array(z.string().trim().max(50)).max(20, "Maximum 20 skills").optional(),
   experience: z.array(experienceSchema).max(10, "Maximum 10 experiences").optional(),
+  // Senior-first fields
+  impact_highlights: z.array(z.string().trim().max(200)).max(3).optional(),
+  availability_status: z.enum(["laid_off", "exploring", "employed_looking", "not_looking"]).optional().nullable(),
+  availability_date: z.string().optional().nullable(),
+  work_style: z.enum(["remote", "hybrid", "onsite"]).optional().nullable(),
+  preferred_timezone: z.string().max(50).optional().nullable(),
+  leadership_team_size: z.string().max(50).optional().nullable(),
+  leadership_budget: z.string().max(50).optional().nullable(),
+  leadership_org_level: z.enum(["IC", "Manager", "Director", "VP", "C-Level"]).optional().nullable(),
+  is_open_to_work: z.boolean().optional(),
+  open_to_contract: z.boolean().optional(),
+  open_to_fractional: z.boolean().optional(),
+  open_to_advisory: z.boolean().optional(),
+  portfolio_url: z.string().url().optional().nullable().or(z.literal("")),
+  github_url: z.string().url().optional().nullable().or(z.literal("")),
+  linkedin_url: z.string().url().optional().nullable().or(z.literal("")),
+  notable_projects: z.array(notableProjectSchema).max(5).optional(),
+  seniority_level: z.enum(["Principal", "Director", "Senior Manager", "VP", "C-Suite"]).optional().nullable(),
+  previous_companies: z.array(z.string().trim().max(100)).max(10).optional(),
+  is_verified: z.boolean().optional(),
+  user_role: z.enum(["candidate", "employer"]).optional(),
 });
 
 export type ProfileData = z.infer<typeof profileSchema>;
@@ -44,6 +78,27 @@ export interface Profile {
   website: string | null;
   skills: string[] | null;
   experience: Experience[] | null;
+  // Senior-first fields
+  impact_highlights: string[] | null;
+  availability_status: AvailabilityStatus | null;
+  availability_date: string | null;
+  work_style: WorkStyle | null;
+  preferred_timezone: string | null;
+  leadership_team_size: string | null;
+  leadership_budget: string | null;
+  leadership_org_level: LeadershipLevel | null;
+  is_open_to_work: boolean;
+  open_to_contract: boolean;
+  open_to_fractional: boolean;
+  open_to_advisory: boolean;
+  portfolio_url: string | null;
+  github_url: string | null;
+  linkedin_url: string | null;
+  notable_projects: NotableProject[] | null;
+  seniority_level: SeniorityLevel | null;
+  previous_companies: string[] | null;
+  is_verified: boolean;
+  user_role: UserRole;
   created_at: string;
   updated_at: string;
 }
