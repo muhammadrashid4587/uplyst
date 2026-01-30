@@ -4,7 +4,8 @@ import { GlassPanel } from "./ui/GlassPanel";
 import { Badge } from "./ui/SignalBadge";
 import { SignalButton } from "./ui/SignalButton";
 import { TalentProfile } from "@/data/mockTalent";
-import { MapPin, Briefcase, Shield, ArrowRight } from "lucide-react";
+import { MapPin, Briefcase, Shield, ArrowRight, Clock, Sparkles } from "lucide-react";
+import { TalentActions } from "./talent/TalentActions";
 
 // Placeholder avatar images - in production these would be real profile photos
 const avatarImages = [
@@ -22,9 +23,10 @@ interface ProfileCardProps {
   profile: TalentProfile;
   className?: string;
   index?: number;
+  showActions?: boolean;
 }
 
-export const ProfileCard = ({ profile, className, index = 0 }: ProfileCardProps) => {
+export const ProfileCard = ({ profile, className, index = 0, showActions = true }: ProfileCardProps) => {
   return (
     <GlassPanel
       hover
@@ -39,8 +41,18 @@ export const ProfileCard = ({ profile, className, index = 0 }: ProfileCardProps)
         <span className="text-xs font-medium text-primary">{profile.signalScore}</span>
       </div>
 
+      {/* Recently Laid Off Badge */}
+      {profile.recentlyLaidOff && (
+        <div className="absolute top-4 left-4">
+          <Badge variant="warning" size="sm">
+            <Clock className="w-3 h-3 mr-1" />
+            Available Now
+          </Badge>
+        </div>
+      )}
+
       {/* Profile Image & Name */}
-      <div className="flex flex-col items-center text-center mb-4">
+      <div className="flex flex-col items-center text-center mb-4 pt-2">
         <div className="w-16 h-16 rounded-full overflow-hidden border-2 border-primary/30 group-hover:border-primary/60 transition-colors duration-300 mb-3">
           <img 
             src={avatarImages[index % avatarImages.length]} 
@@ -55,7 +67,7 @@ export const ProfileCard = ({ profile, className, index = 0 }: ProfileCardProps)
       </div>
 
       {/* Quick Info */}
-      <div className="flex items-center justify-center gap-2 text-xs text-muted-foreground mb-4">
+      <div className="flex items-center justify-center gap-2 text-xs text-muted-foreground mb-3">
         <span className="flex items-center gap-1">
           <Briefcase className="w-3 h-3" />
           {profile.domain}
@@ -67,13 +79,35 @@ export const ProfileCard = ({ profile, className, index = 0 }: ProfileCardProps)
         </span>
       </div>
 
-      {/* Verification Badge */}
-      {profile.verified && (
-        <div className="flex justify-center mb-4">
+      {/* Badges Row */}
+      <div className="flex flex-wrap justify-center gap-1.5 mb-4">
+        {profile.verified && (
           <Badge variant="success" size="sm">
             <Shield className="w-3 h-3 mr-1" />
             Verified
           </Badge>
+        )}
+        {profile.seniorityLevel && (
+          <Badge variant="muted" size="sm">
+            {profile.seniorityLevel}
+          </Badge>
+        )}
+        {profile.openToWork && (
+          <Badge variant="primary" size="sm">
+            <Sparkles className="w-3 h-3 mr-1" />
+            Open
+          </Badge>
+        )}
+      </div>
+
+      {/* Actions */}
+      {showActions && (
+        <div className="flex items-center justify-between mb-3">
+          <TalentActions 
+            talentId={profile.id} 
+            talentName={profile.name}
+            variant="card"
+          />
         </div>
       )}
 

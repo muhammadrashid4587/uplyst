@@ -220,46 +220,106 @@ export type Database = {
       }
       profiles: {
         Row: {
+          availability_date: string | null
+          availability_status: string | null
           avatar_url: string | null
           bio: string | null
           created_at: string
           display_name: string | null
           experience: Json | null
+          github_url: string | null
           id: string
+          impact_highlights: string[] | null
+          is_open_to_work: boolean | null
+          is_verified: boolean | null
+          leadership_budget: string | null
+          leadership_org_level: string | null
+          leadership_team_size: string | null
+          linkedin_url: string | null
           location: string | null
+          notable_projects: Json | null
+          open_to_advisory: boolean | null
+          open_to_contract: boolean | null
+          open_to_fractional: boolean | null
+          portfolio_url: string | null
+          preferred_timezone: string | null
+          previous_companies: string[] | null
+          seniority_level: string | null
           skills: string[] | null
           title: string | null
           updated_at: string
           user_id: string
+          user_role: string | null
           website: string | null
+          work_style: string | null
         }
         Insert: {
+          availability_date?: string | null
+          availability_status?: string | null
           avatar_url?: string | null
           bio?: string | null
           created_at?: string
           display_name?: string | null
           experience?: Json | null
+          github_url?: string | null
           id?: string
+          impact_highlights?: string[] | null
+          is_open_to_work?: boolean | null
+          is_verified?: boolean | null
+          leadership_budget?: string | null
+          leadership_org_level?: string | null
+          leadership_team_size?: string | null
+          linkedin_url?: string | null
           location?: string | null
+          notable_projects?: Json | null
+          open_to_advisory?: boolean | null
+          open_to_contract?: boolean | null
+          open_to_fractional?: boolean | null
+          portfolio_url?: string | null
+          preferred_timezone?: string | null
+          previous_companies?: string[] | null
+          seniority_level?: string | null
           skills?: string[] | null
           title?: string | null
           updated_at?: string
           user_id: string
+          user_role?: string | null
           website?: string | null
+          work_style?: string | null
         }
         Update: {
+          availability_date?: string | null
+          availability_status?: string | null
           avatar_url?: string | null
           bio?: string | null
           created_at?: string
           display_name?: string | null
           experience?: Json | null
+          github_url?: string | null
           id?: string
+          impact_highlights?: string[] | null
+          is_open_to_work?: boolean | null
+          is_verified?: boolean | null
+          leadership_budget?: string | null
+          leadership_org_level?: string | null
+          leadership_team_size?: string | null
+          linkedin_url?: string | null
           location?: string | null
+          notable_projects?: Json | null
+          open_to_advisory?: boolean | null
+          open_to_contract?: boolean | null
+          open_to_fractional?: boolean | null
+          portfolio_url?: string | null
+          preferred_timezone?: string | null
+          previous_companies?: string[] | null
+          seniority_level?: string | null
           skills?: string[] | null
           title?: string | null
           updated_at?: string
           user_id?: string
+          user_role?: string | null
           website?: string | null
+          work_style?: string | null
         }
         Relationships: []
       }
