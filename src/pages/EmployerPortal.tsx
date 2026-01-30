@@ -5,6 +5,7 @@ import { SignalButton } from "@/components/ui/SignalButton";
 import { Badge } from "@/components/ui/SignalBadge";
 import { mockTalent } from "@/data/mockTalent";
 import { Input } from "@/components/ui/input";
+import { TalentChatbot } from "@/components/TalentChatbot";
 import {
   Search,
   Plus,
@@ -370,6 +371,8 @@ const EmployerPortal = () => {
           </GlassPanel>
         </div>
       </section>
+
+      <TalentChatbot />
     </Layout>
   );
 };

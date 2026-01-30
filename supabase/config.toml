@@ -1,1 +1,4 @@
 project_id = "cxrzzutgfqdavmbtaxzv"
+
+[functions.talent-search-chat]
+verify_jwt = false
