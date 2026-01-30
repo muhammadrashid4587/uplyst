@@ -202,10 +202,10 @@ export const HologramS = () => {
         dpr={[1, 2]}
         gl={{ antialias: true, alpha: true }}
       >
-        <ambientLight intensity={0.8} />
-        <pointLight position={[10, 10, 10]} intensity={1.5} color="#00d4ff" />
-        <pointLight position={[-10, -10, -10]} intensity={0.8} color="#0066ff" />
-        <pointLight position={[0, 0, 10]} intensity={1} color="#ffffff" />
+        <ambientLight intensity={0.6} />
+        <pointLight position={[5, 5, 8]} intensity={0.8} color="#00d4ff" />
+        <pointLight position={[-5, -5, -5]} intensity={0.4} color="#0066ff" />
+        <pointLight position={[0, 0, 10]} intensity={0.6} color="#ffffff" />
         
         <RotatingS />
         
