@@ -10,9 +10,10 @@ import { Textarea } from "@/components/ui/textarea";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Progress } from "@/components/ui/progress";
 import { Badge } from "@/components/ui/badge";
+import { ResumeParser } from "@/components/ResumeParser";
 import { 
   User as UserIcon, Camera, MapPin, Briefcase, Link as LinkIcon, 
-  Save, Loader2, Trash2, Plus, X, Calendar, Building2, GraduationCap 
+  Save, Loader2, Trash2, Plus, X, Calendar, Building2, GraduationCap, FileText
 } from "lucide-react";
 import { toast } from "@/hooks/use-toast";
 import { useProfile, profileSchema, Experience } from "@/hooks/useProfile";
@@ -132,6 +133,39 @@ const DashboardProfile = () => {
 
   const removeExperience = (id: string) => {
     setExperience(experience.filter(exp => exp.id !== id));
+  };
+
+  // Handle resume data extraction
+  const handleResumeDataExtracted = (data: any) => {
+    if (data.display_name) setDisplayName(data.display_name);
+    if (data.title) setTitle(data.title);
+    if (data.bio) setBio(data.bio);
+    if (data.location) setLocation(data.location);
+    if (data.skills && data.skills.length > 0) {
+      setSkills(prev => {
+        const combined = [...new Set([...prev, ...data.skills])];
+        return combined.slice(0, 20);
+      });
+    }
+    if (data.experience && data.experience.length > 0) {
+      const newExperiences: Experience[] = data.experience.slice(0, 10).map((exp: any) => ({
+        id: crypto.randomUUID(),
+        title: exp.title || "",
+        company: exp.company || "",
+        location: "",
+        startDate: exp.startDate || "",
+        endDate: exp.endDate || "",
+        current: !exp.endDate || exp.endDate.toLowerCase() === "present",
+        description: exp.description || "",
+      }));
+      setExperience(prev => {
+        const combined = [...prev, ...newExperiences];
+        return combined.slice(0, 10);
+      });
+    }
+    if (data.website || data.portfolio_url) {
+      setWebsite(data.website || data.portfolio_url || "");
+    }
   };
 
   const handleSave = async () => {
@@ -254,6 +288,18 @@ const DashboardProfile = () => {
               )}
             </div>
           </div>
+        </GlassPanel>
+
+        {/* Resume Parser */}
+        <GlassPanel className="p-6 mb-6">
+          <h2 className="text-lg font-semibold text-foreground mb-4 flex items-center gap-2">
+            <FileText className="w-5 h-5 text-primary" />
+            Quick Import from Resume
+          </h2>
+          <p className="text-sm text-muted-foreground mb-4">
+            Upload your resume and our AI will automatically extract your information to fill out your profile.
+          </p>
+          <ResumeParser onDataExtracted={handleResumeDataExtracted} />
         </GlassPanel>
 
         {/* Basic Information */}
