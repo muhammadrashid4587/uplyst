@@ -1,7 +1,7 @@
 import { useNavigate, useLocation, Link } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { User } from "@supabase/supabase-js";
-import { SignalLogo } from "./SignalLogo";
+import { UplystLogo } from "./SignalLogo";
 import { NavLink } from "./NavLink";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import {
@@ -80,7 +80,7 @@ export function DashboardSidebar({ user, profile, onSearchClick }: DashboardSide
       <SidebarHeader className="border-b border-border/20 p-4">
         <div className={cn("flex items-center gap-3 transition-all duration-300", collapsed && "justify-center")}>
           {!collapsed ? (
-            <SignalLogo size="sm" />
+            <UplystLogo size="sm" />
           ) : (
             <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-primary/20 to-accent/20 flex items-center justify-center border border-primary/20 shadow-lg shadow-primary/10">
               <span className="font-display text-primary font-bold text-base">S</span>

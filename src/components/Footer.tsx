@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-import { SignalLogo } from "./SignalLogo";
+import { UplystLogo } from "./SignalLogo";
 import { Github, Twitter, Linkedin, ArrowUpRight } from "lucide-react";
 
 const footerLinks = {
@@ -36,7 +36,7 @@ export const Footer = () => {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-12">
           {/* Brand */}
           <div className="lg:col-span-2">
-            <SignalLogo size="lg" className="mb-6" />
+            <UplystLogo size="lg" className="mb-6" />
             <p className="text-muted-foreground max-w-sm mb-8 leading-relaxed">
               The high-signal career platform for senior professionals. 
               Uplyst highlights credibility, leadership, and real-world impact — not buzzwords.

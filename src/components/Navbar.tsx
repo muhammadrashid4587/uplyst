@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { cn } from "@/lib/utils";
-import { SignalLogo } from "./SignalLogo";
+import { UplystLogo } from "./SignalLogo";
 import { SignalButton } from "./ui/SignalButton";
 import { Menu, X } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
@@ -64,7 +64,7 @@ export const Navbar = () => {
         <div className="flex items-center justify-between h-16 md:h-20">
           {/* Logo */}
           <Link to="/" className="flex-shrink-0 hover:opacity-80 transition-opacity">
-            <SignalLogo size="md" />
+            <UplystLogo size="md" />
           </Link>
 
           {/* Desktop Navigation */}
