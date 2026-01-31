@@ -117,7 +117,6 @@ export const Footer = () => {
         <div className="mt-16 pt-8 border-t border-border/30 flex flex-col md:flex-row items-center justify-between gap-4">
           <p className="text-sm text-muted-foreground">
             © {new Date().getFullYear()} Uplyst. All rights reserved.
-            © {new Date().getFullYear()} Signal. All rights reserved.
           </p>
           <p className="text-sm text-muted-foreground font-display">
             Built for senior professionals who deserve to be <span className="text-primary">seen</span>.
