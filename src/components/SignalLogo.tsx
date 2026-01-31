@@ -33,7 +33,7 @@ export const SignalLogo = ({
       
       {showWordmark && (
         <span className={cn("font-display font-bold tracking-tight bg-gradient-to-r from-primary via-accent to-primary bg-clip-text text-transparent", text)}>
-          Signal
+          Uplyst
         </span>
       )}
     </div>

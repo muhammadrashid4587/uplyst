@@ -7,16 +7,16 @@ import { ChevronDown, HelpCircle } from "lucide-react";
 
 const faqs = [
   {
-    question: "Why does Signal exist?",
-    answer: "Senior professionals affected by layoffs often get lost in the noise of traditional job boards. Their decades of experience, leadership impact, and proven track record get reduced to keywords and algorithms. Signal was built to restore dignity to the job search by highlighting what matters: real experience, verified credentials, and genuine impact.",
+    question: "Why does Uplyst exist?",
+    answer: "Senior professionals affected by layoffs often get lost in the noise of traditional job boards. Their decades of experience, leadership impact, and proven track record get reduced to keywords and algorithms. Uplyst was built to restore dignity to the job search by highlighting what matters: real experience, verified credentials, and genuine impact.",
   },
   {
-    question: "Who is Signal for?",
-    answer: "Signal is designed for experienced professionals (typically 10+ years) who hold or have held senior roles — directors, VPs, C-suite executives, principal engineers, and senior managers. If you've led teams, driven results, and made real impact, Signal is for you.",
+    question: "Who is Uplyst for?",
+    answer: "Uplyst is designed for experienced professionals (typically 10+ years) who hold or have held senior roles — directors, VPs, C-suite executives, principal engineers, and senior managers. If you've led teams, driven results, and made real impact, Uplyst is for you.",
   },
   {
     question: "How does verification work?",
-    answer: "We use a multi-layered approach: automated verification of employment history through trusted databases, optional reference checks from former colleagues, and analysis of public professional footprints. The more you verify, the stronger your signal.",
+    answer: "We use a multi-layered approach: automated verification of employment history through trusted databases, optional reference checks from former colleagues, and analysis of public professional footprints. The more you verify, the stronger your profile.",
   },
   {
     question: "Is my information secure?",
