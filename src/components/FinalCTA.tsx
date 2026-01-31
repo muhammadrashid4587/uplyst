@@ -1,7 +1,7 @@
 import { useScrollReveal } from "@/hooks/useScrollReveal";
 import { GlassPanel } from "./ui/GlassPanel";
 import { SignalButton } from "./ui/SignalButton";
-import { SignalLogo } from "./SignalLogo";
+import { UplystLogo } from "./SignalLogo";
 import { cn } from "@/lib/utils";
 import { ArrowRight, Sparkles } from "lucide-react";
 import { useMouseGlow } from "@/hooks/useMouseGlow";
@@ -53,9 +53,9 @@ export const FinalCTA = () => {
               )}
             >
               <div className="relative">
-                <SignalLogo size="xl" showWordmark={false} className="animate-glow-pulse" />
+                <UplystLogo size="xl" showWordmark={false} className="animate-glow-pulse" />
                 <div className="absolute inset-0 blur-2xl opacity-50">
-                  <SignalLogo size="xl" showWordmark={false} />
+                  <UplystLogo size="xl" showWordmark={false} />
                 </div>
               </div>
             </div>

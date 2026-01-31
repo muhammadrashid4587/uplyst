@@ -6,7 +6,7 @@ import { AnimatedBackground } from "@/components/AnimatedBackground";
 import { Auth3DLogo } from "@/components/Auth3DLogo";
 import { GlassPanel } from "@/components/ui/GlassPanel";
 import { SignalButton } from "@/components/ui/SignalButton";
-import { SignalLogo } from "@/components/SignalLogo";
+import { UplystLogo } from "@/components/SignalLogo";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { toast } from "@/hooks/use-toast";
@@ -248,7 +248,7 @@ const Auth = () => {
             <ChevronLeft className="w-4 h-4" />
             <span className="text-sm">Back</span>
           </Link>
-          <SignalLogo size="sm" />
+          <UplystLogo size="sm" />
         </header>
 
         {/* Form container */}
