@@ -39,7 +39,7 @@ export const Footer = () => {
             <SignalLogo size="lg" className="mb-6" />
             <p className="text-muted-foreground max-w-sm mb-8 leading-relaxed">
               The high-signal career platform for senior professionals. 
-              We highlight credibility, leadership, and real-world impact — not buzzwords.
+              Uplyst highlights credibility, leadership, and real-world impact — not buzzwords.
             </p>
             <div className="flex items-center gap-3">
               {[
@@ -116,6 +116,7 @@ export const Footer = () => {
         {/* Bottom */}
         <div className="mt-16 pt-8 border-t border-border/30 flex flex-col md:flex-row items-center justify-between gap-4">
           <p className="text-sm text-muted-foreground">
+            © {new Date().getFullYear()} Uplyst. All rights reserved.
             © {new Date().getFullYear()} Signal. All rights reserved.
           </p>
           <p className="text-sm text-muted-foreground font-display">

@@ -91,7 +91,7 @@ export const Hero3D = () => {
             className="text-lg md:text-xl lg:text-2xl text-muted-foreground max-w-3xl mx-auto mb-12 animate-fade-up leading-relaxed"
             style={{ animationDelay: "400ms" }}
           >
-            Signal highlights <span className="text-foreground font-medium">real experience</span> when resumes and algorithms fail.
+            Uplyst highlights <span className="text-foreground font-medium">real experience</span> when resumes and algorithms fail.
             <br className="hidden md:block" />
             Get verified. Get seen. <span className="text-primary font-semibold">Get hired.</span>
           </p>
@@ -102,7 +102,7 @@ export const Hero3D = () => {
             style={{ animationDelay: "600ms" }}
           >
             <SignalButton variant="primary" size="lg" className="group min-w-[240px]">
-              <span>Create Your Signal</span>
+              <span>Create Your Profile</span>
               <ArrowRight className="w-5 h-5 ml-2 group-hover:translate-x-1 transition-transform" />
             </SignalButton>
             <Link to="/talent">
@@ -131,7 +131,7 @@ export const Hero3D = () => {
             </div>
             <p className="text-muted-foreground">
               <span className="text-foreground font-bold text-lg">500+</span>
-              <span className="ml-2">senior professionals already on Signal</span>
+              <span className="ml-2">senior professionals already on Uplyst</span>
             </p>
           </div>
         </div>

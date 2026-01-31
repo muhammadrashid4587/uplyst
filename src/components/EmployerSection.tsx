@@ -62,7 +62,7 @@ export const EmployerSection = () => {
               )}
             >
               Traditional job boards bury senior talent under mountains of keywords and AI screening. 
-              Signal gives you direct access to verified professionals with proven leadership experience.
+              Uplyst gives you direct access to verified professionals with proven leadership experience.
             </p>
             
             <div
@@ -72,10 +72,10 @@ export const EmployerSection = () => {
               )}
             >
               <Link to="/employers">
-                <SignalButton variant="primary" size="lg" className="group">
-                  Start Hiring on Signal
-                  <ArrowRight className="w-5 h-5 ml-2 group-hover:translate-x-1 transition-transform" />
-                </SignalButton>
+              <SignalButton variant="primary" size="lg" className="group">
+                Start Hiring on Uplyst
+                <ArrowRight className="w-5 h-5 ml-2 group-hover:translate-x-1 transition-transform" />
+              </SignalButton>
               </Link>
             </div>
           </div>

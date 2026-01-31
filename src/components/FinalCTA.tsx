@@ -76,7 +76,7 @@ export const FinalCTA = () => {
                 isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-8"
               )}
             >
-              Join hundreds of senior professionals who are already getting noticed on Signal. 
+              Join hundreds of senior professionals who are already getting noticed on Uplyst. 
               Your experience deserves visibility.
             </p>
 
@@ -88,7 +88,7 @@ export const FinalCTA = () => {
             >
               <SignalButton variant="primary" size="lg" className="group min-w-[240px]">
                 <Sparkles className="w-5 h-5 mr-2" />
-                Create Your Signal
+                Create Your Profile
                 <ArrowRight className="w-5 h-5 ml-2 group-hover:translate-x-1 transition-transform" />
               </SignalButton>
             </div>

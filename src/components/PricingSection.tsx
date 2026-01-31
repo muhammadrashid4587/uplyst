@@ -12,7 +12,7 @@ const pricingPlans = [
     period: "forever",
     description: "Get discovered by top employers",
     features: [
-      "Basic Signal profile",
+      "Basic Uplyst profile",
       "Appear in talent directory",
       "Direct employer messages",
       "Basic analytics",
