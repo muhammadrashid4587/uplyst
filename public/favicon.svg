@@ -1,19 +1,19 @@
 <svg width="32" height="32" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
   <defs>
-    <linearGradient id="sGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+    <linearGradient id="uGradient" x1="0%" y1="0%" x2="100%" y2="100%">
       <stop offset="0%" style="stop-color:#0EA5E9;stop-opacity:1" />
       <stop offset="100%" style="stop-color:#06B6D4;stop-opacity:1" />
     </linearGradient>
   </defs>
-  <!-- Stylized S -->
+  <!-- Stylized U -->
   <path
-    d="M16 14C16 11.7909 17.7909 10 20 10H28C30.2091 10 32 11.7909 32 14V16C32 18.2091 30.2091 20 28 20H20C17.7909 20 16 21.7909 16 24V24C16 26.2091 17.7909 28 20 28H28C30.2091 28 32 29.7909 32 32V34C32 36.2091 30.2091 38 28 38H20C17.7909 38 16 36.2091 16 34"
-    stroke="url(#sGradient)"
+    d="M14 12V28C14 33.5228 18.4772 38 24 38C29.5228 38 34 33.5228 34 28V12"
+    stroke="url(#uGradient)"
     stroke-width="4"
     stroke-linecap="round"
     fill="none"
   />
   <!-- Glow effect dots -->
-  <circle cx="16" cy="14" r="2" fill="#0EA5E9" opacity="0.6"/>
-  <circle cx="32" cy="34" r="2" fill="#06B6D4" opacity="0.6"/>
+  <circle cx="14" cy="12" r="2" fill="#0EA5E9" opacity="0.6"/>
+  <circle cx="34" cy="12" r="2" fill="#06B6D4" opacity="0.6"/>
 </svg>
