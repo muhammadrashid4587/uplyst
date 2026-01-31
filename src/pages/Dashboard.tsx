@@ -127,7 +127,7 @@ const Dashboard = () => {
               <div className="flex items-center gap-4 p-4 rounded-lg bg-muted/30 border border-border/30">
                 <Star className="w-8 h-8 text-accent flex-shrink-0" />
                 <div>
-                  <p className="font-medium text-foreground">Welcome to Signal!</p>
+                  <p className="font-medium text-foreground">Welcome to Uplyst!</p>
                   <p className="text-sm text-muted-foreground">
                     Get started by completing your profile and exploring opportunities.
                   </p>

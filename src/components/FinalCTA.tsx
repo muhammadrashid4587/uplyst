@@ -1,7 +1,7 @@
 import { useScrollReveal } from "@/hooks/useScrollReveal";
 import { GlassPanel } from "./ui/GlassPanel";
 import { SignalButton } from "./ui/SignalButton";
-import { UplystLogo } from "./SignalLogo";
+import { UplystLogo } from "./UplystLogo";
 import { cn } from "@/lib/utils";
 import { ArrowRight, Sparkles } from "lucide-react";
 import { useMouseGlow } from "@/hooks/useMouseGlow";

@@ -1,7 +1,7 @@
 import { useNavigate, useLocation, Link } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { User } from "@supabase/supabase-js";
-import { UplystLogo } from "./SignalLogo";
+import { UplystLogo } from "./UplystLogo";
 import { NavLink } from "./NavLink";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import {
