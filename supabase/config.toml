@@ -2,3 +2,6 @@ project_id = "cxrzzutgfqdavmbtaxzv"
 
 [functions.talent-search-chat]
 verify_jwt = false
+
+[functions.parse-resume]
+verify_jwt = false
