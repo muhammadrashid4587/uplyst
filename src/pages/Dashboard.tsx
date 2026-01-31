@@ -4,6 +4,7 @@ import { User } from "@supabase/supabase-js";
 import { DashboardLayout } from "@/components/DashboardLayout";
 import { GlassPanel } from "@/components/ui/GlassPanel";
 import { SignalButton } from "@/components/ui/SignalButton";
+import { SmartMatch } from "@/components/SmartMatch";
 import { 
   User as UserIcon, 
   Star, 
@@ -79,6 +80,11 @@ const Dashboard = () => {
               <p className="text-sm text-muted-foreground">{stat.label}</p>
             </GlassPanel>
           ))}
+        </div>
+
+        {/* Smart Match Section */}
+        <div className="mb-8">
+          <SmartMatch />
         </div>
 
         {/* Main Content Grid */}
