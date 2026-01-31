@@ -6,7 +6,7 @@ import { AnimatedBackground } from "@/components/AnimatedBackground";
 import { Auth3DLogo } from "@/components/Auth3DLogo";
 import { GlassPanel } from "@/components/ui/GlassPanel";
 import { SignalButton } from "@/components/ui/SignalButton";
-import { UplystLogo } from "@/components/SignalLogo";
+import { UplystLogo } from "@/components/UplystLogo";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { toast } from "@/hooks/use-toast";
@@ -254,11 +254,11 @@ const Auth = () => {
         {/* Form container */}
         <main className="flex-1 flex items-center justify-center px-8 lg:px-16 py-12">
           <div className="w-full max-w-sm space-y-8">
-            {/* Signal wordmark */}
+            {/* Uplyst wordmark */}
             <div className="text-center animate-slide-up-1">
               <Link to="/" className="inline-block hover:opacity-80 transition-opacity">
                 <span className="font-display text-5xl font-bold tracking-tight bg-gradient-to-r from-primary via-accent to-primary bg-clip-text text-transparent">
-                  Signal
+                  Uplyst
                 </span>
               </Link>
             </div>
@@ -271,7 +271,7 @@ const Auth = () => {
               <p className="text-muted-foreground text-sm">
                 {isLogin
                   ? "Enter your credentials to access your account"
-                  : "Get started with Signal today"}
+                  : "Get started with Uplyst today"}
               </p>
             </div>
 

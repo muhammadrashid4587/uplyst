@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { cn } from "@/lib/utils";
-import { UplystLogo } from "./SignalLogo";
+import { UplystLogo } from "./UplystLogo";
 import { SignalButton } from "./ui/SignalButton";
 import { Menu, X } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";

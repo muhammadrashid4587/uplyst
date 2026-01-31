@@ -33,11 +33,11 @@ export interface OnboardingData {
 }
 
 const STEPS = [
-  { id: "role", title: "Welcome to Signal", description: "Let's personalize your experience" },
+  { id: "role", title: "Welcome to Uplyst", description: "Let's personalize your experience" },
   { id: "basics", title: "Basic Information", description: "Tell us about yourself" },
   { id: "preferences", title: "Work Preferences", description: "What are you looking for?" },
   { id: "skills", title: "Skills & Impact", description: "Showcase your expertise" },
-  { id: "complete", title: "You're All Set!", description: "Your Signal profile is ready" },
+  { id: "complete", title: "You're All Set!", description: "Your Uplyst profile is ready" },
 ];
 
 const seniorityOptions: { value: SeniorityLevel; label: string; description: string }[] = [
@@ -370,7 +370,7 @@ export function OnboardingWizard({ open, onComplete, onSkip }: OnboardingWizardP
                 <Check className="w-10 h-10 text-primary" />
               </div>
               <h3 className="text-2xl font-display font-bold text-foreground mb-2">
-                Welcome to Signal!
+                Welcome to Uplyst!
               </h3>
               <p className="text-muted-foreground max-w-md mx-auto mb-6">
                 {data.userRole === "candidate" 

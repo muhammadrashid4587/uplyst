@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-import { UplystLogo } from "./SignalLogo";
+import { UplystLogo } from "./UplystLogo";
 import { Github, Twitter, Linkedin, ArrowUpRight } from "lucide-react";
 
 const footerLinks = {
