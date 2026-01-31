@@ -2,12 +2,15 @@ import { ReactNode, useEffect } from "react";
 import { Navbar } from "./Navbar";
 import { Footer } from "./Footer";
 import { AnimatedBackground } from "./AnimatedBackground";
+import { useSmoothScroll } from "@/hooks/useSmoothScroll";
 
 interface LayoutProps {
   children: ReactNode;
 }
 
 export const Layout = ({ children }: LayoutProps) => {
+  useSmoothScroll();
+
   useEffect(() => {
     // Apply dark mode by default
     document.documentElement.classList.add("dark");
