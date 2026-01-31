@@ -4,7 +4,7 @@ import { SignalButton } from "./ui/SignalButton";
 import { mockTalent } from "@/data/mockTalent";
 import { useParallax } from "@/hooks/useParallax";
 import { useMouseGlow } from "@/hooks/useMouseGlow";
-import { HologramS } from "./HologramS";
+import { HologramU } from "./HologramU";
 
 export const Hero3D = () => {
   const parallaxOffset = useParallax(0.3);
@@ -13,7 +13,7 @@ export const Hero3D = () => {
   return (
     <section className="relative min-h-screen flex items-center overflow-hidden">
       {/* 3D Hologram Background */}
-      <HologramS />
+      <HologramU />
 
       {/* Base gradient overlay */}
       <div className="absolute inset-0 bg-gradient-to-b from-background/80 via-background/60 to-background pointer-events-none z-[1]" />

@@ -3,7 +3,7 @@ import { Canvas, useFrame } from "@react-three/fiber";
 import { Text3D, Center, Float } from "@react-three/drei";
 import * as THREE from "three";
 
-const RotatingS = () => {
+const RotatingU = () => {
   const groupRef = useRef<THREE.Group>(null);
 
   useFrame((state) => {
@@ -84,7 +84,7 @@ const RotatingS = () => {
             bevelOffset={0}
             bevelSegments={8}
           >
-            S
+            U
             <primitive object={hologramMaterial} attach="material" />
           </Text3D>
 
@@ -99,7 +99,7 @@ const RotatingS = () => {
             bevelOffset={0}
             bevelSegments={8}
           >
-            S
+            U
             <meshBasicMaterial color="#00d4ff" transparent opacity={0.35} />
           </Text3D>
 
@@ -114,7 +114,7 @@ const RotatingS = () => {
             bevelOffset={0}
             bevelSegments={8}
           >
-            S
+            U
             <meshBasicMaterial
               color="#00d4ff"
               transparent
@@ -141,7 +141,7 @@ export const Auth3DLogo = () => {
         <pointLight position={[-10, -10, -10]} intensity={0.6} color="#0066ff" />
         <pointLight position={[0, 0, 10]} intensity={0.8} color="#ffffff" />
         
-        <RotatingS />
+        <RotatingU />
       </Canvas>
     </div>
   );

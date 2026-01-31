@@ -3,7 +3,7 @@ import { Canvas, useFrame } from "@react-three/fiber";
 import { Text3D, Center, Float } from "@react-three/drei";
 import * as THREE from "three";
 
-const RotatingS = () => {
+const RotatingU = () => {
   const groupRef = useRef<THREE.Group>(null);
 
   // Rotate on its own Y axis (spinning in place)
@@ -86,7 +86,7 @@ const RotatingS = () => {
     <Float speed={1.5} rotationIntensity={0} floatIntensity={0.3}>
       <Center>
         <group ref={groupRef}>
-          {/* Main S with hologram material */}
+          {/* Main U with hologram material */}
           <Text3D
             font="/fonts/helvetiker_bold.typeface.json"
             size={4}
@@ -98,7 +98,7 @@ const RotatingS = () => {
             bevelOffset={0}
             bevelSegments={8}
           >
-            S
+            U
             <primitive object={hologramMaterial} attach="material" />
           </Text3D>
 
@@ -114,7 +114,7 @@ const RotatingS = () => {
             bevelOffset={0}
             bevelSegments={8}
           >
-            S
+            U
             <meshBasicMaterial
               color="#00d4ff"
               transparent
@@ -122,7 +122,7 @@ const RotatingS = () => {
             />
           </Text3D>
 
-          {/* Outer glow S */}
+          {/* Outer glow U */}
           <Text3D
             font="/fonts/helvetiker_bold.typeface.json"
             size={4.1}
@@ -134,7 +134,7 @@ const RotatingS = () => {
             bevelOffset={0}
             bevelSegments={8}
           >
-            S
+            U
             <meshBasicMaterial
               color="#00d4ff"
               transparent
@@ -194,7 +194,7 @@ const DataParticles = () => {
   );
 };
 
-export const HologramS = () => {
+export const HologramU = () => {
   return (
     <div className="absolute inset-0 pointer-events-none z-0">
       <Canvas
@@ -207,7 +207,7 @@ export const HologramS = () => {
         <pointLight position={[-5, -5, -5]} intensity={0.4} color="#0066ff" />
         <pointLight position={[0, 0, 10]} intensity={0.6} color="#ffffff" />
         
-        <RotatingS />
+        <RotatingU />
         
         <DataParticles />
       </Canvas>
@@ -237,4 +237,4 @@ export const HologramS = () => {
   );
 };
 
-export default HologramS;
+export default HologramU;
