@@ -1,13 +1,29 @@
-import { useEffect, useState } from "react";
-import { useMouseGlow } from "@/hooks/useMouseGlow";
+import { useEffect, useState, useRef, useCallback } from "react";
 
 export const CustomCursor = () => {
-  const position = useMouseGlow();
   const [isPointer, setIsPointer] = useState(false);
   const [isClicking, setIsClicking] = useState(false);
   const [isVisible, setIsVisible] = useState(false);
+  const cursorRef = useRef<HTMLDivElement>(null);
+  const positionRef = useRef({ x: 0, y: 0 });
+  const rafRef = useRef<number>();
+
+  const updateCursorPosition = useCallback(() => {
+    if (cursorRef.current) {
+      cursorRef.current.style.transform = `translate3d(${positionRef.current.x}px, ${positionRef.current.y}px, 0) translate(-50%, -50%) scale(${isClicking ? 0.8 : 1})`;
+    }
+  }, [isClicking]);
 
   useEffect(() => {
+    const handleMouseMove = (e: MouseEvent) => {
+      positionRef.current = { x: e.clientX, y: e.clientY };
+      
+      if (rafRef.current) {
+        cancelAnimationFrame(rafRef.current);
+      }
+      rafRef.current = requestAnimationFrame(updateCursorPosition);
+    };
+
     const handleMouseOver = (e: MouseEvent) => {
       const target = e.target as HTMLElement;
       const isClickable = 
@@ -25,28 +41,39 @@ export const CustomCursor = () => {
     const handleMouseEnter = () => setIsVisible(true);
     const handleMouseLeave = () => setIsVisible(false);
 
-    document.addEventListener('mouseover', handleMouseOver);
+    const handleFirstMove = (e: MouseEvent) => {
+      positionRef.current = { x: e.clientX, y: e.clientY };
+      updateCursorPosition();
+      setIsVisible(true);
+      document.removeEventListener('mousemove', handleFirstMove);
+    };
+
+    window.addEventListener('mousemove', handleMouseMove, { passive: true });
+    document.addEventListener('mouseover', handleMouseOver, { passive: true });
     document.addEventListener('mousedown', handleMouseDown);
     document.addEventListener('mouseup', handleMouseUp);
     document.addEventListener('mouseenter', handleMouseEnter);
     document.addEventListener('mouseleave', handleMouseLeave);
-
-    // Show cursor after initial mouse move
-    const handleFirstMove = () => {
-      setIsVisible(true);
-      document.removeEventListener('mousemove', handleFirstMove);
-    };
     document.addEventListener('mousemove', handleFirstMove);
 
     return () => {
+      window.removeEventListener('mousemove', handleMouseMove);
       document.removeEventListener('mouseover', handleMouseOver);
       document.removeEventListener('mousedown', handleMouseDown);
       document.removeEventListener('mouseup', handleMouseUp);
       document.removeEventListener('mouseenter', handleMouseEnter);
       document.removeEventListener('mouseleave', handleMouseLeave);
       document.removeEventListener('mousemove', handleFirstMove);
+      if (rafRef.current) {
+        cancelAnimationFrame(rafRef.current);
+      }
     };
-  }, []);
+  }, [updateCursorPosition]);
+
+  // Update transform when clicking state changes
+  useEffect(() => {
+    updateCursorPosition();
+  }, [isClicking, updateCursorPosition]);
 
   // Don't render on touch devices
   if (typeof window !== 'undefined' && 'ontouchstart' in window) {
@@ -57,40 +84,21 @@ export const CustomCursor = () => {
     <>
       {/* Main cursor dot */}
       <div
-        className={`fixed pointer-events-none z-[9999] transition-transform duration-75 ease-out ${
+        ref={cursorRef}
+        className={`fixed top-0 left-0 pointer-events-none z-[9999] will-change-transform ${
           isVisible ? 'opacity-100' : 'opacity-0'
         }`}
         style={{
-          left: position.x,
-          top: position.y,
-          transform: `translate(-50%, -50%) scale(${isClicking ? 0.8 : 1})`,
+          transform: `translate3d(${positionRef.current.x}px, ${positionRef.current.y}px, 0) translate(-50%, -50%)`,
         }}
       >
         <div
-          className={`rounded-full bg-primary transition-all duration-150 ${
+          className={`rounded-full bg-primary transition-[width,height] duration-100 ${
             isPointer ? 'w-4 h-4' : 'w-3 h-3'
           }`}
           style={{
             boxShadow: '0 0 10px hsl(var(--primary) / 0.5), 0 0 20px hsl(var(--primary) / 0.3)',
           }}
-        />
-      </div>
-
-      {/* Trailing ring */}
-      <div
-        className={`fixed pointer-events-none z-[9998] transition-all duration-300 ease-out ${
-          isVisible ? 'opacity-100' : 'opacity-0'
-        }`}
-        style={{
-          left: position.x,
-          top: position.y,
-          transform: `translate(-50%, -50%) scale(${isPointer ? 1.5 : 1}) ${isClicking ? 'scale(0.9)' : ''}`,
-        }}
-      >
-        <div
-          className={`rounded-full border-2 transition-all duration-150 ${
-            isPointer ? 'border-primary w-10 h-10' : 'border-primary/50 w-8 h-8'
-          }`}
         />
       </div>
 
