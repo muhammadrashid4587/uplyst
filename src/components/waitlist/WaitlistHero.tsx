@@ -3,6 +3,7 @@ import { cn } from "@/lib/utils";
 import { SignalButton } from "@/components/ui/SignalButton";
 import { Badge } from "@/components/ui/SignalBadge";
 import { HologramU } from "@/components/HologramU";
+import { Starfield } from "@/components/Starfield";
 import { useParallax } from "@/hooks/useParallax";
 import { useWaitlist } from "@/hooks/useWaitlist";
 import { ArrowDown, Sparkles, Users } from "lucide-react";
@@ -46,6 +47,9 @@ export const WaitlistHero = () => {
 
   return (
     <section className="relative min-h-screen flex items-center justify-center overflow-hidden pt-20">
+      {/* Starfield background */}
+      <Starfield starCount={150} className="opacity-60" />
+      
       {/* Parallax background layer */}
       <div 
         className="absolute inset-0 pointer-events-none"
