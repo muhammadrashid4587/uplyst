@@ -11,12 +11,14 @@ export const useSmoothScroll = () => {
     }
 
     const lenis = new Lenis({
-      duration: 1.2,
-      easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
+      duration: 0.8, // Faster, snappier response like Mac
+      easing: (t) => 1 - Math.pow(1 - t, 3), // Cubic ease-out for natural deceleration
       orientation: "vertical",
       gestureOrientation: "vertical",
       smoothWheel: true,
-      touchMultiplier: 2,
+      wheelMultiplier: 1.2, // More responsive wheel
+      touchMultiplier: 1.5,
+      infinite: false,
     });
 
     lenisRef.current = lenis;
