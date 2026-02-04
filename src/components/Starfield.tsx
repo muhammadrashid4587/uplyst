@@ -9,6 +9,18 @@ interface Star {
   speed: number;
 }
 
+interface ShootingStar {
+  x: number;
+  y: number;
+  angle: number;
+  speed: number;
+  length: number;
+  opacity: number;
+  life: number;
+  maxLife: number;
+  trail: { x: number; y: number; opacity: number }[];
+}
+
 interface StarfieldProps {
   starCount?: number;
   className?: string;
@@ -17,6 +29,7 @@ interface StarfieldProps {
 export const Starfield = ({ starCount = 200, className = "" }: StarfieldProps) => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const starsRef = useRef<Star[]>([]);
+  const shootingStarsRef = useRef<ShootingStar[]>([]);
   const animationRef = useRef<number>();
   const mouseRef = useRef({ x: 0, y: 0 });
 
@@ -67,8 +80,29 @@ export const Starfield = ({ starCount = 200, className = "" }: StarfieldProps) =
 
     window.addEventListener("mousemove", handleMouseMove);
 
+    // Create a new shooting star
+    const createShootingStar = (rect: DOMRect): ShootingStar => {
+      const startX = Math.random() * rect.width * 0.8;
+      const startY = Math.random() * rect.height * 0.4;
+      const angle = Math.PI * 0.15 + Math.random() * 0.2; // Diagonal angle (roughly 30-45 degrees)
+      
+      return {
+        x: startX,
+        y: startY,
+        angle,
+        speed: 8 + Math.random() * 6, // Faster speed
+        length: 80 + Math.random() * 120, // Longer trails
+        opacity: 0.9 + Math.random() * 0.1,
+        life: 0,
+        maxLife: 60 + Math.random() * 40, // Frames to live
+        trail: [],
+      };
+    };
+
     // Animation loop
     let lastTime = 0;
+    let shootingStarTimer = 0;
+    
     const animate = (time: number) => {
       const deltaTime = time - lastTime;
       lastTime = time;
@@ -119,25 +153,84 @@ export const Starfield = ({ starCount = 200, className = "" }: StarfieldProps) =
         }
       });
 
-      // Draw occasional shooting stars
-      if (Math.random() < 0.001) {
-        const shootingX = Math.random() * rect.width;
-        const shootingY = Math.random() * rect.height * 0.5;
+      // Spawn shooting stars more frequently
+      shootingStarTimer += deltaTime;
+      if (shootingStarTimer > 800 + Math.random() * 1200) { // Every 0.8-2 seconds
+        shootingStarsRef.current.push(createShootingStar(rect));
+        shootingStarTimer = 0;
+      }
+
+      // Update and draw shooting stars
+      shootingStarsRef.current = shootingStarsRef.current.filter((star) => {
+        star.life++;
         
-        const gradient = ctx.createLinearGradient(
-          shootingX, shootingY,
-          shootingX + 100, shootingY + 50
+        // Move the shooting star
+        const moveX = Math.cos(star.angle) * star.speed;
+        const moveY = Math.sin(star.angle) * star.speed;
+        star.x += moveX;
+        star.y += moveY;
+
+        // Add current position to trail
+        star.trail.unshift({ 
+          x: star.x, 
+          y: star.y, 
+          opacity: star.opacity 
+        });
+
+        // Limit trail length
+        const maxTrailLength = Math.floor(star.length / 3);
+        if (star.trail.length > maxTrailLength) {
+          star.trail.pop();
+        }
+
+        // Fade out near end of life
+        const lifeRatio = star.life / star.maxLife;
+        const fadeOpacity = lifeRatio > 0.7 ? (1 - (lifeRatio - 0.7) / 0.3) : 1;
+
+        // Draw the trail with gradient
+        if (star.trail.length > 1) {
+          for (let i = 0; i < star.trail.length - 1; i++) {
+            const t1 = star.trail[i];
+            const t2 = star.trail[i + 1];
+            const trailOpacity = (1 - i / star.trail.length) * fadeOpacity * star.opacity;
+            const trailWidth = (1 - i / star.trail.length) * 3 + 0.5;
+
+            // Draw trail segment
+            ctx.beginPath();
+            ctx.moveTo(t1.x, t1.y);
+            ctx.lineTo(t2.x, t2.y);
+            ctx.strokeStyle = `hsla(190, 95%, 75%, ${trailOpacity})`;
+            ctx.lineWidth = trailWidth;
+            ctx.lineCap = "round";
+            ctx.stroke();
+          }
+        }
+
+        // Draw bright head of shooting star
+        const headGradient = ctx.createRadialGradient(
+          star.x, star.y, 0,
+          star.x, star.y, 8
         );
-        gradient.addColorStop(0, "hsla(190, 90%, 80%, 0.8)");
-        gradient.addColorStop(1, "transparent");
+        headGradient.addColorStop(0, `hsla(190, 100%, 95%, ${fadeOpacity * star.opacity})`);
+        headGradient.addColorStop(0.3, `hsla(190, 95%, 80%, ${fadeOpacity * star.opacity * 0.8})`);
+        headGradient.addColorStop(1, "transparent");
         
         ctx.beginPath();
-        ctx.moveTo(shootingX, shootingY);
-        ctx.lineTo(shootingX + 100, shootingY + 50);
-        ctx.strokeStyle = gradient;
-        ctx.lineWidth = 2;
-        ctx.stroke();
-      }
+        ctx.arc(star.x, star.y, 8, 0, Math.PI * 2);
+        ctx.fillStyle = headGradient;
+        ctx.fill();
+
+        // Core of head
+        ctx.beginPath();
+        ctx.arc(star.x, star.y, 2, 0, Math.PI * 2);
+        ctx.fillStyle = `hsla(0, 0%, 100%, ${fadeOpacity * star.opacity})`;
+        ctx.fill();
+
+        // Remove if life exceeded or out of bounds
+        return star.life < star.maxLife && 
+               star.x < rect.width + 100 && 
+               star.y < rect.height + 100;
+      });
 
       animationRef.current = requestAnimationFrame(animate);
     };
