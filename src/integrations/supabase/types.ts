@@ -323,12 +323,51 @@ export type Database = {
         }
         Relationships: []
       }
+      waitlist_signups: {
+        Row: {
+          created_at: string
+          email: string
+          full_name: string
+          id: string
+          ref_code: string | null
+          ref_count: number | null
+          referred_by: string | null
+          role: string | null
+          seniority: string | null
+          target_roles: string | null
+        }
+        Insert: {
+          created_at?: string
+          email: string
+          full_name: string
+          id?: string
+          ref_code?: string | null
+          ref_count?: number | null
+          referred_by?: string | null
+          role?: string | null
+          seniority?: string | null
+          target_roles?: string | null
+        }
+        Update: {
+          created_at?: string
+          email?: string
+          full_name?: string
+          id?: string
+          ref_code?: string | null
+          ref_count?: number | null
+          referred_by?: string | null
+          role?: string | null
+          seniority?: string | null
+          target_roles?: string | null
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      generate_ref_code: { Args: never; Returns: string }
     }
     Enums: {
       [_ in never]: never
