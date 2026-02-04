@@ -63,9 +63,9 @@ export const WaitlistHero = () => {
       </div>
 
       <div className="container mx-auto px-4 relative z-20">
-        <div className="flex flex-col lg:flex-row items-center gap-12 lg:gap-8">
-          {/* Left: Content */}
-          <div className="flex-1 text-center lg:text-left relative z-30">
+        <div className="flex flex-col items-center lg:items-start lg:flex-row gap-8 lg:gap-12">
+          {/* Left: Content - Always on top on mobile */}
+          <div className="flex-1 text-center lg:text-left relative z-30 order-1">
             <Badge 
               variant="primary" 
               className="mb-6 animate-fade-in inline-flex"
@@ -138,12 +138,12 @@ export const WaitlistHero = () => {
             )}
           </div>
 
-          {/* Right: 3D Logo */}
+          {/* Right: 3D Logo - Below content on mobile */}
           <div 
-            className="flex-1 flex justify-center lg:justify-end animate-fade-in relative z-10"
+            className="flex-1 flex justify-center lg:justify-end animate-fade-in relative z-10 order-2"
             style={{ animationDelay: "0.2s" }}
           >
-            <div className="w-full max-w-sm lg:max-w-md aspect-square">
+            <div className="w-64 h-64 sm:w-80 sm:h-80 lg:w-full lg:max-w-md lg:aspect-square">
               <HologramU />
             </div>
           </div>
