@@ -63,9 +63,9 @@ export const WaitlistHero = () => {
       </div>
 
       <div className="container mx-auto px-4 relative z-20">
-        <div className="flex flex-col items-center lg:items-start lg:flex-row gap-8 lg:gap-12">
-          {/* Left: Content - Always on top on mobile */}
-          <div className="flex-1 text-center lg:text-left relative z-30 order-1">
+        <div className="flex flex-col items-center gap-8 lg:gap-12">
+          {/* Content - Centered */}
+          <div className="flex-1 text-center relative z-30 max-w-3xl">
             <Badge 
               variant="primary" 
               className="mb-6 animate-fade-in inline-flex"
@@ -92,7 +92,7 @@ export const WaitlistHero = () => {
             </p>
 
             <div 
-              className="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start animate-fade-in"
+              className="flex flex-col sm:flex-row gap-4 justify-center animate-fade-in"
               style={{ animationDelay: "0.3s" }}
             >
               <SignalButton 
@@ -118,7 +118,7 @@ export const WaitlistHero = () => {
             {/* Social proof */}
             {signupCount > 0 && (
               <div 
-                className="mt-8 flex items-center gap-3 justify-center lg:justify-start animate-fade-in"
+                className="mt-8 flex items-center gap-3 justify-center animate-fade-in"
                 style={{ animationDelay: "0.4s" }}
               >
                 <div className="flex -space-x-2">
@@ -138,12 +138,12 @@ export const WaitlistHero = () => {
             )}
           </div>
 
-          {/* Right: 3D Logo - Below content on mobile */}
+          {/* 3D Logo - Below content, centered */}
           <div 
-            className="flex-1 flex justify-center lg:justify-end animate-fade-in relative z-10 order-2"
+            className="flex justify-center animate-fade-in relative z-10"
             style={{ animationDelay: "0.2s" }}
           >
-            <div className="w-64 h-64 sm:w-80 sm:h-80 lg:w-full lg:max-w-md lg:aspect-square">
+            <div className="w-48 h-48 sm:w-64 sm:h-64 lg:w-80 lg:h-80">
               <HologramU />
             </div>
           </div>
