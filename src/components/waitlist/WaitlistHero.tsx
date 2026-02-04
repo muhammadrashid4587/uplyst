@@ -4,6 +4,7 @@ import { SignalButton } from "@/components/ui/SignalButton";
 import { Badge } from "@/components/ui/SignalBadge";
 import { HologramU } from "@/components/HologramU";
 import { Starfield } from "@/components/Starfield";
+import { NebulaBackground } from "@/components/NebulaBackground";
 import { useParallax } from "@/hooks/useParallax";
 import { useWaitlist } from "@/hooks/useWaitlist";
 import { ArrowDown, Sparkles, Users } from "lucide-react";
@@ -47,6 +48,9 @@ export const WaitlistHero = () => {
 
   return (
     <section className="relative min-h-screen flex items-center justify-center overflow-hidden pt-20">
+      {/* Nebula/Aurora background - lowest layer */}
+      <NebulaBackground className="opacity-70" />
+      
       {/* Starfield background */}
       <Starfield starCount={150} className="opacity-40" />
       
