@@ -62,6 +62,13 @@ export const WaitlistHero = () => {
         <div className="absolute inset-0 bg-gradient-radial from-primary/5 via-transparent to-transparent" />
       </div>
 
+      {/* 3D Hologram Background */}
+      <div className="absolute inset-0 flex items-center justify-center pointer-events-none z-10">
+        <div className="w-[500px] h-[500px] sm:w-[600px] sm:h-[600px] lg:w-[800px] lg:h-[800px] opacity-50">
+          <HologramU />
+        </div>
+      </div>
+
       <div className="container mx-auto px-4 relative z-20">
         <div className="flex flex-col items-center gap-8 lg:gap-12">
           {/* Content - Centered */}
@@ -136,16 +143,6 @@ export const WaitlistHero = () => {
                 </span>
               </div>
             )}
-          </div>
-
-          {/* 3D Logo - Below content, centered */}
-          <div 
-            className="flex justify-center animate-fade-in relative z-10"
-            style={{ animationDelay: "0.2s" }}
-          >
-            <div className="w-48 h-48 sm:w-64 sm:h-64 lg:w-80 lg:h-80">
-              <HologramU />
-            </div>
           </div>
         </div>
       </div>
