@@ -6,6 +6,8 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { DemoModeProvider } from "@/contexts/DemoModeContext";
 import WaitlistLanding from "./pages/WaitlistLanding";
 import ComingSoon from "./pages/ComingSoon";
+import PrivacyPolicy from "./pages/PrivacyPolicy";
+import TermsOfService from "./pages/TermsOfService";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -21,6 +23,10 @@ const App = () => (
             {/* Waitlist Landing - Main entry point */}
             <Route path="/" element={<WaitlistLanding />} />
             
+            {/* Legal Pages */}
+            <Route path="/privacy" element={<PrivacyPolicy />} />
+            <Route path="/terms" element={<TermsOfService />} />
+            
             {/* Coming Soon - All product features gated */}
             <Route path="/talent" element={<ComingSoon />} />
             <Route path="/talent/:id" element={<ComingSoon />} />
@@ -28,10 +34,6 @@ const App = () => (
             <Route path="/auth" element={<ComingSoon />} />
             <Route path="/dashboard" element={<ComingSoon />} />
             <Route path="/dashboard/*" element={<ComingSoon />} />
-            
-            {/* Placeholder pages */}
-            <Route path="/privacy" element={<ComingSoon />} />
-            <Route path="/terms" element={<ComingSoon />} />
             
             {/* Catch-all */}
             <Route path="*" element={<NotFound />} />
