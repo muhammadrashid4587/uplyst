@@ -48,7 +48,7 @@ export const WaitlistHero = () => {
   return (
     <section className="relative min-h-screen flex items-center justify-center overflow-hidden pt-20">
       {/* Starfield background */}
-      <Starfield starCount={150} className="opacity-60" />
+      <Starfield starCount={150} className="opacity-40" />
       
       {/* Parallax background layer */}
       <div 
@@ -58,10 +58,10 @@ export const WaitlistHero = () => {
         <div className="absolute inset-0 bg-gradient-radial from-primary/5 via-transparent to-transparent" />
       </div>
 
-      <div className="container mx-auto px-4 relative z-10">
-        <div className="flex flex-col lg:flex-row items-center gap-12 lg:gap-20">
+      <div className="container mx-auto px-4 relative z-20">
+        <div className="flex flex-col lg:flex-row items-center gap-12 lg:gap-8">
           {/* Left: Content */}
-          <div className="flex-1 text-center lg:text-left">
+          <div className="flex-1 text-center lg:text-left relative z-30">
             <Badge 
               variant="primary" 
               className="mb-6 animate-fade-in inline-flex"
@@ -136,10 +136,10 @@ export const WaitlistHero = () => {
 
           {/* Right: 3D Logo */}
           <div 
-            className="flex-1 flex justify-center lg:justify-end animate-fade-in"
+            className="flex-1 flex justify-center lg:justify-end animate-fade-in relative z-10"
             style={{ animationDelay: "0.2s" }}
           >
-            <div className="w-full max-w-md aspect-square">
+            <div className="w-full max-w-sm lg:max-w-md aspect-square">
               <HologramU />
             </div>
           </div>
