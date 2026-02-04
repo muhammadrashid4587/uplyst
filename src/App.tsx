@@ -4,6 +4,7 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { DemoModeProvider } from "@/contexts/DemoModeContext";
+import IntroPage from "./pages/IntroPage";
 import WaitlistLanding from "./pages/WaitlistLanding";
 import ComingSoon from "./pages/ComingSoon";
 import PrivacyPolicy from "./pages/PrivacyPolicy";
@@ -20,8 +21,11 @@ const App = () => (
         <Sonner />
         <BrowserRouter>
           <Routes>
-            {/* Waitlist Landing - Main entry point */}
-            <Route path="/" element={<WaitlistLanding />} />
+            {/* Intro Animation Page */}
+            <Route path="/" element={<IntroPage />} />
+            
+            {/* Waitlist Landing - Main content */}
+            <Route path="/home" element={<WaitlistLanding />} />
             
             {/* Legal Pages */}
             <Route path="/privacy" element={<PrivacyPolicy />} />
