@@ -15,7 +15,8 @@ interface ShatterPiece {
 const IntroPage = () => {
   const navigate = useNavigate();
   const canvasRef = useRef<HTMLCanvasElement>(null);
-  const [phase, setPhase] = useState<"waiting" | "laser" | "fall" | "shatter" | "reveal">("waiting");
+  const [, setPhase] = useState<"waiting" | "laser" | "fall" | "shatter" | "reveal">("waiting");
+  const phaseRef = useRef<"waiting" | "laser" | "fall" | "shatter" | "reveal">("waiting");
   const [opacity, setOpacity] = useState(1);
 
   useEffect(() => {
@@ -88,6 +89,7 @@ const IntroPage = () => {
       if (!hasStarted) {
         startTime = timestamp;
         hasStarted = true;
+        phaseRef.current = "laser";
         setPhase("laser");
       }
 
@@ -110,7 +112,7 @@ const IntroPage = () => {
       }
 
       // Calculate fall physics (only during fall phase, not shatter)
-      if ((phase === "fall" || fallStartTime > 0) && !hasShattered) {
+      if ((phaseRef.current === "fall" || fallStartTime > 0) && !hasShattered) {
         if (fallStartTime === 0) {
           fallStartTime = timestamp;
         }
@@ -127,7 +129,7 @@ const IntroPage = () => {
       }
 
       // Handle shatter phase
-      if (phase === "shatter" || hasShattered) {
+      if (phaseRef.current === "shatter" || hasShattered) {
         if (!hasShattered && drawnPoints.length > 0) {
           hasShattered = true;
           shatterStartTime = timestamp;
@@ -227,6 +229,7 @@ const IntroPage = () => {
         // Check if shatter animation is complete
         const shatterElapsed = timestamp - shatterStartTime;
         if (shatterElapsed > 1500) {
+          phaseRef.current = "reveal";
           setPhase("reveal");
           setOpacity(0);
           setTimeout(() => {
@@ -335,7 +338,7 @@ const IntroPage = () => {
         ctx.stroke();
 
         // Cooling effect - older parts glow less (only during laser phase)
-        if (phase === "laser") {
+        if (phaseRef.current === "laser") {
           drawnPoints.forEach((point) => {
             const age = elapsed - point.time;
             if (age < 2000) {
@@ -355,7 +358,7 @@ const IntroPage = () => {
       }
 
       // Even slower cinematic progress - takes about 6-7 seconds
-      if (phase === "laser" && progress < uPath.length) {
+      if (phaseRef.current === "laser" && progress < uPath.length) {
         const speed = 0.25; // Even slower and more deliberate
         progress += speed;
         
@@ -442,13 +445,15 @@ const IntroPage = () => {
       }
 
       // Check if carving is complete
-      if (progress >= uPath.length && phase === "laser") {
+      if (progress >= uPath.length && phaseRef.current === "laser") {
+        phaseRef.current = "fall";
         setPhase("fall");
         fallStartTime = timestamp;
       }
 
       // Trigger shatter when U hits the floor
-      if (phase === "fall" && fallProgress >= 1 && !hasShattered) {
+      if (phaseRef.current === "fall" && fallProgress >= 1 && !hasShattered) {
+        phaseRef.current = "shatter";
         setPhase("shatter");
         
         // Screen shake effect
@@ -480,7 +485,7 @@ const IntroPage = () => {
       clearTimeout(startTimeout);
       cancelAnimationFrame(animationId);
     };
-  }, [navigate, phase]);
+  }, [navigate]);
 
   // Skip intro on click
   const handleSkip = () => {
@@ -510,7 +515,7 @@ const IntroPage = () => {
       <div 
         className="absolute bottom-8 left-1/2 -translate-x-1/2 text-muted-foreground/60 text-sm tracking-widest uppercase"
         style={{ 
-          opacity: phase === "laser" || phase === "waiting" || phase === "fall" ? 0.6 : 0, 
+          opacity: phaseRef.current === "laser" || phaseRef.current === "waiting" || phaseRef.current === "fall" ? 0.6 : 0, 
           transition: "opacity 0.5s" 
         }}
       >
