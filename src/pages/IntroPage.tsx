@@ -1,10 +1,21 @@
 import { useEffect, useState, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 
+interface ShatterPiece {
+  points: { x: number; y: number }[];
+  x: number;
+  y: number;
+  vx: number;
+  vy: number;
+  rotation: number;
+  rotationSpeed: number;
+  opacity: number;
+}
+
 const IntroPage = () => {
   const navigate = useNavigate();
   const canvasRef = useRef<HTMLCanvasElement>(null);
-  const [phase, setPhase] = useState<"waiting" | "laser" | "fall" | "reveal">("waiting");
+  const [phase, setPhase] = useState<"waiting" | "laser" | "fall" | "shatter" | "reveal">("waiting");
   const [opacity, setOpacity] = useState(1);
 
   useEffect(() => {
@@ -68,6 +79,9 @@ const IntroPage = () => {
     let fallStartTime = 0;
     let uRotation = 0;
     let uOffsetY = 0;
+    const shatterPieces: ShatterPiece[] = [];
+    let shatterStartTime = 0;
+    let hasShattered = false;
 
     const animate = (timestamp: number) => {
       if (!hasStarted) {
@@ -82,8 +96,8 @@ const IntroPage = () => {
       ctx.fillStyle = "rgba(8, 12, 20, 0.08)";
       ctx.fillRect(0, 0, width, height);
 
-      // Calculate fall physics
-      if (phase === "fall" || fallStartTime > 0) {
+      // Calculate fall physics (only during fall phase, not shatter)
+      if ((phase === "fall" || fallStartTime > 0) && !hasShattered) {
         if (fallStartTime === 0) {
           fallStartTime = timestamp;
         }
@@ -97,6 +111,114 @@ const IntroPage = () => {
         
         // Slight rotation as it falls
         uRotation = fallProgress * 0.3;
+      }
+
+      // Handle shatter phase
+      if (phase === "shatter" || hasShattered) {
+        if (!hasShattered && drawnPoints.length > 0) {
+          hasShattered = true;
+          shatterStartTime = timestamp;
+          
+          // Create shatter pieces from the U shape
+          const pieceSize = 8; // Points per piece
+          for (let i = 0; i < drawnPoints.length; i += pieceSize) {
+            const piecePoints = drawnPoints.slice(i, Math.min(i + pieceSize, drawnPoints.length));
+            if (piecePoints.length < 2) continue;
+            
+            // Calculate center of piece
+            const avgX = piecePoints.reduce((sum, p) => sum + p.x, 0) / piecePoints.length;
+            const avgY = piecePoints.reduce((sum, p) => sum + p.y, 0) / piecePoints.length + uOffsetY;
+            
+            // Create piece with physics
+            shatterPieces.push({
+              points: piecePoints.map(p => ({ x: p.x - avgX, y: p.y - avgY })),
+              x: avgX,
+              y: avgY,
+              vx: (Math.random() - 0.5) * 15,
+              vy: -Math.random() * 12 - 5,
+              rotation: 0,
+              rotationSpeed: (Math.random() - 0.5) * 0.3,
+              opacity: 1
+            });
+          }
+          
+          // Create explosion sparks
+          for (let i = 0; i < 50; i++) {
+            sparks.push({
+              x: centerX + (Math.random() - 0.5) * scale,
+              y: height - 100,
+              vx: (Math.random() - 0.5) * 20,
+              vy: -Math.random() * 15 - 5,
+              life: 40 + Math.random() * 40,
+              maxLife: 80,
+              size: Math.random() * 3 + 1,
+              hue: 180 + Math.random() * 40
+            });
+          }
+        }
+        
+        // Update and draw shatter pieces
+        shatterPieces.forEach((piece, i) => {
+          piece.vy += 0.5; // gravity
+          piece.x += piece.vx;
+          piece.y += piece.vy;
+          piece.rotation += piece.rotationSpeed;
+          piece.vx *= 0.99;
+          
+          // Fade out pieces that fall off screen
+          if (piece.y > height + 50) {
+            piece.opacity -= 0.05;
+          }
+          
+          if (piece.opacity > 0 && piece.points.length > 1) {
+            ctx.save();
+            ctx.translate(piece.x, piece.y);
+            ctx.rotate(piece.rotation);
+            ctx.globalAlpha = piece.opacity;
+            
+            // Draw piece with glow
+            ctx.beginPath();
+            ctx.moveTo(piece.points[0].x, piece.points[0].y);
+            for (let j = 1; j < piece.points.length; j++) {
+              ctx.lineTo(piece.points[j].x, piece.points[j].y);
+            }
+            ctx.strokeStyle = "hsla(190, 100%, 50%, 0.3)";
+            ctx.lineWidth = 15;
+            ctx.lineCap = "round";
+            ctx.lineJoin = "round";
+            ctx.stroke();
+            
+            ctx.beginPath();
+            ctx.moveTo(piece.points[0].x, piece.points[0].y);
+            for (let j = 1; j < piece.points.length; j++) {
+              ctx.lineTo(piece.points[j].x, piece.points[j].y);
+            }
+            ctx.strokeStyle = "hsla(190, 100%, 80%, 0.9)";
+            ctx.lineWidth = 4;
+            ctx.stroke();
+            
+            ctx.beginPath();
+            ctx.moveTo(piece.points[0].x, piece.points[0].y);
+            for (let j = 1; j < piece.points.length; j++) {
+              ctx.lineTo(piece.points[j].x, piece.points[j].y);
+            }
+            ctx.strokeStyle = "hsla(180, 100%, 95%, 1)";
+            ctx.lineWidth = 2;
+            ctx.stroke();
+            
+            ctx.restore();
+          }
+        });
+        
+        // Check if shatter animation is complete
+        const shatterElapsed = timestamp - shatterStartTime;
+        if (shatterElapsed > 1500) {
+          setPhase("reveal");
+          setOpacity(0);
+          setTimeout(() => {
+            navigate("/home");
+          }, 800);
+        }
       }
 
       // Draw ambient glow particles
@@ -146,7 +268,7 @@ const IntroPage = () => {
       });
 
       // Draw the carved path with molten glow effect (with fall offset)
-      if (drawnPoints.length > 1) {
+      if (drawnPoints.length > 1 && !hasShattered) {
         ctx.save();
         
         // Apply fall transformation
@@ -311,39 +433,21 @@ const IntroPage = () => {
         fallStartTime = timestamp;
       }
 
-      // Handle fall completion and reveal
-      if (phase === "fall" && fallProgress >= 1) {
-        // Wait a moment then reveal
-        setTimeout(() => {
-          setPhase("reveal");
-          setOpacity(0);
-          setTimeout(() => {
-            navigate("/home");
-          }, 800);
-        }, 200);
-      }
-
-      // Impact sparks when U hits the floor
-      if (phase === "fall" && fallProgress > 0.95 && fallProgress < 1) {
-        // Create impact sparks
-        for (let i = 0; i < 15; i++) {
-          sparks.push({
-            x: centerX + (Math.random() - 0.5) * scale,
-            y: height - 50,
-            vx: (Math.random() - 0.5) * 10,
-            vy: -Math.random() * 8 - 2,
-            life: 30 + Math.random() * 30,
-            maxLife: 60,
-            size: Math.random() * 2 + 1,
-            hue: 180 + Math.random() * 40
-          });
-        }
+      // Trigger shatter when U hits the floor
+      if (phase === "fall" && fallProgress >= 1 && !hasShattered) {
+        setPhase("shatter");
         
         // Screen shake effect
-        canvas.style.transform = `translate(${(Math.random() - 0.5) * 6}px, ${(Math.random() - 0.5) * 6}px)`;
-        setTimeout(() => {
-          canvas.style.transform = '';
-        }, 100);
+        const shakeIntensity = 10;
+        let shakeCount = 0;
+        const shakeInterval = setInterval(() => {
+          canvas.style.transform = `translate(${(Math.random() - 0.5) * shakeIntensity}px, ${(Math.random() - 0.5) * shakeIntensity}px)`;
+          shakeCount++;
+          if (shakeCount > 6) {
+            clearInterval(shakeInterval);
+            canvas.style.transform = '';
+          }
+        }, 50);
       }
 
       animationId = requestAnimationFrame(animate);
