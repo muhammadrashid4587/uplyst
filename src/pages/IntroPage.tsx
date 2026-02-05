@@ -82,6 +82,7 @@ const IntroPage = () => {
     const shatterPieces: ShatterPiece[] = [];
     let shatterStartTime = 0;
     let hasShattered = false;
+    let flashOpacity = 0;
 
     const animate = (timestamp: number) => {
       if (!hasStarted) {
@@ -95,6 +96,18 @@ const IntroPage = () => {
       // Clear with slight trail effect
       ctx.fillStyle = "rgba(8, 12, 20, 0.08)";
       ctx.fillRect(0, 0, width, height);
+
+      // Draw flash effect
+      if (flashOpacity > 0) {
+        const gradient = ctx.createRadialGradient(centerX, height - 100, 0, centerX, height - 100, Math.max(width, height));
+        gradient.addColorStop(0, `hsla(190, 100%, 95%, ${flashOpacity})`);
+        gradient.addColorStop(0.3, `hsla(190, 100%, 70%, ${flashOpacity * 0.7})`);
+        gradient.addColorStop(0.6, `hsla(200, 100%, 50%, ${flashOpacity * 0.3})`);
+        gradient.addColorStop(1, `hsla(220, 100%, 30%, 0)`);
+        ctx.fillStyle = gradient;
+        ctx.fillRect(0, 0, width, height);
+        flashOpacity -= 0.04;
+      }
 
       // Calculate fall physics (only during fall phase, not shatter)
       if ((phase === "fall" || fallStartTime > 0) && !hasShattered) {
@@ -118,6 +131,7 @@ const IntroPage = () => {
         if (!hasShattered && drawnPoints.length > 0) {
           hasShattered = true;
           shatterStartTime = timestamp;
+          flashOpacity = 1; // Trigger flash
           
           // Create shatter pieces from the U shape
           const pieceSize = 8; // Points per piece
@@ -438,16 +452,16 @@ const IntroPage = () => {
         setPhase("shatter");
         
         // Screen shake effect
-        const shakeIntensity = 10;
+        const shakeIntensity = 15;
         let shakeCount = 0;
         const shakeInterval = setInterval(() => {
           canvas.style.transform = `translate(${(Math.random() - 0.5) * shakeIntensity}px, ${(Math.random() - 0.5) * shakeIntensity}px)`;
           shakeCount++;
-          if (shakeCount > 6) {
+          if (shakeCount > 8) {
             clearInterval(shakeInterval);
             canvas.style.transform = '';
           }
-        }, 50);
+        }, 40);
       }
 
       animationId = requestAnimationFrame(animate);
