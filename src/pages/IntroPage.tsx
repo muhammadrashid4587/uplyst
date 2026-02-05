@@ -18,6 +18,7 @@ const IntroPage = () => {
   const [, setPhase] = useState<"waiting" | "laser" | "fall" | "shatter" | "reveal">("waiting");
   const phaseRef = useRef<"waiting" | "laser" | "fall" | "shatter" | "reveal">("waiting");
   const [opacity, setOpacity] = useState(1);
+  const [scale, setScale] = useState(1);
 
   useEffect(() => {
     document.documentElement.classList.add("dark");
@@ -488,6 +489,7 @@ const IntroPage = () => {
     if (phaseRef.current === "reveal") {
       // Start fading out
       setOpacity(0);
+      setScale(1.1); // Zoom in slightly
       // Navigate after fade completes
       const timer = setTimeout(() => {
         navigate("/home");
@@ -499,6 +501,7 @@ const IntroPage = () => {
   // Skip intro on click
   const handleSkip = () => {
     setOpacity(0);
+    setScale(1.1);
     setTimeout(() => {
       navigate("/home");
     }, 500);
@@ -509,7 +512,8 @@ const IntroPage = () => {
       className="fixed inset-0 bg-background z-50 cursor-pointer"
       style={{ 
         opacity, 
-        transition: "opacity 1s ease-out",
+        transform: `scale(${scale})`,
+        transition: "opacity 1s ease-out, transform 1.2s ease-out",
         background: "hsl(220, 40%, 6%)"
       }}
       onClick={handleSkip}
