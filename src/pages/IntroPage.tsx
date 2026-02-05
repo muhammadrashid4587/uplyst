@@ -54,12 +54,12 @@ const IntroPage = () => {
       });
     }
     
-    // Bottom - straight horizontal lines (angular corners)
-    // Left corner going right
-    for (let i = 0; i <= 30; i++) {
+    // Bottom - curved arc
+    for (let i = 0; i <= 40; i++) {
+      const angle = Math.PI + (Math.PI * i) / 40; // From PI to 2*PI (bottom half of circle)
       uPath.push({
-        x: centerX - scale * 0.5 + (scale * 1.0 * i) / 30,
-        y: centerY + scale * 0.4
+        x: centerX + Math.cos(angle) * scale * 0.5,
+        y: centerY + scale * 0.4 + Math.sin(angle) * scale * 0.5 * -1
       });
     }
     
@@ -67,7 +67,7 @@ const IntroPage = () => {
     for (let i = 0; i <= 50; i++) {
       uPath.push({
         x: centerX + scale * 0.5,
-        y: centerY + scale * 0.4 - (scale * 1.0 * i) / 50
+        y: centerY - scale * 0.1 - (scale * 0.5 * i) / 50
       });
     }
 
