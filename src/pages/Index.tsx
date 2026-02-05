@@ -9,48 +9,34 @@ import { PricingSection } from "@/components/PricingSection";
 import { FAQSection } from "@/components/FAQSection";
 import { FinalCTA } from "@/components/FinalCTA";
 import { CustomCursor } from "@/components/CustomCursor";
-import { useEffect, useState } from "react";
-import { useLocation } from "react-router-dom";
+import { useEffect, useState, useRef } from "react";
 
 const Index = () => {
-  const location = useLocation();
-  const [isSliding, setIsSliding] = useState(false);
+  // Check sessionStorage synchronously before first render
+  const shouldSlide = useRef(
+    typeof window !== "undefined" && sessionStorage.getItem("fromIntro") === "true"
+  );
+  const [isSliding, setIsSliding] = useState(shouldSlide.current);
   
   useEffect(() => {
-    // Check if we came from the intro page
-    const fromIntro = sessionStorage.getItem("fromIntro");
-    if (fromIntro) {
-      setIsSliding(true);
+    if (shouldSlide.current) {
       sessionStorage.removeItem("fromIntro");
-      // Remove sliding state after animation completes
-      const timer = setTimeout(() => {
+      // Trigger the slide-in animation after a tiny delay
+      const startTimer = setTimeout(() => {
         setIsSliding(false);
-      }, 800);
-      return () => clearTimeout(timer);
+      }, 50);
+      return () => clearTimeout(startTimer);
     }
-  }, [location]);
+  }, []);
 
   return (
     <div
       style={{
-        transform: isSliding ? "translateY(0)" : undefined,
-        animation: isSliding ? "slideInFromBottom 0.8s ease-out forwards" : undefined,
+        opacity: isSliding ? 0 : 1,
+        transform: isSliding ? "translateY(80px)" : "translateY(0)",
+        transition: isSliding ? "none" : "opacity 0.8s ease-out, transform 0.8s ease-out",
       }}
     >
-      <style>
-        {`
-          @keyframes slideInFromBottom {
-            from {
-              transform: translateY(100px);
-              opacity: 0;
-            }
-            to {
-              transform: translateY(0);
-              opacity: 1;
-            }
-          }
-        `}
-      </style>
       <Layout>
         <CustomCursor />
         <Hero3D />
