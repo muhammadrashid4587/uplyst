@@ -19,6 +19,7 @@ const IntroPage = () => {
   const phaseRef = useRef<"waiting" | "laser" | "fall" | "shatter" | "reveal">("waiting");
   const [opacity, setOpacity] = useState(1);
   const [scale, setScale] = useState(1);
+  const hasNavigated = useRef(false);
 
   useEffect(() => {
     document.documentElement.classList.add("dark");
@@ -229,9 +230,15 @@ const IntroPage = () => {
         
         // Check if shatter animation is complete
         const shatterElapsed = timestamp - shatterStartTime;
-        if (shatterElapsed > 1500 && phaseRef.current !== "reveal") {
+        if (shatterElapsed > 1500 && phaseRef.current !== "reveal" && !hasNavigated.current) {
           phaseRef.current = "reveal";
           setPhase("reveal");
+          setOpacity(0);
+          setScale(1.1);
+          hasNavigated.current = true;
+          setTimeout(() => {
+            navigate("/home");
+          }, 1000);
         }
       }
 
@@ -484,22 +491,10 @@ const IntroPage = () => {
     };
   }, [navigate]);
 
-  // Handle fade transition when reveal phase is reached
-  useEffect(() => {
-    if (phaseRef.current === "reveal") {
-      // Start fading out
-      setOpacity(0);
-      setScale(1.1); // Zoom in slightly
-      // Navigate after fade completes
-      const timer = setTimeout(() => {
-        navigate("/home");
-      }, 1000);
-      return () => clearTimeout(timer);
-    }
-  }, [navigate]);
-
   // Skip intro on click
   const handleSkip = () => {
+    if (hasNavigated.current) return;
+    hasNavigated.current = true;
     setOpacity(0);
     setScale(1.1);
     setTimeout(() => {
