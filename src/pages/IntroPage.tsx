@@ -4,7 +4,7 @@ import { useNavigate } from "react-router-dom";
 const IntroPage = () => {
   const navigate = useNavigate();
   const canvasRef = useRef<HTMLCanvasElement>(null);
-  const [phase, setPhase] = useState<"waiting" | "laser" | "glow" | "reveal">("waiting");
+  const [phase, setPhase] = useState<"waiting" | "laser" | "fall" | "reveal">("waiting");
   const [opacity, setOpacity] = useState(1);
 
   useEffect(() => {
@@ -25,36 +25,35 @@ const IntroPage = () => {
     const width = window.innerWidth;
     const height = window.innerHeight;
 
-    // U shape path points (relative to center)
+    // U shape path points (relative to center) - ANGULAR/STRAIGHT version
     const centerX = width / 2;
     const centerY = height / 2;
     const scale = Math.min(width, height) * 0.2;
 
-    // Define U path as series of points - more detailed for smoother movement
     const uPath: { x: number; y: number }[] = [];
     
-    // Left side down
-    for (let i = 0; i <= 40; i++) {
+    // Left side down - straight line
+    for (let i = 0; i <= 50; i++) {
       uPath.push({
         x: centerX - scale * 0.5,
-        y: centerY - scale * 0.6 + (scale * 0.9 * i) / 40
+        y: centerY - scale * 0.6 + (scale * 1.0 * i) / 50
       });
     }
     
-    // Bottom curve - more points for smooth curve
-    for (let i = 0; i <= 60; i++) {
-      const angle = Math.PI + (Math.PI * i) / 60;
+    // Bottom - straight horizontal lines (angular corners)
+    // Left corner going right
+    for (let i = 0; i <= 30; i++) {
       uPath.push({
-        x: centerX + Math.cos(angle) * scale * 0.5,
-        y: centerY + scale * 0.3 + Math.sin(angle) * scale * 0.35
+        x: centerX - scale * 0.5 + (scale * 1.0 * i) / 30,
+        y: centerY + scale * 0.4
       });
     }
     
-    // Right side up
-    for (let i = 0; i <= 40; i++) {
+    // Right side up - straight line
+    for (let i = 0; i <= 50; i++) {
       uPath.push({
         x: centerX + scale * 0.5,
-        y: centerY + scale * 0.3 - (scale * 0.9 * i) / 40
+        y: centerY + scale * 0.4 - (scale * 1.0 * i) / 50
       });
     }
 
@@ -65,6 +64,10 @@ const IntroPage = () => {
     const glowParticles: { x: number; y: number; size: number; opacity: number }[] = [];
     let startTime = 0;
     let hasStarted = false;
+    let fallProgress = 0;
+    let fallStartTime = 0;
+    let uRotation = 0;
+    let uOffsetY = 0;
 
     const animate = (timestamp: number) => {
       if (!hasStarted) {
@@ -79,6 +82,23 @@ const IntroPage = () => {
       ctx.fillStyle = "rgba(8, 12, 20, 0.08)";
       ctx.fillRect(0, 0, width, height);
 
+      // Calculate fall physics
+      if (phase === "fall" || fallStartTime > 0) {
+        if (fallStartTime === 0) {
+          fallStartTime = timestamp;
+        }
+        const fallElapsed = timestamp - fallStartTime;
+        const fallDuration = 1200;
+        fallProgress = Math.min(fallElapsed / fallDuration, 1);
+        
+        // Gravity acceleration
+        const gravity = fallProgress * fallProgress;
+        uOffsetY = gravity * (height * 0.8);
+        
+        // Slight rotation as it falls
+        uRotation = fallProgress * 0.3;
+      }
+
       // Draw ambient glow particles
       glowParticles.forEach((p, i) => {
         p.opacity -= 0.005;
@@ -86,7 +106,7 @@ const IntroPage = () => {
           glowParticles.splice(i, 1);
         } else {
           ctx.beginPath();
-          ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
+          ctx.arc(p.x, p.y + uOffsetY, p.size, 0, Math.PI * 2);
           ctx.fillStyle = `hsla(190, 80%, 60%, ${p.opacity * 0.3})`;
           ctx.fill();
         }
@@ -125,13 +145,22 @@ const IntroPage = () => {
         }
       });
 
-      // Draw the carved path with molten glow effect
+      // Draw the carved path with molten glow effect (with fall offset)
       if (drawnPoints.length > 1) {
+        ctx.save();
+        
+        // Apply fall transformation
+        if (uOffsetY > 0) {
+          ctx.translate(centerX, centerY);
+          ctx.rotate(uRotation);
+          ctx.translate(-centerX, -centerY);
+        }
+        
         // Outer molten glow
         ctx.beginPath();
-        ctx.moveTo(drawnPoints[0].x, drawnPoints[0].y);
+        ctx.moveTo(drawnPoints[0].x, drawnPoints[0].y + uOffsetY);
         for (let i = 1; i < drawnPoints.length; i++) {
-          ctx.lineTo(drawnPoints[i].x, drawnPoints[i].y);
+          ctx.lineTo(drawnPoints[i].x, drawnPoints[i].y + uOffsetY);
         }
         ctx.strokeStyle = "hsla(190, 100%, 50%, 0.15)";
         ctx.lineWidth = 40;
@@ -141,9 +170,9 @@ const IntroPage = () => {
 
         // Mid glow
         ctx.beginPath();
-        ctx.moveTo(drawnPoints[0].x, drawnPoints[0].y);
+        ctx.moveTo(drawnPoints[0].x, drawnPoints[0].y + uOffsetY);
         for (let i = 1; i < drawnPoints.length; i++) {
-          ctx.lineTo(drawnPoints[i].x, drawnPoints[i].y);
+          ctx.lineTo(drawnPoints[i].x, drawnPoints[i].y + uOffsetY);
         }
         ctx.strokeStyle = "hsla(190, 100%, 60%, 0.4)";
         ctx.lineWidth = 15;
@@ -151,9 +180,9 @@ const IntroPage = () => {
 
         // Inner bright line
         ctx.beginPath();
-        ctx.moveTo(drawnPoints[0].x, drawnPoints[0].y);
+        ctx.moveTo(drawnPoints[0].x, drawnPoints[0].y + uOffsetY);
         for (let i = 1; i < drawnPoints.length; i++) {
-          ctx.lineTo(drawnPoints[i].x, drawnPoints[i].y);
+          ctx.lineTo(drawnPoints[i].x, drawnPoints[i].y + uOffsetY);
         }
         ctx.strokeStyle = "hsla(190, 100%, 80%, 0.9)";
         ctx.lineWidth = 4;
@@ -161,33 +190,37 @@ const IntroPage = () => {
 
         // Core white line
         ctx.beginPath();
-        ctx.moveTo(drawnPoints[0].x, drawnPoints[0].y);
+        ctx.moveTo(drawnPoints[0].x, drawnPoints[0].y + uOffsetY);
         for (let i = 1; i < drawnPoints.length; i++) {
-          ctx.lineTo(drawnPoints[i].x, drawnPoints[i].y);
+          ctx.lineTo(drawnPoints[i].x, drawnPoints[i].y + uOffsetY);
         }
         ctx.strokeStyle = "hsla(180, 100%, 95%, 1)";
         ctx.lineWidth = 2;
         ctx.stroke();
 
-        // Cooling effect - older parts glow less
-        drawnPoints.forEach((point, i) => {
-          const age = elapsed - point.time;
-          if (age < 2000) {
-            const heat = 1 - age / 2000;
-            const gradient = ctx.createRadialGradient(point.x, point.y, 0, point.x, point.y, 8 * heat);
-            gradient.addColorStop(0, `hsla(30, 100%, 60%, ${heat * 0.3})`);
-            gradient.addColorStop(1, "transparent");
-            ctx.beginPath();
-            ctx.arc(point.x, point.y, 8 * heat, 0, Math.PI * 2);
-            ctx.fillStyle = gradient;
-            ctx.fill();
-          }
-        });
+        // Cooling effect - older parts glow less (only during laser phase)
+        if (phase === "laser") {
+          drawnPoints.forEach((point) => {
+            const age = elapsed - point.time;
+            if (age < 2000) {
+              const heat = 1 - age / 2000;
+              const gradient = ctx.createRadialGradient(point.x, point.y + uOffsetY, 0, point.x, point.y + uOffsetY, 8 * heat);
+              gradient.addColorStop(0, `hsla(30, 100%, 60%, ${heat * 0.3})`);
+              gradient.addColorStop(1, "transparent");
+              ctx.beginPath();
+              ctx.arc(point.x, point.y + uOffsetY, 8 * heat, 0, Math.PI * 2);
+              ctx.fillStyle = gradient;
+              ctx.fill();
+            }
+          });
+        }
+        
+        ctx.restore();
       }
 
-      // Slow cinematic progress - takes about 4 seconds
+      // Even slower cinematic progress - takes about 6-7 seconds
       if (phase === "laser" && progress < uPath.length) {
-        const speed = 0.4; // Slow and deliberate
+        const speed = 0.25; // Even slower and more deliberate
         progress += speed;
         
         const currentIndex = Math.floor(progress);
@@ -274,31 +307,43 @@ const IntroPage = () => {
 
       // Check if carving is complete
       if (progress >= uPath.length && phase === "laser") {
-        setPhase("glow");
-        
-        setTimeout(() => {
-          setPhase("reveal");
-          setTimeout(() => {
-            setOpacity(0);
-            setTimeout(() => {
-              navigate("/home");
-            }, 1000);
-          }, 800);
-        }, 1500);
+        setPhase("fall");
+        fallStartTime = timestamp;
       }
 
-      // Final glow pulse after complete
-      if (phase === "glow" || phase === "reveal") {
-        const pulse = Math.sin(elapsed * 0.008) * 0.4 + 0.6;
-        
-        ctx.beginPath();
-        ctx.moveTo(drawnPoints[0]?.x || 0, drawnPoints[0]?.y || 0);
-        for (let i = 1; i < drawnPoints.length; i++) {
-          ctx.lineTo(drawnPoints[i].x, drawnPoints[i].y);
+      // Handle fall completion and reveal
+      if (phase === "fall" && fallProgress >= 1) {
+        // Wait a moment then reveal
+        setTimeout(() => {
+          setPhase("reveal");
+          setOpacity(0);
+          setTimeout(() => {
+            navigate("/home");
+          }, 800);
+        }, 200);
+      }
+
+      // Impact sparks when U hits the floor
+      if (phase === "fall" && fallProgress > 0.95 && fallProgress < 1) {
+        // Create impact sparks
+        for (let i = 0; i < 15; i++) {
+          sparks.push({
+            x: centerX + (Math.random() - 0.5) * scale,
+            y: height - 50,
+            vx: (Math.random() - 0.5) * 10,
+            vy: -Math.random() * 8 - 2,
+            life: 30 + Math.random() * 30,
+            maxLife: 60,
+            size: Math.random() * 2 + 1,
+            hue: 180 + Math.random() * 40
+          });
         }
-        ctx.strokeStyle = `hsla(190, 100%, 70%, ${pulse * 0.6})`;
-        ctx.lineWidth = 50;
-        ctx.stroke();
+        
+        // Screen shake effect
+        canvas.style.transform = `translate(${(Math.random() - 0.5) * 6}px, ${(Math.random() - 0.5) * 6}px)`;
+        setTimeout(() => {
+          canvas.style.transform = '';
+        }, 100);
       }
 
       animationId = requestAnimationFrame(animate);
@@ -332,7 +377,7 @@ const IntroPage = () => {
       className="fixed inset-0 bg-background z-50 cursor-pointer"
       style={{ 
         opacity, 
-        transition: "opacity 1s ease-out",
+        transition: "opacity 0.8s ease-out",
         background: "hsl(220, 40%, 6%)"
       }}
       onClick={handleSkip}
@@ -340,14 +385,14 @@ const IntroPage = () => {
       <canvas
         ref={canvasRef}
         className="absolute inset-0"
-        style={{ width: "100%", height: "100%" }}
+        style={{ width: "100%", height: "100%", transition: "transform 0.1s" }}
       />
       
       {/* Skip hint */}
       <div 
         className="absolute bottom-8 left-1/2 -translate-x-1/2 text-muted-foreground/60 text-sm tracking-widest uppercase"
         style={{ 
-          opacity: phase === "laser" || phase === "waiting" ? 0.6 : 0, 
+          opacity: phase === "laser" || phase === "waiting" || phase === "fall" ? 0.6 : 0, 
           transition: "opacity 0.5s" 
         }}
       >
