@@ -12,6 +12,40 @@ interface ShatterPiece {
   opacity: number;
 }
 
+// Pre-generate the impact sound
+const playImpactSound = async () => {
+  try {
+    const response = await fetch(
+      `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/elevenlabs-sfx`,
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          apikey: import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY,
+          Authorization: `Bearer ${import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY}`,
+        },
+        body: JSON.stringify({
+          prompt: "Heavy metallic clang impact, industrial metal hitting concrete floor, reverberant echo",
+          duration: 2,
+        }),
+      }
+    );
+
+    if (!response.ok) {
+      console.error("Failed to generate sound effect");
+      return;
+    }
+
+    const audioBlob = await response.blob();
+    const audioUrl = URL.createObjectURL(audioBlob);
+    const audio = new Audio(audioUrl);
+    audio.volume = 0.7;
+    await audio.play();
+  } catch (error) {
+    console.error("Error playing impact sound:", error);
+  }
+};
+
 const IntroPage = () => {
   const navigate = useNavigate();
   const canvasRef = useRef<HTMLCanvasElement>(null);
@@ -86,6 +120,7 @@ const IntroPage = () => {
     let shatterStartTime = 0;
     let hasShattered = false;
     let flashOpacity = 0;
+    let soundPlayed = false;
 
     const animate = (timestamp: number) => {
       if (!hasStarted) {
@@ -460,6 +495,12 @@ const IntroPage = () => {
       if (phaseRef.current === "fall" && fallProgress >= 1 && !hasShattered) {
         phaseRef.current = "shatter";
         setPhase("shatter");
+        
+        // Play impact sound
+        if (!soundPlayed) {
+          soundPlayed = true;
+          playImpactSound();
+        }
         
         // Screen shake effect
         const shakeIntensity = 15;
