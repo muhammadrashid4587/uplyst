@@ -46,6 +46,59 @@ const playImpactSound = async () => {
   }
 };
 
+// Ambient hum during laser carving
+let ambientAudio: HTMLAudioElement | null = null;
+
+const startAmbientHum = async () => {
+  try {
+    const response = await fetch(
+      `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/elevenlabs-sfx`,
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          apikey: import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY,
+          Authorization: `Bearer ${import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY}`,
+        },
+        body: JSON.stringify({
+          prompt: "Subtle electronic hum, low frequency drone, sci-fi laser charging ambient, quiet industrial machinery",
+          duration: 8,
+        }),
+      }
+    );
+
+    if (!response.ok) {
+      console.error("Failed to generate ambient sound");
+      return;
+    }
+
+    const audioBlob = await response.blob();
+    const audioUrl = URL.createObjectURL(audioBlob);
+    ambientAudio = new Audio(audioUrl);
+    ambientAudio.volume = 0.25;
+    ambientAudio.loop = true;
+    await ambientAudio.play();
+  } catch (error) {
+    console.error("Error playing ambient sound:", error);
+  }
+};
+
+const fadeOutAmbientHum = () => {
+  if (!ambientAudio) return;
+  
+  const fadeInterval = setInterval(() => {
+    if (ambientAudio && ambientAudio.volume > 0.02) {
+      ambientAudio.volume = Math.max(0, ambientAudio.volume - 0.02);
+    } else {
+      clearInterval(fadeInterval);
+      if (ambientAudio) {
+        ambientAudio.pause();
+        ambientAudio = null;
+      }
+    }
+  }, 50);
+};
+
 const IntroPage = () => {
   const navigate = useNavigate();
   const canvasRef = useRef<HTMLCanvasElement>(null);
@@ -121,6 +174,7 @@ const IntroPage = () => {
     let hasShattered = false;
     let flashOpacity = 0;
     let soundPlayed = false;
+    let ambientStarted = false;
 
     const animate = (timestamp: number) => {
       if (!hasStarted) {
@@ -128,6 +182,12 @@ const IntroPage = () => {
         hasStarted = true;
         phaseRef.current = "laser";
         setPhase("laser");
+        
+        // Start ambient hum
+        if (!ambientStarted) {
+          ambientStarted = true;
+          startAmbientHum();
+        }
       }
 
       const elapsed = timestamp - startTime;
@@ -489,6 +549,9 @@ const IntroPage = () => {
         phaseRef.current = "fall";
         setPhase("fall");
         fallStartTime = timestamp;
+        
+        // Fade out ambient hum
+        fadeOutAmbientHum();
       }
 
       // Trigger shatter when U hits the floor
@@ -530,6 +593,12 @@ const IntroPage = () => {
     return () => {
       clearTimeout(startTimeout);
       cancelAnimationFrame(animationId);
+      
+      // Clean up ambient audio
+      if (ambientAudio) {
+        ambientAudio.pause();
+        ambientAudio = null;
+      }
     };
   }, [navigate]);
 
