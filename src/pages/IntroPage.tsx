@@ -50,7 +50,7 @@ const IntroPage = () => {
     for (let i = 0; i <= 50; i++) {
       uPath.push({
         x: centerX - scale * 0.5,
-        y: centerY - scale * 0.6 + (scale * 1.0 * i) / 50
+        y: centerY - scale * 0.6 + (scale * 1.0 * i) / 50 // ends at centerY + 0.4
       });
     }
     
@@ -59,7 +59,7 @@ const IntroPage = () => {
       const angle = Math.PI + (Math.PI * i) / 40; // From PI to 2*PI (bottom half of circle)
       uPath.push({
         x: centerX + Math.cos(angle) * scale * 0.5,
-        y: centerY + scale * 0.4 + Math.sin(angle) * scale * 0.5 * -1
+        y: centerY + scale * 0.4 - Math.sin(angle) * scale * 0.5
       });
     }
     
@@ -67,7 +67,7 @@ const IntroPage = () => {
     for (let i = 0; i <= 50; i++) {
       uPath.push({
         x: centerX + scale * 0.5,
-        y: centerY - scale * 0.1 - (scale * 0.5 * i) / 50
+        y: centerY + scale * 0.4 - (scale * 1.0 * i) / 50 // starts at centerY + 0.4, ends at centerY - 0.6
       });
     }
 
