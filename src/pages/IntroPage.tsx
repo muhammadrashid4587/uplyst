@@ -237,6 +237,7 @@ const IntroPage = () => {
           setScale(1.1);
           hasNavigated.current = true;
           setTimeout(() => {
+            sessionStorage.setItem("fromIntro", "true");
             navigate("/home");
           }, 1000);
         }
@@ -498,6 +499,7 @@ const IntroPage = () => {
     setOpacity(0);
     setScale(1.1);
     setTimeout(() => {
+      sessionStorage.setItem("fromIntro", "true");
       navigate("/home");
     }, 500);
   };
