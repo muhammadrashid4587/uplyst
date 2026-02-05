@@ -62,7 +62,7 @@ const startAmbientHum = async () => {
         },
         body: JSON.stringify({
           prompt: "Subtle electronic hum, low frequency drone, sci-fi laser charging ambient, quiet industrial machinery",
-          duration: 4,
+          duration: 6,
         }),
       }
     );
@@ -214,7 +214,7 @@ const IntroPage = () => {
           fallStartTime = timestamp;
         }
         const fallElapsed = timestamp - fallStartTime;
-        const fallDuration = 600;
+        const fallDuration = 800;
         fallProgress = Math.min(fallElapsed / fallDuration, 1);
         
         // Gravity acceleration
@@ -325,7 +325,7 @@ const IntroPage = () => {
         
         // Check if shatter animation is complete
         const shatterElapsed = timestamp - shatterStartTime;
-        if (shatterElapsed > 800 && phaseRef.current !== "reveal" && !hasNavigated.current) {
+        if (shatterElapsed > 1000 && phaseRef.current !== "reveal" && !hasNavigated.current) {
           phaseRef.current = "reveal";
           setPhase("reveal");
           setOpacity(0);
@@ -457,9 +457,9 @@ const IntroPage = () => {
         ctx.restore();
       }
 
-      // Fast cinematic progress - takes about 1-1.5 seconds
+      // Cinematic progress - takes about 2.5-3 seconds
       if (phaseRef.current === "laser" && progress < uPath.length) {
-        const speed = 2.5; // Fast and dynamic
+        const speed = 1.5; // Balanced pacing
         progress += speed;
         
         const currentIndex = Math.floor(progress);
