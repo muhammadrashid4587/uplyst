@@ -11,43 +11,86 @@ import { FinalCTA } from "@/components/FinalCTA";
 import { CustomCursor } from "@/components/CustomCursor";
 import { useEffect, useState, useRef } from "react";
 
+interface StaggeredSectionProps {
+  children: React.ReactNode;
+  delay: number;
+  isAnimating: boolean;
+}
+
+const StaggeredSection = ({ children, delay, isAnimating }: StaggeredSectionProps) => {
+  const [isVisible, setIsVisible] = useState(!isAnimating);
+  
+  useEffect(() => {
+    if (isAnimating) {
+      const timer = setTimeout(() => {
+        setIsVisible(true);
+      }, delay);
+      return () => clearTimeout(timer);
+    }
+  }, [isAnimating, delay]);
+  
+  return (
+    <div
+      style={{
+        opacity: isVisible ? 1 : 0,
+        transform: isVisible ? "translateY(0)" : "translateY(60px)",
+        transition: "opacity 0.6s ease-out, transform 0.6s ease-out",
+      }}
+    >
+      {children}
+    </div>
+  );
+};
+
 const Index = () => {
   // Check sessionStorage synchronously before first render
   const shouldSlide = useRef(
     typeof window !== "undefined" && sessionStorage.getItem("fromIntro") === "true"
   );
-  const [isSliding, setIsSliding] = useState(shouldSlide.current);
+  const [isAnimating, setIsAnimating] = useState(shouldSlide.current);
   
   useEffect(() => {
     if (shouldSlide.current) {
       sessionStorage.removeItem("fromIntro");
-      // Trigger the slide-in animation after a tiny delay
-      const startTimer = setTimeout(() => {
-        setIsSliding(false);
-      }, 50);
-      return () => clearTimeout(startTimer);
+      // Keep animating state for staggered children
+      const timer = setTimeout(() => {
+        setIsAnimating(false);
+      }, 1500); // After all stagger animations complete
+      return () => clearTimeout(timer);
     }
   }, []);
 
   return (
-    <div
-      style={{
-        opacity: isSliding ? 0 : 1,
-        transform: isSliding ? "translateY(80px)" : "translateY(0)",
-        transition: isSliding ? "none" : "opacity 0.8s ease-out, transform 0.8s ease-out",
-      }}
-    >
+    <div>
       <Layout>
         <CustomCursor />
-        <Hero3D />
-        <AnimatedStats />
-        <AnimatedTimeline />
-        <FloatingProfileCards />
-        <EmployerSection />
-        <TrustSection />
-        <PricingSection />
-        <FAQSection />
-        <FinalCTA />
+        <StaggeredSection delay={0} isAnimating={isAnimating}>
+          <Hero3D />
+        </StaggeredSection>
+        <StaggeredSection delay={100} isAnimating={isAnimating}>
+          <AnimatedStats />
+        </StaggeredSection>
+        <StaggeredSection delay={200} isAnimating={isAnimating}>
+          <AnimatedTimeline />
+        </StaggeredSection>
+        <StaggeredSection delay={300} isAnimating={isAnimating}>
+          <FloatingProfileCards />
+        </StaggeredSection>
+        <StaggeredSection delay={400} isAnimating={isAnimating}>
+          <EmployerSection />
+        </StaggeredSection>
+        <StaggeredSection delay={500} isAnimating={isAnimating}>
+          <TrustSection />
+        </StaggeredSection>
+        <StaggeredSection delay={600} isAnimating={isAnimating}>
+          <PricingSection />
+        </StaggeredSection>
+        <StaggeredSection delay={700} isAnimating={isAnimating}>
+          <FAQSection />
+        </StaggeredSection>
+        <StaggeredSection delay={800} isAnimating={isAnimating}>
+          <FinalCTA />
+        </StaggeredSection>
       </Layout>
     </div>
   );
