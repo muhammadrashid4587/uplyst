@@ -228,13 +228,9 @@ const IntroPage = () => {
         
         // Check if shatter animation is complete
         const shatterElapsed = timestamp - shatterStartTime;
-        if (shatterElapsed > 1500) {
+        if (shatterElapsed > 1500 && phaseRef.current !== "reveal") {
           phaseRef.current = "reveal";
           setPhase("reveal");
-          setOpacity(0);
-          setTimeout(() => {
-            navigate("/home");
-          }, 800);
         }
       }
 
@@ -487,6 +483,19 @@ const IntroPage = () => {
     };
   }, [navigate]);
 
+  // Handle fade transition when reveal phase is reached
+  useEffect(() => {
+    if (phaseRef.current === "reveal") {
+      // Start fading out
+      setOpacity(0);
+      // Navigate after fade completes
+      const timer = setTimeout(() => {
+        navigate("/home");
+      }, 1000);
+      return () => clearTimeout(timer);
+    }
+  }, [navigate]);
+
   // Skip intro on click
   const handleSkip = () => {
     setOpacity(0);
@@ -500,7 +509,7 @@ const IntroPage = () => {
       className="fixed inset-0 bg-background z-50 cursor-pointer"
       style={{ 
         opacity, 
-        transition: "opacity 0.8s ease-out",
+        transition: "opacity 1s ease-out",
         background: "hsl(220, 40%, 6%)"
       }}
       onClick={handleSkip}
