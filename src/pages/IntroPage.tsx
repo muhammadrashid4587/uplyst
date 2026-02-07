@@ -1,17 +1,6 @@
 import { useEffect, useState, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 
-interface ShatterPiece {
-  points: { x: number; y: number }[];
-  x: number;
-  y: number;
-  vx: number;
-  vy: number;
-  rotation: number;
-  rotationSpeed: number;
-  opacity: number;
-}
-
 // Pre-generate the impact sound
 const playImpactSound = async () => {
   try {
@@ -102,10 +91,10 @@ const fadeOutAmbientHum = () => {
 const IntroPage = () => {
   const navigate = useNavigate();
   const canvasRef = useRef<HTMLCanvasElement>(null);
-  const [, setPhase] = useState<"waiting" | "laser" | "fall" | "shatter" | "reveal">("waiting");
-  const phaseRef = useRef<"waiting" | "laser" | "fall" | "shatter" | "reveal">("waiting");
-  const [opacity, setOpacity] = useState(1);
-  const [scale, setScale] = useState(1);
+  const [, setPhase] = useState<"waiting" | "laser" | "wallFall" | "reveal">("waiting");
+  const phaseRef = useRef<"waiting" | "laser" | "wallFall" | "reveal">("waiting");
+  const [wallRotation, setWallRotation] = useState(0);
+  const [wallOpacity, setWallOpacity] = useState(1);
   const hasNavigated = useRef(false);
 
   useEffect(() => {
@@ -165,15 +154,7 @@ const IntroPage = () => {
     const glowParticles: { x: number; y: number; size: number; opacity: number }[] = [];
     let startTime = 0;
     let hasStarted = false;
-    let fallProgress = 0;
-    let fallStartTime = 0;
-    let uRotation = 0;
-    let uOffsetY = 0;
-    const shatterPieces: ShatterPiece[] = [];
-    let shatterStartTime = 0;
-    let hasShattered = false;
-    let flashOpacity = 0;
-    let soundPlayed = false;
+    let wallFallStartTime = 0;
     let ambientStarted = false;
 
     const animate = (timestamp: number) => {
@@ -196,145 +177,32 @@ const IntroPage = () => {
       ctx.fillStyle = "rgba(8, 12, 20, 0.08)";
       ctx.fillRect(0, 0, width, height);
 
-      // Draw flash effect
-      if (flashOpacity > 0) {
-        const gradient = ctx.createRadialGradient(centerX, height - 100, 0, centerX, height - 100, Math.max(width, height));
-        gradient.addColorStop(0, `hsla(190, 100%, 95%, ${flashOpacity})`);
-        gradient.addColorStop(0.3, `hsla(190, 100%, 70%, ${flashOpacity * 0.7})`);
-        gradient.addColorStop(0.6, `hsla(200, 100%, 50%, ${flashOpacity * 0.3})`);
-        gradient.addColorStop(1, `hsla(220, 100%, 30%, 0)`);
-        ctx.fillStyle = gradient;
-        ctx.fillRect(0, 0, width, height);
-        flashOpacity -= 0.04;
-      }
-
-      // Calculate fall physics (only during fall phase, not shatter)
-      if ((phaseRef.current === "fall" || fallStartTime > 0) && !hasShattered) {
-        if (fallStartTime === 0) {
-          fallStartTime = timestamp;
-        }
-        const fallElapsed = timestamp - fallStartTime;
-        const fallDuration = 800;
-        fallProgress = Math.min(fallElapsed / fallDuration, 1);
-        
-        // Gravity acceleration
-        const gravity = fallProgress * fallProgress;
-        uOffsetY = gravity * (height * 0.8);
-        
-        // Slight rotation as it falls
-        uRotation = fallProgress * 0.3;
-      }
-
-      // Handle shatter phase
-      if (phaseRef.current === "shatter" || hasShattered) {
-        if (!hasShattered && drawnPoints.length > 0) {
-          hasShattered = true;
-          shatterStartTime = timestamp;
-          flashOpacity = 1; // Trigger flash
-          
-          // Create shatter pieces from the U shape
-          const pieceSize = 8; // Points per piece
-          for (let i = 0; i < drawnPoints.length; i += pieceSize) {
-            const piecePoints = drawnPoints.slice(i, Math.min(i + pieceSize, drawnPoints.length));
-            if (piecePoints.length < 2) continue;
-            
-            // Calculate center of piece
-            const avgX = piecePoints.reduce((sum, p) => sum + p.x, 0) / piecePoints.length;
-            const avgY = piecePoints.reduce((sum, p) => sum + p.y, 0) / piecePoints.length + uOffsetY;
-            
-            // Create piece with physics
-            shatterPieces.push({
-              points: piecePoints.map(p => ({ x: p.x - avgX, y: p.y - avgY })),
-              x: avgX,
-              y: avgY,
-              vx: (Math.random() - 0.5) * 15,
-              vy: -Math.random() * 12 - 5,
-              rotation: 0,
-              rotationSpeed: (Math.random() - 0.5) * 0.3,
-              opacity: 1
-            });
-          }
-          
-          // Create explosion sparks
-          for (let i = 0; i < 50; i++) {
-            sparks.push({
-              x: centerX + (Math.random() - 0.5) * scale,
-              y: height - 100,
-              vx: (Math.random() - 0.5) * 20,
-              vy: -Math.random() * 15 - 5,
-              life: 40 + Math.random() * 40,
-              maxLife: 80,
-              size: Math.random() * 3 + 1,
-              hue: 180 + Math.random() * 40
-            });
-          }
+      // Handle wall fall phase
+      if (phaseRef.current === "wallFall") {
+        if (wallFallStartTime === 0) {
+          wallFallStartTime = timestamp;
+          // Play impact sound when wall starts falling
+          playImpactSound();
         }
         
-        // Update and draw shatter pieces
-        shatterPieces.forEach((piece, i) => {
-          piece.vy += 0.5; // gravity
-          piece.x += piece.vx;
-          piece.y += piece.vy;
-          piece.rotation += piece.rotationSpeed;
-          piece.vx *= 0.99;
-          
-          // Fade out pieces that fall off screen
-          if (piece.y > height + 50) {
-            piece.opacity -= 0.05;
-          }
-          
-          if (piece.opacity > 0 && piece.points.length > 1) {
-            ctx.save();
-            ctx.translate(piece.x, piece.y);
-            ctx.rotate(piece.rotation);
-            ctx.globalAlpha = piece.opacity;
-            
-            // Draw piece with glow
-            ctx.beginPath();
-            ctx.moveTo(piece.points[0].x, piece.points[0].y);
-            for (let j = 1; j < piece.points.length; j++) {
-              ctx.lineTo(piece.points[j].x, piece.points[j].y);
-            }
-            ctx.strokeStyle = "hsla(190, 100%, 50%, 0.3)";
-            ctx.lineWidth = 15;
-            ctx.lineCap = "round";
-            ctx.lineJoin = "round";
-            ctx.stroke();
-            
-            ctx.beginPath();
-            ctx.moveTo(piece.points[0].x, piece.points[0].y);
-            for (let j = 1; j < piece.points.length; j++) {
-              ctx.lineTo(piece.points[j].x, piece.points[j].y);
-            }
-            ctx.strokeStyle = "hsla(190, 100%, 80%, 0.9)";
-            ctx.lineWidth = 4;
-            ctx.stroke();
-            
-            ctx.beginPath();
-            ctx.moveTo(piece.points[0].x, piece.points[0].y);
-            for (let j = 1; j < piece.points.length; j++) {
-              ctx.lineTo(piece.points[j].x, piece.points[j].y);
-            }
-            ctx.strokeStyle = "hsla(180, 100%, 95%, 1)";
-            ctx.lineWidth = 2;
-            ctx.stroke();
-            
-            ctx.restore();
-          }
-        });
+        const wallFallElapsed = timestamp - wallFallStartTime;
+        const wallFallDuration = 1200;
+        const wallProgress = Math.min(wallFallElapsed / wallFallDuration, 1);
         
-        // Check if shatter animation is complete
-        const shatterElapsed = timestamp - shatterStartTime;
-        if (shatterElapsed > 1000 && phaseRef.current !== "reveal" && !hasNavigated.current) {
+        // Eased rotation for wall falling forward
+        const eased = 1 - Math.pow(1 - wallProgress, 3);
+        setWallRotation(eased * 90);
+        setWallOpacity(1 - eased);
+        
+        // Navigate after wall falls
+        if (wallProgress >= 1 && !hasNavigated.current) {
           phaseRef.current = "reveal";
           setPhase("reveal");
-          setOpacity(0);
-          setScale(1.1);
           hasNavigated.current = true;
           setTimeout(() => {
             sessionStorage.setItem("fromIntro", "true");
             navigate("/home");
-          }, 1000);
+          }, 300);
         }
       }
 
@@ -345,7 +213,7 @@ const IntroPage = () => {
           glowParticles.splice(i, 1);
         } else {
           ctx.beginPath();
-          ctx.arc(p.x, p.y + uOffsetY, p.size, 0, Math.PI * 2);
+          ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
           ctx.fillStyle = `hsla(190, 80%, 60%, ${p.opacity * 0.3})`;
           ctx.fill();
         }
@@ -384,22 +252,15 @@ const IntroPage = () => {
         }
       });
 
-      // Draw the carved path with molten glow effect (with fall offset)
-      if (drawnPoints.length > 1 && !hasShattered) {
+      // Draw the carved path with molten glow effect
+      if (drawnPoints.length > 1 && phaseRef.current !== "wallFall" && phaseRef.current !== "reveal") {
         ctx.save();
-        
-        // Apply fall transformation
-        if (uOffsetY > 0) {
-          ctx.translate(centerX, centerY);
-          ctx.rotate(uRotation);
-          ctx.translate(-centerX, -centerY);
-        }
         
         // Outer molten glow
         ctx.beginPath();
-        ctx.moveTo(drawnPoints[0].x, drawnPoints[0].y + uOffsetY);
+        ctx.moveTo(drawnPoints[0].x, drawnPoints[0].y);
         for (let i = 1; i < drawnPoints.length; i++) {
-          ctx.lineTo(drawnPoints[i].x, drawnPoints[i].y + uOffsetY);
+          ctx.lineTo(drawnPoints[i].x, drawnPoints[i].y);
         }
         ctx.strokeStyle = "hsla(190, 100%, 50%, 0.15)";
         ctx.lineWidth = 40;
@@ -409,9 +270,9 @@ const IntroPage = () => {
 
         // Mid glow
         ctx.beginPath();
-        ctx.moveTo(drawnPoints[0].x, drawnPoints[0].y + uOffsetY);
+        ctx.moveTo(drawnPoints[0].x, drawnPoints[0].y);
         for (let i = 1; i < drawnPoints.length; i++) {
-          ctx.lineTo(drawnPoints[i].x, drawnPoints[i].y + uOffsetY);
+          ctx.lineTo(drawnPoints[i].x, drawnPoints[i].y);
         }
         ctx.strokeStyle = "hsla(190, 100%, 60%, 0.4)";
         ctx.lineWidth = 15;
@@ -419,9 +280,9 @@ const IntroPage = () => {
 
         // Inner bright line
         ctx.beginPath();
-        ctx.moveTo(drawnPoints[0].x, drawnPoints[0].y + uOffsetY);
+        ctx.moveTo(drawnPoints[0].x, drawnPoints[0].y);
         for (let i = 1; i < drawnPoints.length; i++) {
-          ctx.lineTo(drawnPoints[i].x, drawnPoints[i].y + uOffsetY);
+          ctx.lineTo(drawnPoints[i].x, drawnPoints[i].y);
         }
         ctx.strokeStyle = "hsla(190, 100%, 80%, 0.9)";
         ctx.lineWidth = 4;
@@ -429,9 +290,9 @@ const IntroPage = () => {
 
         // Core white line
         ctx.beginPath();
-        ctx.moveTo(drawnPoints[0].x, drawnPoints[0].y + uOffsetY);
+        ctx.moveTo(drawnPoints[0].x, drawnPoints[0].y);
         for (let i = 1; i < drawnPoints.length; i++) {
-          ctx.lineTo(drawnPoints[i].x, drawnPoints[i].y + uOffsetY);
+          ctx.lineTo(drawnPoints[i].x, drawnPoints[i].y);
         }
         ctx.strokeStyle = "hsla(180, 100%, 95%, 1)";
         ctx.lineWidth = 2;
@@ -443,11 +304,11 @@ const IntroPage = () => {
             const age = elapsed - point.time;
             if (age < 2000) {
               const heat = 1 - age / 2000;
-              const gradient = ctx.createRadialGradient(point.x, point.y + uOffsetY, 0, point.x, point.y + uOffsetY, 8 * heat);
+              const gradient = ctx.createRadialGradient(point.x, point.y, 0, point.x, point.y, 8 * heat);
               gradient.addColorStop(0, `hsla(30, 100%, 60%, ${heat * 0.3})`);
               gradient.addColorStop(1, "transparent");
               ctx.beginPath();
-              ctx.arc(point.x, point.y + uOffsetY, 8 * heat, 0, Math.PI * 2);
+              ctx.arc(point.x, point.y, 8 * heat, 0, Math.PI * 2);
               ctx.fillStyle = gradient;
               ctx.fill();
             }
@@ -544,38 +405,13 @@ const IntroPage = () => {
         }
       }
 
-      // Check if carving is complete
+      // Check if carving is complete - trigger wall fall
       if (progress >= uPath.length && phaseRef.current === "laser") {
-        phaseRef.current = "fall";
-        setPhase("fall");
-        fallStartTime = timestamp;
+        phaseRef.current = "wallFall";
+        setPhase("wallFall");
         
         // Fade out ambient hum
         fadeOutAmbientHum();
-      }
-
-      // Trigger shatter when U hits the floor
-      if (phaseRef.current === "fall" && fallProgress >= 1 && !hasShattered) {
-        phaseRef.current = "shatter";
-        setPhase("shatter");
-        
-        // Play impact sound
-        if (!soundPlayed) {
-          soundPlayed = true;
-          playImpactSound();
-        }
-        
-        // Screen shake effect
-        const shakeIntensity = 15;
-        let shakeCount = 0;
-        const shakeInterval = setInterval(() => {
-          canvas.style.transform = `translate(${(Math.random() - 0.5) * shakeIntensity}px, ${(Math.random() - 0.5) * shakeIntensity}px)`;
-          shakeCount++;
-          if (shakeCount > 8) {
-            clearInterval(shakeInterval);
-            canvas.style.transform = '';
-          }
-        }, 40);
       }
 
       animationId = requestAnimationFrame(animate);
@@ -606,8 +442,7 @@ const IntroPage = () => {
   const handleSkip = () => {
     if (hasNavigated.current) return;
     hasNavigated.current = true;
-    setOpacity(0);
-    setScale(1.1);
+    setWallOpacity(0);
     setTimeout(() => {
       sessionStorage.setItem("fromIntro", "true");
       navigate("/home");
@@ -618,9 +453,10 @@ const IntroPage = () => {
     <div 
       className="fixed inset-0 bg-background z-50 cursor-pointer"
       style={{ 
-        opacity, 
-        transform: `scale(${scale})`,
-        transition: "opacity 1s ease-out, transform 1.2s ease-out",
+        opacity: wallOpacity,
+        transform: `perspective(1000px) rotateX(${wallRotation}deg)`,
+        transformOrigin: "top center",
+        transition: "opacity 0.5s ease-out, transform 1.2s cubic-bezier(0.55, 0.085, 0.68, 0.53)",
         background: "hsl(220, 40%, 6%)"
       }}
       onClick={handleSkip}
@@ -628,14 +464,14 @@ const IntroPage = () => {
       <canvas
         ref={canvasRef}
         className="absolute inset-0"
-        style={{ width: "100%", height: "100%", transition: "transform 0.1s" }}
+        style={{ width: "100%", height: "100%" }}
       />
       
       {/* Skip hint */}
       <div 
         className="absolute bottom-8 left-1/2 -translate-x-1/2 text-muted-foreground/60 text-sm tracking-widest uppercase"
         style={{ 
-          opacity: phaseRef.current === "laser" || phaseRef.current === "waiting" || phaseRef.current === "fall" ? 0.6 : 0, 
+          opacity: phaseRef.current === "laser" || phaseRef.current === "waiting" ? 0.6 : 0, 
           transition: "opacity 0.5s" 
         }}
       >
