@@ -91,8 +91,8 @@ const fadeOutAmbientHum = () => {
 const IntroPage = () => {
   const navigate = useNavigate();
   const canvasRef = useRef<HTMLCanvasElement>(null);
-  const [, setPhase] = useState<"waiting" | "laser" | "wallFall" | "reveal">("waiting");
-  const phaseRef = useRef<"waiting" | "laser" | "wallFall" | "reveal">("waiting");
+  const [, setPhase] = useState<"waiting" | "laser" | "cracking" | "wallFall" | "reveal">("waiting");
+  const phaseRef = useRef<"waiting" | "laser" | "cracking" | "wallFall" | "reveal">("waiting");
   const [wallRotation, setWallRotation] = useState(0);
   const [wallOpacity, setWallOpacity] = useState(1);
   const hasNavigated = useRef(false);
@@ -152,10 +152,13 @@ const IntroPage = () => {
     const drawnPoints: { x: number; y: number; time: number }[] = [];
     const sparks: { x: number; y: number; vx: number; vy: number; life: number; maxLife: number; size: number; hue: number }[] = [];
     const glowParticles: { x: number; y: number; size: number; opacity: number }[] = [];
+    const cracks: { points: { x: number; y: number }[]; opacity: number; growing: boolean; targetLength: number }[] = [];
     let startTime = 0;
     let hasStarted = false;
+    let crackingStartTime = 0;
     let wallFallStartTime = 0;
     let ambientStarted = false;
+    let cracksGenerated = false;
 
     const animate = (timestamp: number) => {
       if (!hasStarted) {
@@ -177,6 +180,119 @@ const IntroPage = () => {
       ctx.fillStyle = "rgba(8, 12, 20, 0.08)";
       ctx.fillRect(0, 0, width, height);
 
+      // Handle cracking phase
+      if (phaseRef.current === "cracking") {
+        if (crackingStartTime === 0) {
+          crackingStartTime = timestamp;
+        }
+        
+        // Generate cracks from U shape points
+        if (!cracksGenerated && drawnPoints.length > 0) {
+          cracksGenerated = true;
+          
+          // Create cracks emanating from various points along the U
+          const crackCount = 12;
+          for (let i = 0; i < crackCount; i++) {
+            const sourcePoint = drawnPoints[Math.floor(Math.random() * drawnPoints.length)];
+            const angle = Math.random() * Math.PI * 2;
+            const crackLength = 80 + Math.random() * 200;
+            
+            // Generate jagged crack path
+            const crackPoints: { x: number; y: number }[] = [{ x: sourcePoint.x, y: sourcePoint.y }];
+            let currentX = sourcePoint.x;
+            let currentY = sourcePoint.y;
+            const segments = 8 + Math.floor(Math.random() * 6);
+            
+            for (let j = 0; j < segments; j++) {
+              const segmentLength = crackLength / segments;
+              const jitter = (Math.random() - 0.5) * 0.8;
+              const segmentAngle = angle + jitter;
+              currentX += Math.cos(segmentAngle) * segmentLength;
+              currentY += Math.sin(segmentAngle) * segmentLength;
+              crackPoints.push({ x: currentX, y: currentY });
+            }
+            
+            cracks.push({
+              points: crackPoints,
+              opacity: 0,
+              growing: true,
+              targetLength: crackPoints.length
+            });
+          }
+        }
+        
+        const crackingElapsed = timestamp - crackingStartTime;
+        const crackingDuration = 800;
+        const crackProgress = Math.min(crackingElapsed / crackingDuration, 1);
+        
+        // Draw and animate cracks
+        cracks.forEach((crack, crackIndex) => {
+          // Stagger crack appearance
+          const crackDelay = (crackIndex / cracks.length) * 0.5;
+          const adjustedProgress = Math.max(0, (crackProgress - crackDelay) / (1 - crackDelay));
+          
+          if (adjustedProgress > 0) {
+            crack.opacity = Math.min(adjustedProgress * 2, 1);
+            const visiblePoints = Math.floor(adjustedProgress * crack.points.length);
+            
+            if (visiblePoints > 1) {
+              // Draw crack glow
+              ctx.beginPath();
+              ctx.moveTo(crack.points[0].x, crack.points[0].y);
+              for (let j = 1; j < visiblePoints; j++) {
+                ctx.lineTo(crack.points[j].x, crack.points[j].y);
+              }
+              ctx.strokeStyle = `hsla(190, 100%, 60%, ${crack.opacity * 0.3})`;
+              ctx.lineWidth = 8;
+              ctx.lineCap = "round";
+              ctx.lineJoin = "round";
+              ctx.stroke();
+              
+              // Draw crack line
+              ctx.beginPath();
+              ctx.moveTo(crack.points[0].x, crack.points[0].y);
+              for (let j = 1; j < visiblePoints; j++) {
+                ctx.lineTo(crack.points[j].x, crack.points[j].y);
+              }
+              ctx.strokeStyle = `hsla(190, 100%, 85%, ${crack.opacity * 0.8})`;
+              ctx.lineWidth = 2;
+              ctx.stroke();
+              
+              // Draw bright core
+              ctx.beginPath();
+              ctx.moveTo(crack.points[0].x, crack.points[0].y);
+              for (let j = 1; j < visiblePoints; j++) {
+                ctx.lineTo(crack.points[j].x, crack.points[j].y);
+              }
+              ctx.strokeStyle = `hsla(180, 100%, 95%, ${crack.opacity})`;
+              ctx.lineWidth = 1;
+              ctx.stroke();
+              
+              // Sparks at crack tips
+              if (adjustedProgress < 0.9 && Math.random() > 0.7) {
+                const tipPoint = crack.points[visiblePoints - 1];
+                sparks.push({
+                  x: tipPoint.x,
+                  y: tipPoint.y,
+                  vx: (Math.random() - 0.5) * 3,
+                  vy: (Math.random() - 0.5) * 3,
+                  life: 20 + Math.random() * 20,
+                  maxLife: 40,
+                  size: Math.random() * 1.5 + 0.5,
+                  hue: 180 + Math.random() * 30
+                });
+              }
+            }
+          }
+        });
+        
+        // Transition to wall fall after cracking completes
+        if (crackProgress >= 1) {
+          phaseRef.current = "wallFall";
+          setPhase("wallFall");
+        }
+      }
+
       // Handle wall fall phase
       if (phaseRef.current === "wallFall") {
         if (wallFallStartTime === 0) {
@@ -188,6 +304,20 @@ const IntroPage = () => {
         const wallFallElapsed = timestamp - wallFallStartTime;
         const wallFallDuration = 1200;
         const wallProgress = Math.min(wallFallElapsed / wallFallDuration, 1);
+        
+        // Continue drawing cracks during wall fall
+        cracks.forEach((crack) => {
+          if (crack.points.length > 1) {
+            ctx.beginPath();
+            ctx.moveTo(crack.points[0].x, crack.points[0].y);
+            for (let j = 1; j < crack.points.length; j++) {
+              ctx.lineTo(crack.points[j].x, crack.points[j].y);
+            }
+            ctx.strokeStyle = `hsla(190, 100%, 85%, ${crack.opacity * 0.8})`;
+            ctx.lineWidth = 2;
+            ctx.stroke();
+          }
+        });
         
         // Eased rotation for wall falling forward
         const eased = 1 - Math.pow(1 - wallProgress, 3);
@@ -405,10 +535,10 @@ const IntroPage = () => {
         }
       }
 
-      // Check if carving is complete - trigger wall fall
+      // Check if carving is complete - trigger cracking phase
       if (progress >= uPath.length && phaseRef.current === "laser") {
-        phaseRef.current = "wallFall";
-        setPhase("wallFall");
+        phaseRef.current = "cracking";
+        setPhase("cracking");
         
         // Fade out ambient hum
         fadeOutAmbientHum();
@@ -471,7 +601,7 @@ const IntroPage = () => {
       <div 
         className="absolute bottom-8 left-1/2 -translate-x-1/2 text-muted-foreground/60 text-sm tracking-widest uppercase"
         style={{ 
-          opacity: phaseRef.current === "laser" || phaseRef.current === "waiting" ? 0.6 : 0, 
+          opacity: phaseRef.current === "laser" || phaseRef.current === "waiting" || phaseRef.current === "cracking" ? 0.6 : 0, 
           transition: "opacity 0.5s" 
         }}
       >
