@@ -153,12 +153,14 @@ const IntroPage = () => {
     const sparks: { x: number; y: number; vx: number; vy: number; life: number; maxLife: number; size: number; hue: number }[] = [];
     const glowParticles: { x: number; y: number; size: number; opacity: number }[] = [];
     const cracks: { points: { x: number; y: number }[]; opacity: number; growing: boolean; targetLength: number }[] = [];
+    const debris: { x: number; y: number; vx: number; vy: number; size: number; opacity: number; rotation: number; rotationSpeed: number }[] = [];
     let startTime = 0;
     let hasStarted = false;
     let crackingStartTime = 0;
     let wallFallStartTime = 0;
     let ambientStarted = false;
     let cracksGenerated = false;
+    let debrisGenerated = false;
 
     const animate = (timestamp: number) => {
       if (!hasStarted) {
@@ -304,6 +306,87 @@ const IntroPage = () => {
         const wallFallElapsed = timestamp - wallFallStartTime;
         const wallFallDuration = 1200;
         const wallProgress = Math.min(wallFallElapsed / wallFallDuration, 1);
+        
+        // Generate debris particles when wall starts falling
+        if (!debrisGenerated) {
+          debrisGenerated = true;
+          
+          // Create debris from crack points and U shape
+          const allSourcePoints = [
+            ...drawnPoints.map(p => ({ x: p.x, y: p.y })),
+            ...cracks.flatMap(c => c.points)
+          ];
+          
+          // Generate dust/debris particles
+          for (let i = 0; i < 60; i++) {
+            const sourcePoint = allSourcePoints[Math.floor(Math.random() * allSourcePoints.length)] || { x: centerX, y: centerY };
+            debris.push({
+              x: sourcePoint.x + (Math.random() - 0.5) * 40,
+              y: sourcePoint.y + (Math.random() - 0.5) * 40,
+              vx: (Math.random() - 0.5) * 2,
+              vy: Math.random() * 1.5 + 0.5,
+              size: Math.random() * 4 + 1,
+              opacity: Math.random() * 0.6 + 0.3,
+              rotation: Math.random() * Math.PI * 2,
+              rotationSpeed: (Math.random() - 0.5) * 0.1
+            });
+          }
+          
+          // Add larger chunks
+          for (let i = 0; i < 15; i++) {
+            const sourcePoint = allSourcePoints[Math.floor(Math.random() * allSourcePoints.length)] || { x: centerX, y: centerY };
+            debris.push({
+              x: sourcePoint.x + (Math.random() - 0.5) * 30,
+              y: sourcePoint.y + (Math.random() - 0.5) * 30,
+              vx: (Math.random() - 0.5) * 3,
+              vy: Math.random() * 2 + 1,
+              size: Math.random() * 8 + 4,
+              opacity: Math.random() * 0.4 + 0.2,
+              rotation: Math.random() * Math.PI * 2,
+              rotationSpeed: (Math.random() - 0.5) * 0.15
+            });
+          }
+        }
+        
+        // Update and draw debris
+        debris.forEach((d, i) => {
+          // Physics
+          d.vy += 0.08; // gentle gravity
+          d.x += d.vx;
+          d.y += d.vy;
+          d.rotation += d.rotationSpeed;
+          d.vx *= 0.99; // air resistance
+          d.opacity -= 0.003;
+          
+          if (d.opacity > 0 && d.y < height + 50) {
+            ctx.save();
+            ctx.translate(d.x, d.y);
+            ctx.rotate(d.rotation);
+            ctx.globalAlpha = d.opacity;
+            
+            // Draw debris chunk with subtle glow
+            const gradient = ctx.createRadialGradient(0, 0, 0, 0, 0, d.size);
+            gradient.addColorStop(0, "hsla(210, 20%, 40%, 0.8)");
+            gradient.addColorStop(0.5, "hsla(210, 15%, 25%, 0.6)");
+            gradient.addColorStop(1, "hsla(210, 10%, 15%, 0)");
+            
+            ctx.fillStyle = gradient;
+            ctx.beginPath();
+            ctx.arc(0, 0, d.size, 0, Math.PI * 2);
+            ctx.fill();
+            
+            // Add subtle cyan edge highlight on some pieces
+            if (d.size > 3) {
+              ctx.strokeStyle = `hsla(190, 60%, 60%, ${d.opacity * 0.3})`;
+              ctx.lineWidth = 0.5;
+              ctx.stroke();
+            }
+            
+            ctx.restore();
+          } else if (d.opacity <= 0) {
+            debris.splice(i, 1);
+          }
+        });
         
         // Continue drawing cracks during wall fall
         cracks.forEach((crack) => {
