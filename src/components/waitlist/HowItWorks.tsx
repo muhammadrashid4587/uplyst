@@ -127,8 +127,15 @@ export const HowItWorks = () => {
                 <GlassPanel
                   className="flex items-start gap-4 p-6 h-full"
                 >
-                  <div className="flex-shrink-0 w-12 h-12 rounded-xl bg-primary/10 border border-primary/20 flex items-center justify-center">
-                    <step.icon className="w-6 h-6 text-primary" />
+                  <div className="flex-shrink-0 relative w-14 h-14">
+                    {/* Numbered badge */}
+                    <div className="absolute -top-2 -right-2 w-6 h-6 rounded-full bg-primary text-primary-foreground flex items-center justify-center text-xs font-bold border border-primary/30">
+                      {step.number}
+                    </div>
+                    {/* Icon circle */}
+                    <div className="w-14 h-14 rounded-xl bg-primary/10 border border-primary/20 flex items-center justify-center">
+                      <step.icon className="w-6 h-6 text-primary" />
+                    </div>
                   </div>
                   <div className="flex-1">
                     <h4 className="text-base font-display font-semibold text-foreground mb-1.5">
