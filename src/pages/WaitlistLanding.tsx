@@ -2,11 +2,14 @@ import { useEffect } from "react";
 import { AnimatedBackground } from "@/components/AnimatedBackground";
 import { WaitlistNav } from "@/components/waitlist/WaitlistNav";
 import { WaitlistHero } from "@/components/waitlist/WaitlistHero";
+import { HowItWorks } from "@/components/waitlist/HowItWorks";
+import { WhyThisExists } from "@/components/waitlist/WhyThisExists";
 import { ProductPreview } from "@/components/waitlist/ProductPreview";
 import { WaitlistTrust } from "@/components/waitlist/WaitlistTrust";
 import { RoadmapTimeline } from "@/components/waitlist/RoadmapTimeline";
 import { WaitlistFAQ } from "@/components/waitlist/WaitlistFAQ";
 import { WaitlistForm } from "@/components/waitlist/WaitlistForm";
+import { FutureSignal } from "@/components/waitlist/FutureSignal";
 import { WaitlistFooter } from "@/components/waitlist/WaitlistFooter";
 import { useSmoothScroll } from "@/hooks/useSmoothScroll";
 
@@ -19,11 +22,13 @@ const WaitlistLanding = () => {
   }, []);
 
   return (
-    <div className="min-h-screen flex flex-col noise-overlay relative">
+    <div className="min-h-screen flex flex-col noise-overlay relative animate-fade-in">
       <AnimatedBackground />
       <WaitlistNav />
       <main className="flex-1 pt-16 md:pt-20 relative z-10">
         <WaitlistHero />
+        <HowItWorks />
+        <WhyThisExists />
         <div id="products">
           <ProductPreview />
         </div>
@@ -31,6 +36,7 @@ const WaitlistLanding = () => {
         <RoadmapTimeline />
         <WaitlistFAQ />
         <WaitlistForm />
+        <FutureSignal />
       </main>
       <WaitlistFooter />
     </div>
