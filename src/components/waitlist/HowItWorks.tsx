@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useRef } from "react";
 import { cn } from "@/lib/utils";
 import { useScrollReveal } from "@/hooks/useScrollReveal";
 import { ChevronDown, FileSearch, Languages, Target, Shield } from "lucide-react";
@@ -31,15 +31,56 @@ const steps = [
   },
 ];
 
+const playAccordionSound = async (isExpanding: boolean) => {
+  try {
+    const prompt = isExpanding 
+      ? "subtle soft whoosh expand sound, gentle and smooth, 0.5 seconds"
+      : "subtle soft collapse sound, light and quick, 0.3 seconds";
+    
+    const duration = isExpanding ? 0.5 : 0.3;
+
+    const response = await fetch(
+      `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/elevenlabs-sfx`,
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          apikey: import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY,
+          Authorization: `Bearer ${import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY}`,
+        },
+        body: JSON.stringify({ prompt, duration }),
+      }
+    );
+
+    if (response.ok) {
+      const audioBlob = await response.blob();
+      const audioUrl = URL.createObjectURL(audioBlob);
+      const audio = new Audio(audioUrl);
+      audio.volume = 0.3; // Keep it subtle
+      await audio.play();
+    }
+  } catch (error) {
+    // Silently fail - don't interrupt UX if sound generation fails
+    console.debug("Sound effect generation skipped:", error);
+  }
+};
+
 export const HowItWorks = () => {
   const [isExpanded, setIsExpanded] = useState(false);
   const { ref, isVisible } = useScrollReveal(0.1);
+  const audioRef = useRef<HTMLAudioElement | null>(null);
+
+  const handleToggle = () => {
+    const newState = !isExpanded;
+    setIsExpanded(newState);
+    playAccordionSound(newState);
+  };
 
   return (
     <section className="py-12 md:py-16 relative" ref={ref}>
       <div className="container mx-auto px-4">
         <button
-          onClick={() => setIsExpanded(!isExpanded)}
+          onClick={handleToggle}
           className={cn(
             "w-full max-w-lg mx-auto group block",
             "transition-all duration-500",
