@@ -7,8 +7,9 @@ export const WhyThisExists = () => {
 
   return (
     <section className="py-16 md:py-20 relative" ref={ref}>
-      {/* Subtle gradient background */}
-      <div className="absolute inset-0 bg-gradient-to-b from-primary/5 via-transparent to-primary/3 pointer-events-none" />
+      {/* Dual-tone gradient background */}
+      <div className="absolute inset-0 bg-gradient-to-br from-primary/8 via-transparent to-accent/6 pointer-events-none" />
+      <div className="absolute inset-0 bg-gradient-to-tl from-accent/5 via-transparent to-primary/5 pointer-events-none" />
       
       {/* Subtle gradient dividers */}
       <div className="absolute top-0 left-0 w-full h-px bg-gradient-to-r from-transparent via-border/50 to-transparent" />
