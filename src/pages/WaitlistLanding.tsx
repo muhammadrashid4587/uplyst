@@ -1,5 +1,6 @@
 import { useEffect } from "react";
 import { AnimatedBackground } from "@/components/AnimatedBackground";
+import { CustomCursor } from "@/components/CustomCursor";
 import { WaitlistNav } from "@/components/waitlist/WaitlistNav";
 import { WaitlistHero } from "@/components/waitlist/WaitlistHero";
 import { HowItWorks } from "@/components/waitlist/HowItWorks";
@@ -23,6 +24,7 @@ const WaitlistLanding = () => {
 
   return (
     <div className="min-h-screen flex flex-col noise-overlay relative animate-fade-in">
+      <CustomCursor />
       <AnimatedBackground />
       <WaitlistNav />
       <main className="flex-1 pt-16 md:pt-20 relative z-10">
