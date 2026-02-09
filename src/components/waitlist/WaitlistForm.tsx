@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { useSearchParams } from "react-router-dom";
 import { cn } from "@/lib/utils";
 import { GlassPanel } from "@/components/ui/GlassPanel";
@@ -8,7 +8,7 @@ import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useWaitlist } from "@/hooks/useWaitlist";
 import { toast } from "@/hooks/use-toast";
-import { Loader2, Sparkles, Users, Share2, Copy, Check } from "lucide-react";
+import { Loader2, Sparkles, Users, Share2, Copy, Check, ArrowRight, Mail } from "lucide-react";
 import { useScrollReveal } from "@/hooks/useScrollReveal";
 
 interface WaitlistFormProps {
@@ -26,6 +26,7 @@ export const WaitlistForm = ({ className }: WaitlistFormProps) => {
     role: "",
     seniority: "",
     target_roles: "",
+    situation: "",
   });
 
   const [success, setSuccess] = useState(false);
@@ -102,14 +103,23 @@ export const WaitlistForm = ({ className }: WaitlistFormProps) => {
             <p className="text-muted-foreground mb-2">
               You're <span className="text-primary font-bold">#{position}</span> on the waitlist.
             </p>
-            <p className="text-sm text-muted-foreground mb-8">
-              We'll notify you when it's your turn to access Uplyst.
-            </p>
+            
+            {/* What happens next */}
+            <div className="bg-card/30 rounded-lg p-4 mb-6 border border-border/30">
+              <h3 className="text-sm font-semibold text-foreground mb-2 flex items-center justify-center gap-2">
+                <ArrowRight className="w-4 h-4 text-primary" />
+                What Happens Next
+              </h3>
+              <p className="text-sm text-muted-foreground">
+                We'll reach out when it's your turn. Early users help define how Uplyst evolves.
+              </p>
+            </div>
 
+            {/* Share section */}
             <div className="bg-card/50 rounded-xl p-6 border border-border/50 mb-6">
               <div className="flex items-center gap-2 mb-4 justify-center">
                 <Share2 className="w-5 h-5 text-primary" />
-                <span className="font-semibold">Move up the list</span>
+                <span className="font-semibold">Invite someone who needs this</span>
               </div>
               <p className="text-sm text-muted-foreground mb-4">
                 Share your link. Each signup moves you up!
@@ -168,6 +178,16 @@ export const WaitlistForm = ({ className }: WaitlistFormProps) => {
           )}
         </div>
 
+        {/* Credibility line */}
+        <p
+          className={cn(
+            "text-center text-sm text-muted-foreground mb-8 transition-all duration-700 delay-150",
+            isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-4"
+          )}
+        >
+          Built with senior-level professionals in mind. Early access is limited to ensure quality.
+        </p>
+
         <GlassPanel
           className={cn(
             "max-w-xl mx-auto p-8 transition-all duration-700 delay-200",
@@ -183,7 +203,7 @@ export const WaitlistForm = ({ className }: WaitlistFormProps) => {
                   placeholder="Jane Doe"
                   value={formData.full_name}
                   onChange={(e) => setFormData({ ...formData, full_name: e.target.value })}
-                  className="bg-background/50"
+                  className="bg-background/50 transition-all duration-200 focus:ring-2 focus:ring-primary/50 focus:border-primary"
                   required
                 />
               </div>
@@ -195,7 +215,7 @@ export const WaitlistForm = ({ className }: WaitlistFormProps) => {
                   placeholder="jane@company.com"
                   value={formData.email}
                   onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                  className="bg-background/50"
+                  className="bg-background/50 transition-all duration-200 focus:ring-2 focus:ring-primary/50 focus:border-primary"
                   required
                 />
               </div>
@@ -237,6 +257,26 @@ export const WaitlistForm = ({ className }: WaitlistFormProps) => {
               </div>
             </div>
 
+            {/* New situation question */}
+            <div className="space-y-2">
+              <Label htmlFor="situation">What best describes your situation? (Optional)</Label>
+              <Select
+                value={formData.situation}
+                onValueChange={(value) => setFormData({ ...formData, situation: value })}
+              >
+                <SelectTrigger className="bg-background/50">
+                  <SelectValue placeholder="Select your situation" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="recently_laid_off">Recently laid off</SelectItem>
+                  <SelectItem value="actively_applying">Actively applying, low response</SelectItem>
+                  <SelectItem value="exploring_quietly">Exploring options quietly</SelectItem>
+                  <SelectItem value="hiring_advising">Hiring / advising</SelectItem>
+                  <SelectItem value="other">Other</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+
             <div className="space-y-2">
               <Label htmlFor="target_roles">What roles are you targeting?</Label>
               <Input
@@ -244,7 +284,7 @@ export const WaitlistForm = ({ className }: WaitlistFormProps) => {
                 placeholder="e.g., VP of Engineering, Head of Product"
                 value={formData.target_roles}
                 onChange={(e) => setFormData({ ...formData, target_roles: e.target.value })}
-                className="bg-background/50"
+                className="bg-background/50 transition-all duration-200 focus:ring-2 focus:ring-primary/50 focus:border-primary"
               />
             </div>
 
@@ -252,7 +292,7 @@ export const WaitlistForm = ({ className }: WaitlistFormProps) => {
               type="submit"
               variant="primary"
               size="lg"
-              className="w-full font-display uppercase tracking-wider"
+              className="w-full font-display uppercase tracking-wider group"
               disabled={isLoading}
             >
               {isLoading ? (
@@ -262,7 +302,7 @@ export const WaitlistForm = ({ className }: WaitlistFormProps) => {
                 </>
               ) : (
                 <>
-                  <Sparkles className="w-4 h-4 mr-2" />
+                  <Mail className="w-4 h-4 mr-2 group-hover:scale-110 transition-transform" />
                   Join the Waitlist
                 </>
               )}
