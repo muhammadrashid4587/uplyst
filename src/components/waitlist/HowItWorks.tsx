@@ -73,27 +73,32 @@ export const HowItWorks = () => {
         >
           <div className="max-w-4xl mx-auto grid sm:grid-cols-2 gap-5">
             {steps.map((step, index) => (
-              <GlassPanel
+              <div
                 key={step.number}
                 className={cn(
-                  "flex items-start gap-4 p-6",
-                  "transition-all duration-500",
-                  isExpanded ? "opacity-100 translate-y-0" : "opacity-0 translate-y-4"
+                  "transition-all duration-500 ease-out",
+                  isExpanded 
+                    ? "opacity-100 translate-y-0 scale-100" 
+                    : "opacity-0 translate-y-4 scale-95"
                 )}
-                style={{ transitionDelay: isExpanded ? `${index * 100}ms` : "0ms" }}
+                style={{ transitionDelay: isExpanded ? `${index * 75}ms` : "0ms" }}
               >
-                <div className="flex-shrink-0 w-12 h-12 rounded-xl bg-primary/10 border border-primary/20 flex items-center justify-center">
-                  <step.icon className="w-6 h-6 text-primary" />
-                </div>
-                <div className="flex-1">
-                  <h4 className="text-base font-display font-semibold text-foreground mb-1.5">
-                    {step.title}
-                  </h4>
-                  <p className="text-sm text-muted-foreground leading-relaxed">
-                    {step.description}
-                  </p>
-                </div>
-              </GlassPanel>
+                <GlassPanel
+                  className="flex items-start gap-4 p-6 h-full"
+                >
+                  <div className="flex-shrink-0 w-12 h-12 rounded-xl bg-primary/10 border border-primary/20 flex items-center justify-center">
+                    <step.icon className="w-6 h-6 text-primary" />
+                  </div>
+                  <div className="flex-1">
+                    <h4 className="text-base font-display font-semibold text-foreground mb-1.5">
+                      {step.title}
+                    </h4>
+                    <p className="text-sm text-muted-foreground leading-relaxed">
+                      {step.description}
+                    </p>
+                  </div>
+                </GlassPanel>
+              </div>
             ))}
           </div>
         </div>
