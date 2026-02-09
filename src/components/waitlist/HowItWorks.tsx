@@ -2,6 +2,7 @@ import { useState } from "react";
 import { cn } from "@/lib/utils";
 import { useScrollReveal } from "@/hooks/useScrollReveal";
 import { ChevronDown, FileSearch, Languages, Target, Shield } from "lucide-react";
+import { GlassPanel } from "@/components/ui/GlassPanel";
 
 const steps = [
   {
@@ -35,59 +36,64 @@ export const HowItWorks = () => {
   const { ref, isVisible } = useScrollReveal(0.1);
 
   return (
-    <section className="py-16 relative" ref={ref}>
+    <section className="py-12 md:py-16 relative" ref={ref}>
       <div className="container mx-auto px-4">
         <button
           onClick={() => setIsExpanded(!isExpanded)}
           className={cn(
-            "w-full max-w-2xl mx-auto group",
+            "w-full max-w-lg mx-auto group block",
             "transition-all duration-500",
             isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-8"
           )}
         >
-          <div className="flex items-center justify-center gap-3 py-4 px-6 rounded-xl border border-border/30 bg-card/30 backdrop-blur-sm hover:border-primary/30 hover:bg-card/50 transition-all duration-300">
-            <span className="text-lg font-display font-semibold text-foreground">
+          <GlassPanel 
+            hover 
+            className="py-4 px-6 flex items-center justify-center gap-3"
+          >
+            <span className="text-base md:text-lg font-display font-semibold text-foreground">
               How Uplyst Works
             </span>
-            <span className="text-sm text-muted-foreground">(At a High Level)</span>
+            <span className="text-xs md:text-sm text-muted-foreground hidden sm:inline">
+              (At a High Level)
+            </span>
             <ChevronDown
               className={cn(
-                "w-5 h-5 text-muted-foreground transition-transform duration-300",
+                "w-5 h-5 text-primary transition-transform duration-300 ml-1",
                 isExpanded && "rotate-180"
               )}
             />
-          </div>
+          </GlassPanel>
         </button>
 
         <div
           className={cn(
             "overflow-hidden transition-all duration-500 ease-out",
-            isExpanded ? "max-h-[600px] opacity-100 mt-8" : "max-h-0 opacity-0 mt-0"
+            isExpanded ? "max-h-[800px] opacity-100 mt-8" : "max-h-0 opacity-0 mt-0"
           )}
         >
-          <div className="max-w-3xl mx-auto grid sm:grid-cols-2 gap-4">
+          <div className="max-w-4xl mx-auto grid sm:grid-cols-2 gap-5">
             {steps.map((step, index) => (
-              <div
+              <GlassPanel
                 key={step.number}
                 className={cn(
-                  "flex items-start gap-4 p-5 rounded-xl border border-border/30 bg-card/20 backdrop-blur-sm",
-                  "transition-all duration-300 delay-100",
+                  "flex items-start gap-4 p-6",
+                  "transition-all duration-500",
                   isExpanded ? "opacity-100 translate-y-0" : "opacity-0 translate-y-4"
                 )}
-                style={{ transitionDelay: isExpanded ? `${index * 75}ms` : "0ms" }}
+                style={{ transitionDelay: isExpanded ? `${index * 100}ms` : "0ms" }}
               >
-                <div className="flex-shrink-0 w-10 h-10 rounded-lg bg-primary/10 border border-primary/20 flex items-center justify-center">
-                  <step.icon className="w-5 h-5 text-primary" />
+                <div className="flex-shrink-0 w-12 h-12 rounded-xl bg-primary/10 border border-primary/20 flex items-center justify-center">
+                  <step.icon className="w-6 h-6 text-primary" />
                 </div>
-                <div>
-                  <h4 className="text-sm font-semibold text-foreground mb-1">
+                <div className="flex-1">
+                  <h4 className="text-base font-display font-semibold text-foreground mb-1.5">
                     {step.title}
                   </h4>
                   <p className="text-sm text-muted-foreground leading-relaxed">
                     {step.description}
                   </p>
                 </div>
-              </div>
+              </GlassPanel>
             ))}
           </div>
         </div>
