@@ -2,16 +2,27 @@ import { useEffect, useState, useRef, useCallback } from "react";
 
 const MAGNETIC_DISTANCE = 80; // pixels - range to start magnetic pull
 const MAGNETIC_STRENGTH = 0.35; // 0-1 - how strong the pull is
+const TRAIL_LENGTH = 12; // number of trail points
+const TRAIL_DECAY = 0.85; // opacity decay per point
+
+interface TrailPoint {
+  x: number;
+  y: number;
+  opacity: number;
+}
 
 export const CustomCursor = () => {
   const [isPointer, setIsPointer] = useState(false);
   const [isClicking, setIsClicking] = useState(false);
   const [isVisible, setIsVisible] = useState(false);
+  const [trail, setTrail] = useState<TrailPoint[]>([]);
   const cursorRef = useRef<HTMLDivElement>(null);
+  const trailContainerRef = useRef<HTMLDivElement>(null);
   const mousePositionRef = useRef({ x: 0, y: 0 });
   const displayPositionRef = useRef({ x: 0, y: 0 });
   const magneticTargetRef = useRef<HTMLElement | null>(null);
   const rafRef = useRef<number>();
+  const lastTrailUpdateRef = useRef({ x: 0, y: 0 });
 
   const getClickableElement = useCallback((target: HTMLElement): HTMLElement | null => {
     if (target.tagName === 'BUTTON' || target.tagName === 'A') return target;
@@ -66,6 +77,30 @@ export const CustomCursor = () => {
     // Smooth interpolation for display position
     displayPositionRef.current.x += (targetX - displayPositionRef.current.x) * 0.4;
     displayPositionRef.current.y += (targetY - displayPositionRef.current.y) * 0.4;
+
+    // Update trail
+    const dist = Math.hypot(
+      displayPositionRef.current.x - lastTrailUpdateRef.current.x,
+      displayPositionRef.current.y - lastTrailUpdateRef.current.y
+    );
+    
+    if (dist > 8) { // Only update trail when cursor moves enough
+      const newPoint: TrailPoint = {
+        x: displayPositionRef.current.x,
+        y: displayPositionRef.current.y,
+        opacity: 1,
+      };
+      
+      setTrail(prev => {
+        const updated = [newPoint, ...prev].slice(0, TRAIL_LENGTH);
+        return updated.map((point, index) => ({
+          ...point,
+          opacity: Math.pow(TRAIL_DECAY, index),
+        }));
+      });
+      
+      lastTrailUpdateRef.current = { ...displayPositionRef.current };
+    }
 
     cursorRef.current.style.transform = `translate3d(${displayPositionRef.current.x}px, ${displayPositionRef.current.y}px, 0) translate(-50%, -50%) scale(${isClicking ? 0.8 : 1})`;
   }, [isClicking, findNearbyClickable]);
@@ -133,6 +168,31 @@ export const CustomCursor = () => {
 
   return (
     <>
+      {/* Trail effect container */}
+      <div
+        ref={trailContainerRef}
+        className="fixed top-0 left-0 pointer-events-none z-[9998] will-change-transform"
+        style={{ width: "100%", height: "100%" }}
+      >
+        {trail.map((point, index) => (
+          <div
+            key={index}
+            className="absolute rounded-full pointer-events-none"
+            style={{
+              left: `${point.x}px`,
+              top: `${point.y}px`,
+              width: '4px',
+              height: '4px',
+              background: 'hsl(var(--primary))',
+              boxShadow: '0 0 8px hsl(var(--primary) / 0.6)',
+              opacity: point.opacity * 0.6,
+              transform: 'translate(-50%, -50%)',
+              transition: 'opacity 0.1s ease-out',
+            }}
+          />
+        ))}
+      </div>
+
       {/* Main cursor dot */}
       <div
         ref={cursorRef}
