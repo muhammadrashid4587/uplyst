@@ -50,12 +50,6 @@ export const WaitlistHero = () => {
 
   return (
     <section className="relative min-h-screen flex items-center justify-center overflow-hidden pt-20">
-      {/* Nebula/Aurora background - lowest layer */}
-      <NebulaBackground className="opacity-70" />
-      
-      {/* Starfield background */}
-      <Starfield starCount={150} className="opacity-40" />
-      
       {/* Parallax background layer */}
       <div 
         className="absolute inset-0 pointer-events-none"
