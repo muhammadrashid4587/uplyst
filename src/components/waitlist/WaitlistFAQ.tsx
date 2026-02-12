@@ -2,6 +2,7 @@ import { cn } from "@/lib/utils";
 import { Badge } from "@/components/ui/SignalBadge";
 import { useClipReveal } from "@/hooks/useClipReveal";
 import { HelpCircle } from "lucide-react";
+import { CelestialBackground } from "@/components/ui/CelestialBackground";
 import {
   Accordion,
   AccordionContent,
@@ -41,7 +42,8 @@ export const WaitlistFAQ = () => {
   const { ref: contentRef, style: contentStyle } = useClipReveal({ direction: "up", delay: 200, duration: 900 });
 
   return (
-    <section className="py-24 relative" id="faq">
+    <section className="py-24 relative overflow-hidden" id="faq">
+      <CelestialBackground variant="aurora" intensity="subtle" />
       <div className="container mx-auto px-4">
         <div className="text-center mb-16" ref={titleRef} style={titleStyle}>
           <Badge variant="primary" className="mb-6">

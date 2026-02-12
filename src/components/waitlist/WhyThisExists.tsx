@@ -2,13 +2,15 @@ import { cn } from "@/lib/utils";
 import { useClipReveal } from "@/hooks/useClipReveal";
 import { Quote } from "lucide-react";
 import { useSectionParallax } from "@/hooks/useSectionParallax";
+import { CelestialBackground } from "@/components/ui/CelestialBackground";
 
 export const WhyThisExists = () => {
   const { ref: clipRef, style: clipStyle } = useClipReveal({ direction: "up", duration: 1000 });
   const { ref: parallaxRef, style: parallaxStyle } = useSectionParallax({ speed: 0.1 });
 
   return (
-    <section className="py-16 md:py-20 relative" ref={parallaxRef} style={parallaxStyle}>
+    <section className="py-16 md:py-20 relative overflow-hidden" ref={parallaxRef} style={parallaxStyle}>
+      <CelestialBackground variant="divine" intensity="subtle" />
       {/* Dual-tone gradient background */}
       <div className="absolute inset-0 bg-gradient-to-br from-primary/8 via-transparent to-accent/6 pointer-events-none" />
       <div className="absolute inset-0 bg-gradient-to-tl from-accent/5 via-transparent to-primary/5 pointer-events-none" />

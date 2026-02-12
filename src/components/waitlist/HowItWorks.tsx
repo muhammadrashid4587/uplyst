@@ -3,6 +3,7 @@ import { cn } from "@/lib/utils";
 import { useClipReveal } from "@/hooks/useClipReveal";
 import { ChevronDown, FileSearch, Languages, Target, Shield } from "lucide-react";
 import { GlassPanel } from "@/components/ui/GlassPanel";
+import { CelestialBackground } from "@/components/ui/CelestialBackground";
 
 const steps = [
   {
@@ -75,7 +76,8 @@ export const HowItWorks = () => {
   };
 
   return (
-    <section className="py-12 md:py-16 relative">
+    <section className="py-12 md:py-16 relative overflow-hidden">
+      <CelestialBackground variant="ethereal" intensity="subtle" />
       <div className="container mx-auto px-4">
         <div ref={clipRef} style={clipStyle}>
           <button
