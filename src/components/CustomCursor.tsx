@@ -145,10 +145,10 @@ export const CustomCursor = () => {
       >
         <div
           className={`rounded-full bg-primary transition-[width,height] duration-100 ${
-            isPointer ? 'w-4 h-4' : 'w-3 h-3'
+            isPointer ? 'w-6 h-6' : 'w-5 h-5'
           }`}
           style={{
-            boxShadow: '0 0 10px hsl(var(--primary) / 0.5), 0 0 20px hsl(var(--primary) / 0.3)',
+            boxShadow: '0 0 20px hsl(var(--primary) / 0.8), 0 0 40px hsl(var(--primary) / 0.6), 0 0 60px hsl(var(--primary) / 0.4)',
           }}
         />
       </div>
