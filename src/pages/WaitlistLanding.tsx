@@ -13,7 +13,6 @@ import { WaitlistForm } from "@/components/waitlist/WaitlistForm";
 import { FutureSignal } from "@/components/waitlist/FutureSignal";
 import { WaitlistFooter } from "@/components/waitlist/WaitlistFooter";
 import { CompanyMarquee } from "@/components/waitlist/CompanyMarquee";
-import { GlobeSection } from "@/components/waitlist/GlobeSection";
 import { useSmoothScroll } from "@/hooks/useSmoothScroll";
 
 const WaitlistLanding = () => {
@@ -34,7 +33,6 @@ const WaitlistLanding = () => {
         <HowItWorks />
         <CompanyMarquee direction="right" speed={45} className="opacity-60" />
         <WhyThisExists />
-        <GlobeSection />
         <div id="products">
           <ProductPreview />
         </div>
