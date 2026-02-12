@@ -1,6 +1,6 @@
 import { cn } from "@/lib/utils";
 import { Badge } from "@/components/ui/SignalBadge";
-import { useScrollReveal } from "@/hooks/useScrollReveal";
+import { useClipReveal } from "@/hooks/useClipReveal";
 import { HelpCircle } from "lucide-react";
 import {
   Accordion,
@@ -37,38 +37,23 @@ const faqs = [
 ];
 
 export const WaitlistFAQ = () => {
-  const { ref, isVisible } = useScrollReveal(0.1);
+  const { ref: titleRef, style: titleStyle } = useClipReveal({ direction: "up", duration: 800 });
+  const { ref: contentRef, style: contentStyle } = useClipReveal({ direction: "up", delay: 200, duration: 900 });
 
   return (
-    <section className="py-24 relative" id="faq" ref={ref}>
+    <section className="py-24 relative" id="faq">
       <div className="container mx-auto px-4">
-        <div className="text-center mb-16">
-          <Badge 
-            variant="primary" 
-            className={cn(
-              "mb-6 transition-all duration-700",
-              isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-4"
-            )}
-          >
+        <div className="text-center mb-16" ref={titleRef} style={titleStyle}>
+          <Badge variant="primary" className="mb-6">
             <HelpCircle className="w-3 h-3 mr-1" />
             FAQ
           </Badge>
-          <h2 
-            className={cn(
-              "text-4xl md:text-5xl font-display font-bold mb-4 transition-all duration-700 delay-100",
-              isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-8"
-            )}
-          >
+          <h2 className="text-4xl md:text-5xl font-display font-bold mb-4">
             Common <span className="text-primary text-glow">Questions</span>
           </h2>
         </div>
 
-        <div 
-          className={cn(
-            "max-w-2xl mx-auto transition-all duration-700 delay-200",
-            isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-12"
-          )}
-        >
+        <div ref={contentRef} style={contentStyle} className="max-w-2xl mx-auto">
           <Accordion type="single" collapsible className="space-y-4">
             {faqs.map((faq, index) => (
               <AccordionItem

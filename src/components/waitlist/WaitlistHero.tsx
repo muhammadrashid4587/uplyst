@@ -73,17 +73,29 @@ export const WaitlistHero = () => {
         <div className="flex flex-col items-center gap-8 lg:gap-12">
           {/* Content - Centered */}
           <div className="flex-1 text-center relative z-30 max-w-3xl">
+            <div
+              style={{
+                opacity: 0,
+                animation: "heroClipIn 0.8s cubic-bezier(0.23, 1, 0.32, 1) 0.2s forwards",
+              }}
+              className="inline-flex"
+            >
             <Badge 
               variant="primary" 
-              className="mb-6 animate-fade-in inline-flex"
+              className="mb-6 inline-flex"
             >
               <Sparkles className="w-3 h-3 mr-1" />
               Early Access Opening Soon
             </Badge>
+            </div>
 
             <h1 
-              className="text-5xl md:text-6xl lg:text-7xl font-display font-bold mb-6 text-3d animate-fade-in"
-              style={{ animationDelay: "0.1s" }}
+              className="text-5xl md:text-6xl lg:text-7xl font-display font-bold mb-6 text-3d"
+              style={{
+                opacity: 0,
+                clipPath: "inset(100% 0 0 0)",
+                animation: "heroClipIn 1s cubic-bezier(0.23, 1, 0.32, 1) 0.4s forwards",
+              }}
             >
               Land Your Next
               <br />
@@ -91,16 +103,23 @@ export const WaitlistHero = () => {
             </h1>
 
             <p 
-              className="text-lg md:text-xl text-muted-foreground max-w-xl mb-8 animate-fade-in"
-              style={{ animationDelay: "0.2s" }}
+              className="text-lg md:text-xl text-muted-foreground max-w-xl mb-8 mx-auto"
+              style={{
+                opacity: 0,
+                clipPath: "inset(100% 0 0 0)",
+                animation: "heroClipIn 1s cubic-bezier(0.23, 1, 0.32, 1) 0.6s forwards",
+              }}
             >
               AI-powered tools built for experienced professionals navigating career transitions. 
               Truth-first optimization. No fabrication.
             </p>
 
             <div 
-              className="flex flex-col sm:flex-row gap-4 justify-center animate-fade-in"
-              style={{ animationDelay: "0.3s" }}
+              className="flex flex-col sm:flex-row gap-4 justify-center"
+              style={{
+                opacity: 0,
+                animation: "heroClipIn 0.8s cubic-bezier(0.23, 1, 0.32, 1) 0.8s forwards",
+              }}
             >
               <SignalButton 
                 variant="primary" 
@@ -125,8 +144,11 @@ export const WaitlistHero = () => {
             {/* Social proof */}
             {signupCount > 0 && (
               <div 
-                className="mt-8 flex items-center gap-3 justify-center animate-fade-in"
-                style={{ animationDelay: "0.4s" }}
+                className="mt-8 flex items-center gap-3 justify-center"
+                style={{
+                  opacity: 0,
+                  animation: "heroClipIn 0.8s cubic-bezier(0.23, 1, 0.32, 1) 1s forwards",
+                }}
               >
                 <div className="flex -space-x-2">
                   {[1, 2, 3, 4].map((i) => (
