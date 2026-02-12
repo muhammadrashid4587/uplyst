@@ -49,20 +49,10 @@ export const useWaitlist = () => {
         throw insertError;
       }
 
-      // Get position in waitlist
-      const { count, error: countError } = await supabase
-        .from("waitlist_signups")
-        .select("*", { count: "exact", head: true })
-        .lte("created_at", inserted.created_at);
-
-      if (countError) {
-        console.error("Error getting position:", countError);
-      }
-
       return {
         success: true,
         ref_code: inserted.ref_code,
-        position: count || 1,
+        position: 1, // Position not available due to privacy restrictions
       };
     } catch (error: any) {
       console.error("Waitlist signup error:", error);
@@ -75,36 +65,14 @@ export const useWaitlist = () => {
     }
   };
 
-  const getPosition = async (email: string): Promise<number | null> => {
-    try {
-      const { data: signup, error } = await supabase
-        .from("waitlist_signups")
-        .select("created_at")
-        .eq("email", email.toLowerCase().trim())
-        .maybeSingle();
-
-      if (error || !signup) return null;
-
-      const { count } = await supabase
-        .from("waitlist_signups")
-        .select("*", { count: "exact", head: true })
-        .lte("created_at", signup.created_at);
-
-      return count || null;
-    } catch {
-      return null;
-    }
+  const getPosition = async (_email: string): Promise<number | null> => {
+    // Position lookup not available due to privacy restrictions
+    return null;
   };
 
   const getTotalSignups = async (): Promise<number> => {
-    try {
-      const { count } = await supabase
-        .from("waitlist_signups")
-        .select("*", { count: "exact", head: true });
-      return count || 0;
-    } catch {
-      return 0;
-    }
+    // Total count not available due to privacy restrictions
+    return 0;
   };
 
   return {
