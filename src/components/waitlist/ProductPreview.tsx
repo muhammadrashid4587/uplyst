@@ -3,14 +3,14 @@ import { cn } from "@/lib/utils";
 import { GlassPanel } from "@/components/ui/GlassPanel";
 import { Badge } from "@/components/ui/SignalBadge";
 import { SignalButton } from "@/components/ui/SignalButton";
-import { useScrollReveal } from "@/hooks/useScrollReveal";
+import { useClipReveal } from "@/hooks/useClipReveal";
+import { useSectionParallax } from "@/hooks/useSectionParallax";
 import { 
   FileSearch, 
   Zap, 
   Send, 
   Lock, 
   Sparkles,
-  X
 } from "lucide-react";
 import {
   Dialog,
@@ -110,7 +110,8 @@ const SkeletonDemo = ({ type }: { type: string }) => {
 };
 
 export const ProductPreview = () => {
-  const { ref, isVisible } = useScrollReveal(0.1);
+  const { ref: titleRef, style: titleStyle } = useClipReveal({ direction: "up", duration: 800 });
+  const { ref: parallaxRef, style: parallaxStyle } = useSectionParallax({ speed: 0.08 });
   const [dialogOpen, setDialogOpen] = useState(false);
 
   const handleCTAClick = () => {
@@ -124,95 +125,33 @@ export const ProductPreview = () => {
   };
 
   return (
-    <section className="py-24 relative overflow-hidden" ref={ref}>
+    <section className="py-24 relative overflow-hidden" ref={parallaxRef} style={parallaxStyle}>
       {/* Dual-tone gradient background */}
       <div className="absolute inset-0 bg-gradient-to-br from-primary/8 via-card/20 to-accent/6 pointer-events-none" />
       <div className="absolute inset-0 bg-gradient-to-tl from-accent/5 via-transparent to-primary/5 pointer-events-none" />
       
       <div className="container mx-auto px-4 relative z-10">
-        <div className="text-center mb-16">
-          <Badge 
-            variant="primary" 
-            className={cn(
-              "mb-6 transition-all duration-700",
-              isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-4"
-            )}
-          >
+        <div className="text-center mb-16" ref={titleRef} style={titleStyle}>
+          <Badge variant="primary" className="mb-6">
             <Sparkles className="w-3 h-3 mr-1" />
             Product Preview
           </Badge>
-          <h2 
-            className={cn(
-              "text-4xl md:text-5xl font-display font-bold mb-4 transition-all duration-700 delay-100",
-              isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-8"
-            )}
-          >
+          <h2 className="text-4xl md:text-5xl font-display font-bold mb-4">
             Tools Built for <span className="text-primary text-glow">Senior Talent</span>
           </h2>
-          <p 
-            className={cn(
-              "text-lg text-muted-foreground max-w-2xl mx-auto transition-all duration-700 delay-200",
-              isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-8"
-            )}
-          >
+          <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
             Truth-first optimization. No fabrication. Designed to pass ATS and win the recruiter skim.
           </p>
         </div>
 
         <div className="grid md:grid-cols-3 gap-6">
           {products.map((product, index) => (
-            <GlassPanel
+            <ProductCard
               key={product.title}
-              hover
-              className={cn(
-                "relative overflow-hidden group transition-all duration-700",
-                isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-12"
-              )}
-              style={{ transitionDelay: `${300 + index * 100}ms` }}
-            >
-              {/* Coming Soon Badge */}
-              <div className="absolute top-4 right-4 z-10">
-                <Badge variant="muted" className="bg-muted/80 backdrop-blur-sm">
-                  <Lock className="w-3 h-3 mr-1" />
-                  Coming Soon
-                </Badge>
-              </div>
-
-              {/* Icon */}
-              <div className="relative w-14 h-14 rounded-2xl bg-primary/10 border border-primary/20 flex items-center justify-center mb-6">
-                <product.icon className="w-7 h-7 text-primary" />
-                <div className="absolute inset-0 rounded-2xl bg-primary/20 blur-xl opacity-0 group-hover:opacity-100 transition-opacity" />
-              </div>
-
-              {/* Content */}
-              <h3 className="text-xl font-display font-bold mb-2">{product.title}</h3>
-              <p className="text-sm text-muted-foreground mb-4">{product.description}</p>
-
-              {/* Features */}
-              <ul className="space-y-1 mb-6">
-                {product.features.map((feature) => (
-                  <li key={feature} className="text-xs text-muted-foreground flex items-center gap-2">
-                    <span className="w-1 h-1 rounded-full bg-primary" />
-                    {feature}
-                  </li>
-                ))}
-              </ul>
-
-              {/* Demo Preview */}
-              <div className="rounded-lg bg-card/50 border border-border/50 overflow-hidden mb-6 h-28">
-                <SkeletonDemo type={product.demo} />
-              </div>
-
-              {/* CTA */}
-              <SignalButton 
-                variant="ghost" 
-                size="sm" 
-                className="w-full"
-                onClick={handleCTAClick}
-              >
-                Get Early Access
-              </SignalButton>
-            </GlassPanel>
+              product={product}
+              index={index}
+              onCTAClick={handleCTAClick}
+            />
           ))}
         </div>
       </div>
@@ -241,6 +180,77 @@ export const ProductPreview = () => {
         </DialogContent>
       </Dialog>
     </section>
+  );
+};
+
+const ProductCard = ({
+  product,
+  index,
+  onCTAClick,
+}: {
+  product: typeof products[0];
+  index: number;
+  onCTAClick: () => void;
+}) => {
+  const { ref, style } = useClipReveal({
+    direction: index === 0 ? "left" : index === 2 ? "right" : "up",
+    delay: index * 120,
+    duration: 900,
+  });
+
+  return (
+    <div ref={ref} style={style}>
+      <GlassPanel
+        hover
+        className="relative overflow-hidden group h-full hover-image-reveal"
+      >
+        {/* Coming Soon Badge */}
+        <div className="absolute top-4 right-4 z-10">
+          <Badge variant="muted" className="bg-muted/80 backdrop-blur-sm">
+            <Lock className="w-3 h-3 mr-1" />
+            Coming Soon
+          </Badge>
+        </div>
+
+        {/* Hover reveal overlay */}
+        <div className="absolute inset-0 bg-gradient-to-t from-primary/10 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none" />
+
+        {/* Icon */}
+        <div className="relative w-14 h-14 rounded-2xl bg-primary/10 border border-primary/20 flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-500">
+          <product.icon className="w-7 h-7 text-primary" />
+          <div className="absolute inset-0 rounded-2xl bg-primary/20 blur-xl opacity-0 group-hover:opacity-100 transition-opacity" />
+        </div>
+
+        {/* Content */}
+        <h3 className="text-xl font-display font-bold mb-2">{product.title}</h3>
+        <p className="text-sm text-muted-foreground mb-4">{product.description}</p>
+
+        {/* Features */}
+        <ul className="space-y-1 mb-6">
+          {product.features.map((feature) => (
+            <li key={feature} className="text-xs text-muted-foreground flex items-center gap-2">
+              <span className="w-1 h-1 rounded-full bg-primary" />
+              {feature}
+            </li>
+          ))}
+        </ul>
+
+        {/* Demo Preview */}
+        <div className="rounded-lg bg-card/50 border border-border/50 overflow-hidden mb-6 h-28">
+          <SkeletonDemo type={product.demo} />
+        </div>
+
+        {/* CTA */}
+        <SignalButton 
+          variant="ghost" 
+          size="sm" 
+          className="w-full"
+          onClick={onCTAClick}
+        >
+          Get Early Access
+        </SignalButton>
+      </GlassPanel>
+    </div>
   );
 };
 

@@ -679,3 +679,45 @@
 .animate-glow-pulse {
   animation: glowPulse 3s ease-in-out infinite;
 }
+
+@keyframes heroClipIn {
+  0% {
+    opacity: 0;
+    clip-path: inset(100% 0 0 0);
+    transform: translateY(30px);
+  }
+  100% {
+    opacity: 1;
+    clip-path: inset(0 0 0 0);
+    transform: translateY(0);
+  }
+}
+
+/* Hover image reveal - MoonX style */
+.hover-image-reveal {
+  position: relative;
+  overflow: hidden;
+}
+
+.hover-image-reveal::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    135deg,
+    hsl(var(--primary) / 0.08) 0%,
+    transparent 40%,
+    transparent 60%,
+    hsl(var(--accent) / 0.06) 100%
+  );
+  opacity: 0;
+  transition: opacity 0.5s ease, transform 0.5s ease;
+  transform: scale(1.1);
+  pointer-events: none;
+  border-radius: inherit;
+}
+
+.hover-image-reveal:hover::after {
+  opacity: 1;
+  transform: scale(1);
+}

@@ -1,6 +1,6 @@
 import { useState, useRef } from "react";
 import { cn } from "@/lib/utils";
-import { useScrollReveal } from "@/hooks/useScrollReveal";
+import { useClipReveal } from "@/hooks/useClipReveal";
 import { ChevronDown, FileSearch, Languages, Target, Shield } from "lucide-react";
 import { GlassPanel } from "@/components/ui/GlassPanel";
 
@@ -56,19 +56,17 @@ const playAccordionSound = async (isExpanding: boolean) => {
       const audioBlob = await response.blob();
       const audioUrl = URL.createObjectURL(audioBlob);
       const audio = new Audio(audioUrl);
-      audio.volume = 0.3; // Keep it subtle
+      audio.volume = 0.3;
       await audio.play();
     }
   } catch (error) {
-    // Silently fail - don't interrupt UX if sound generation fails
     console.debug("Sound effect generation skipped:", error);
   }
 };
 
 export const HowItWorks = () => {
   const [isExpanded, setIsExpanded] = useState(false);
-  const { ref, isVisible } = useScrollReveal(0.1);
-  const audioRef = useRef<HTMLAudioElement | null>(null);
+  const { ref: clipRef, style: clipStyle } = useClipReveal({ direction: "center", duration: 800 });
 
   const handleToggle = () => {
     const newState = !isExpanded;
@@ -77,34 +75,32 @@ export const HowItWorks = () => {
   };
 
   return (
-    <section className="py-12 md:py-16 relative" ref={ref}>
+    <section className="py-12 md:py-16 relative">
       <div className="container mx-auto px-4">
-        <button
-          onClick={handleToggle}
-          className={cn(
-            "w-full max-w-lg mx-auto group block",
-            "transition-all duration-500",
-            isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-8"
-          )}
-        >
-          <GlassPanel 
-            hover 
-            className="py-4 px-6 flex items-center justify-center gap-3"
+        <div ref={clipRef} style={clipStyle}>
+          <button
+            onClick={handleToggle}
+            className="w-full max-w-lg mx-auto group block transition-all duration-500"
           >
-            <span className="text-base md:text-lg font-display font-semibold text-foreground">
-              How Uplyst Works
-            </span>
-            <span className="text-xs md:text-sm text-muted-foreground hidden sm:inline">
-              (At a High Level)
-            </span>
-            <ChevronDown
-              className={cn(
-                "w-5 h-5 text-primary transition-transform duration-300 ml-1",
-                isExpanded && "rotate-180"
-              )}
-            />
-          </GlassPanel>
-        </button>
+            <GlassPanel 
+              hover 
+              className="py-4 px-6 flex items-center justify-center gap-3"
+            >
+              <span className="text-base md:text-lg font-display font-semibold text-foreground">
+                How Uplyst Works
+              </span>
+              <span className="text-xs md:text-sm text-muted-foreground hidden sm:inline">
+                (At a High Level)
+              </span>
+              <ChevronDown
+                className={cn(
+                  "w-5 h-5 text-primary transition-transform duration-300 ml-1",
+                  isExpanded && "rotate-180"
+                )}
+              />
+            </GlassPanel>
+          </button>
+        </div>
 
         <div
           className={cn(
@@ -125,15 +121,14 @@ export const HowItWorks = () => {
                 style={{ transitionDelay: isExpanded ? `${index * 75}ms` : "0ms" }}
               >
                 <GlassPanel
-                  className="flex items-start gap-4 p-6 h-full"
+                  className="flex items-start gap-4 p-6 h-full group hover-image-reveal"
+                  hover
                 >
                   <div className="flex-shrink-0 relative w-14 h-14">
-                    {/* Numbered badge */}
                     <div className="absolute -top-2 -right-2 w-6 h-6 rounded-full bg-primary text-primary-foreground flex items-center justify-center text-xs font-bold border border-primary/30">
                       {step.number}
                     </div>
-                    {/* Icon circle */}
-                    <div className="w-14 h-14 rounded-xl bg-primary/10 border border-primary/20 flex items-center justify-center">
+                    <div className="w-14 h-14 rounded-xl bg-primary/10 border border-primary/20 flex items-center justify-center group-hover:scale-110 transition-transform duration-500">
                       <step.icon className="w-6 h-6 text-primary" />
                     </div>
                   </div>
