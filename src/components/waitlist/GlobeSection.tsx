@@ -9,6 +9,7 @@ const Globe = () => {
   const meshRef = useRef<THREE.Mesh>(null);
   const pointsRef = useRef<THREE.Points>(null);
   const glowRef = useRef<THREE.Mesh>(null);
+  const nodesRef = useRef<THREE.Group>(null);
 
   // Create globe wireframe geometry
   const wireframeGeo = useMemo(() => {
@@ -29,6 +30,26 @@ const Globe = () => {
       positions[i * 3 + 2] = r * Math.cos(phi);
     }
     return positions;
+  }, []);
+
+  // Create glowing pulse nodes
+  const pulseNodes = useMemo(() => {
+    const nodeCount = 6;
+    const nodes = [];
+    for (let i = 0; i < nodeCount; i++) {
+      const phi = Math.acos(2 * Math.random() - 1);
+      const theta = 2 * Math.PI * Math.random();
+      const r = 1.82;
+      nodes.push({
+        position: [
+          r * Math.sin(phi) * Math.cos(theta),
+          r * Math.sin(phi) * Math.sin(theta),
+          r * Math.cos(phi),
+        ],
+        phase: Math.random() * Math.PI * 2,
+      });
+    }
+    return nodes;
   }, []);
 
   // Create arc connections between random points
@@ -76,6 +97,20 @@ const Globe = () => {
     }
     if (glowRef.current) {
       glowRef.current.scale.setScalar(1 + Math.sin(t * 0.5) * 0.03);
+    }
+    // Animate pulse nodes
+    if (nodesRef.current) {
+      nodesRef.current.children.forEach((child, i) => {
+        if (child instanceof THREE.Mesh) {
+          const phase = pulseNodes[i].phase;
+          const pulse = 0.5 + 0.5 * Math.sin(t * 3 + phase);
+          child.scale.setScalar(0.08 + pulse * 0.08);
+          const material = child.material as THREE.MeshBasicMaterial;
+          if (material) {
+            material.opacity = 0.3 + pulse * 0.7;
+          }
+        }
+      });
     }
   });
 
@@ -146,6 +181,20 @@ const Globe = () => {
           side={THREE.DoubleSide}
         />
       </mesh>
+
+      {/* Glowing pulse nodes */}
+      <group ref={nodesRef}>
+        {pulseNodes.map((node, i) => (
+          <mesh key={`node-${i}`} position={node.position as [number, number, number]}>
+            <sphereGeometry args={[0.08, 16, 16]} />
+            <meshBasicMaterial
+              color="#06b6d4"
+              transparent
+              opacity={0.5}
+            />
+          </mesh>
+        ))}
+      </group>
     </group>
   );
 };
