@@ -3,6 +3,7 @@ import { useSearchParams } from "react-router-dom";
 import { cn } from "@/lib/utils";
 import { GlassPanel } from "@/components/ui/GlassPanel";
 import { SignalButton } from "@/components/ui/SignalButton";
+import { CelestialBackground } from "@/components/ui/CelestialBackground";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
@@ -86,7 +87,8 @@ export const WaitlistForm = ({ className }: WaitlistFormProps) => {
 
   if (success) {
     return (
-      <section id="waitlist" className={cn("py-24 relative", className)} ref={ref}>
+      <section id="waitlist" className={cn("py-24 relative overflow-hidden", className)} ref={ref}>
+        <CelestialBackground variant="divine" intensity="medium" />
         <div className="container mx-auto px-4">
           <GlassPanel
             className={cn(
@@ -152,7 +154,8 @@ export const WaitlistForm = ({ className }: WaitlistFormProps) => {
   }
 
   return (
-    <section id="waitlist" className={cn("py-24 relative", className)} ref={ref}>
+    <section id="waitlist" className={cn("py-24 relative overflow-hidden", className)} ref={ref}>
+      <CelestialBackground variant="divine" intensity="medium" />
       <div className="container mx-auto px-4">
         <div className="text-center mb-12">
           <h2

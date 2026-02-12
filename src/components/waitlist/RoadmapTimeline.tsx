@@ -4,6 +4,7 @@ import { Badge } from "@/components/ui/SignalBadge";
 import { useClipReveal } from "@/hooks/useClipReveal";
 import { useSectionParallax } from "@/hooks/useSectionParallax";
 import { Clock, Users, Rocket, Globe } from "lucide-react";
+import { CelestialBackground } from "@/components/ui/CelestialBackground";
 
 const phases = [
   {
@@ -38,6 +39,7 @@ export const RoadmapTimeline = () => {
 
   return (
     <section className="py-24 relative overflow-hidden" ref={parallaxRef} style={parallaxStyle}>
+      <CelestialBackground variant="convergence" intensity="medium" />
       {/* Dual-tone gradient background */}
       <div className="absolute inset-0 bg-gradient-to-br from-primary/8 via-transparent to-accent/6 pointer-events-none" />
       <div className="absolute inset-0 bg-gradient-to-tl from-accent/5 via-transparent to-primary/5 pointer-events-none" />

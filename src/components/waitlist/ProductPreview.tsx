@@ -12,6 +12,7 @@ import {
   Lock, 
   Sparkles,
 } from "lucide-react";
+import { CelestialBackground } from "@/components/ui/CelestialBackground";
 import {
   Dialog,
   DialogContent,
@@ -126,6 +127,7 @@ export const ProductPreview = () => {
 
   return (
     <section className="py-24 relative overflow-hidden" ref={parallaxRef} style={parallaxStyle}>
+      <CelestialBackground variant="radiance" intensity="strong" />
       {/* Dual-tone gradient background */}
       <div className="absolute inset-0 bg-gradient-to-br from-primary/8 via-card/20 to-accent/6 pointer-events-none" />
       <div className="absolute inset-0 bg-gradient-to-tl from-accent/5 via-transparent to-primary/5 pointer-events-none" />
