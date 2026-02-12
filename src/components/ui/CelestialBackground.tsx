@@ -20,52 +20,65 @@ export const CelestialBackground = ({
   };
   const o = opacityMap[intensity];
 
+  const breathe = "celestial-breathe";
+
   return (
     <div className={cn("absolute inset-0 pointer-events-none overflow-hidden", className)}>
+      <style>{`
+        @keyframes celestial-breathe {
+          0%, 100% { opacity: 1; transform: scale(1); }
+          50% { opacity: 0.6; transform: scale(1.04); }
+        }
+        .${breathe} {
+          animation: celestial-breathe 6s ease-in-out infinite;
+        }
+        .${breathe}-slow {
+          animation: celestial-breathe 8s ease-in-out infinite;
+        }
+        .${breathe}-fast {
+          animation: celestial-breathe 4.5s ease-in-out infinite;
+        }
+      `}</style>
+
       {variant === "radiance" && (
         <>
-          {/* Central divine light beam */}
           <div
-            className="absolute left-1/2 -translate-x-1/2 -top-20 w-[600px] h-[800px]"
+            className={`absolute left-1/2 -translate-x-1/2 -top-20 w-[600px] h-[800px] ${breathe}`}
             style={{
               background: `radial-gradient(ellipse at center top, hsl(var(--primary) / ${o.glow}) 0%, hsl(var(--primary) / ${o.primary}) 30%, transparent 70%)`,
             }}
           />
-          {/* Side rays */}
           <div
-            className="absolute -left-20 top-0 w-[400px] h-full"
+            className={`absolute -left-20 top-0 w-[400px] h-full ${breathe}-slow`}
             style={{
               background: `linear-gradient(135deg, hsl(var(--primary) / ${o.secondary}) 0%, transparent 60%)`,
             }}
           />
           <div
-            className="absolute -right-20 top-0 w-[400px] h-full"
+            className={`absolute -right-20 top-0 w-[400px] h-full ${breathe}-slow`}
             style={{
               background: `linear-gradient(225deg, hsl(var(--accent) / ${o.secondary}) 0%, transparent 60%)`,
+              animationDelay: "3s",
             }}
           />
-          {/* Bottom fade */}
           <div className="absolute bottom-0 left-0 w-full h-32 bg-gradient-to-t from-background to-transparent" />
         </>
       )}
 
       {variant === "divine" && (
         <>
-          {/* Expanding light from center top — "parting clouds" */}
           <div
-            className="absolute left-1/2 -translate-x-1/2 -top-40 w-[900px] h-[600px]"
+            className={`absolute left-1/2 -translate-x-1/2 -top-40 w-[900px] h-[600px] ${breathe}`}
             style={{
               background: `conic-gradient(from 180deg at 50% 0%, transparent 30%, hsl(var(--primary) / ${o.glow}) 40%, transparent 50%, hsl(var(--primary) / ${o.primary}) 60%, transparent 70%)`,
             }}
           />
-          {/* Soft spread */}
           <div
-            className="absolute inset-0"
+            className={`absolute inset-0 ${breathe}-slow`}
             style={{
               background: `radial-gradient(ellipse 120% 80% at 50% -10%, hsl(var(--primary) / ${o.primary}) 0%, transparent 70%)`,
             }}
           />
-          {/* Warm haze */}
           <div
             className="absolute bottom-0 left-0 w-full h-1/2"
             style={{
@@ -77,9 +90,8 @@ export const CelestialBackground = ({
 
       {variant === "aurora" && (
         <>
-          {/* Aurora curtain effect */}
           <div
-            className="absolute inset-0"
+            className={`absolute inset-0 ${breathe}-slow`}
             style={{
               background: `
                 linear-gradient(170deg, hsl(var(--primary) / ${o.secondary}) 0%, transparent 30%),
@@ -87,30 +99,31 @@ export const CelestialBackground = ({
               `,
             }}
           />
-          {/* Vertical light streaks */}
           <div
-            className="absolute left-[20%] top-0 w-px h-full"
+            className={`absolute left-[20%] top-0 w-px h-full ${breathe}-fast`}
             style={{
               background: `linear-gradient(to bottom, transparent 10%, hsl(var(--primary) / ${o.glow * 0.5}) 40%, transparent 80%)`,
             }}
           />
           <div
-            className="absolute left-[50%] top-0 w-px h-full"
+            className={`absolute left-[50%] top-0 w-px h-full ${breathe}`}
             style={{
               background: `linear-gradient(to bottom, transparent 20%, hsl(var(--primary) / ${o.glow * 0.7}) 50%, transparent 90%)`,
+              animationDelay: "2s",
             }}
           />
           <div
-            className="absolute left-[80%] top-0 w-px h-full"
+            className={`absolute left-[80%] top-0 w-px h-full ${breathe}-fast`}
             style={{
               background: `linear-gradient(to bottom, transparent 5%, hsl(var(--accent) / ${o.glow * 0.4}) 35%, transparent 75%)`,
+              animationDelay: "1s",
             }}
           />
-          {/* Soft glow overlay */}
           <div
-            className="absolute inset-0"
+            className={`absolute inset-0 ${breathe}-slow`}
             style={{
               background: `radial-gradient(ellipse at 50% 50%, hsl(var(--primary) / ${o.secondary}) 0%, transparent 60%)`,
+              animationDelay: "3s",
             }}
           />
         </>
@@ -118,29 +131,27 @@ export const CelestialBackground = ({
 
       {variant === "convergence" && (
         <>
-          {/* Converging light beams from corners */}
           <div
-            className="absolute -top-10 -left-10 w-[500px] h-[500px]"
+            className={`absolute -top-10 -left-10 w-[500px] h-[500px] ${breathe}`}
             style={{
               background: `radial-gradient(circle at 0% 0%, hsl(var(--primary) / ${o.primary}) 0%, transparent 60%)`,
             }}
           />
           <div
-            className="absolute -top-10 -right-10 w-[500px] h-[500px]"
+            className={`absolute -top-10 -right-10 w-[500px] h-[500px] ${breathe}`}
             style={{
               background: `radial-gradient(circle at 100% 0%, hsl(var(--accent) / ${o.primary}) 0%, transparent 60%)`,
+              animationDelay: "3s",
             }}
           />
-          {/* Central convergence point */}
           <div
-            className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-[400px] h-[400px]"
+            className={`absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-[400px] h-[400px] ${breathe}-fast`}
             style={{
               background: `radial-gradient(circle, hsl(var(--primary) / ${o.glow}) 0%, transparent 60%)`,
             }}
           />
-          {/* Bottom-up glow */}
           <div
-            className="absolute bottom-0 left-0 w-full h-1/3"
+            className={`absolute bottom-0 left-0 w-full h-1/3 ${breathe}-slow`}
             style={{
               background: `linear-gradient(to top, hsl(var(--primary) / ${o.secondary}) 0%, transparent 100%)`,
             }}
@@ -150,9 +161,8 @@ export const CelestialBackground = ({
 
       {variant === "ethereal" && (
         <>
-          {/* Soft fog-like layers */}
           <div
-            className="absolute inset-0"
+            className={`absolute inset-0 ${breathe}-slow`}
             style={{
               background: `
                 radial-gradient(ellipse 100% 60% at 30% 20%, hsl(var(--primary) / ${o.primary}) 0%, transparent 50%),
@@ -160,14 +170,12 @@ export const CelestialBackground = ({
               `,
             }}
           />
-          {/* Central halo */}
           <div
-            className="absolute left-1/2 top-1/3 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[300px]"
+            className={`absolute left-1/2 top-1/3 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[300px] ${breathe}`}
             style={{
               background: `radial-gradient(ellipse, hsl(var(--primary) / ${o.glow * 0.6}) 0%, transparent 70%)`,
             }}
           />
-          {/* Horizon glow */}
           <div
             className="absolute bottom-0 left-0 w-full h-px"
             style={{
@@ -177,7 +185,6 @@ export const CelestialBackground = ({
         </>
       )}
 
-      {/* Universal separator lines */}
       <div className="absolute top-0 left-0 w-full h-px bg-gradient-to-r from-transparent via-border/40 to-transparent" />
       <div className="absolute bottom-0 left-0 w-full h-px bg-gradient-to-r from-transparent via-border/40 to-transparent" />
     </div>
