@@ -101,6 +101,14 @@ export default {
           "0%, 100%": { boxShadow: "0 0 20px hsl(var(--signal-red) / 0.3)" },
           "50%": { boxShadow: "0 0 40px hsl(var(--signal-red) / 0.5)" },
         },
+        "marquee-left": {
+          from: { transform: "translateX(0)" },
+          to: { transform: "translateX(-50%)" },
+        },
+        "marquee-right": {
+          from: { transform: "translateX(-50%)" },
+          to: { transform: "translateX(0)" },
+        },
       },
       animation: {
         "accordion-down": "accordion-down 0.2s ease-out",
@@ -110,6 +118,8 @@ export default {
         "scale-in": "scale-in 0.3s ease-out forwards",
         "slide-in-right": "slide-in-right 0.4s ease-out forwards",
         "pulse-glow": "pulse-glow 2s ease-in-out infinite",
+        "marquee-left": "marquee-left var(--marquee-duration, 40s) linear infinite",
+        "marquee-right": "marquee-right var(--marquee-duration, 40s) linear infinite",
       },
       boxShadow: {
         glow: "0 0 30px hsl(var(--signal-red) / 0.2)",
