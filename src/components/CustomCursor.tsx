@@ -1,4 +1,5 @@
 import { useEffect, useState, useRef, useCallback } from "react";
+import { createPortal } from "react-dom";
 
 const MAGNETIC_DISTANCE = 80; // pixels - range to start magnetic pull
 const MAGNETIC_STRENGTH = 0.35; // 0-1 - how strong the pull is
@@ -166,13 +167,13 @@ export const CustomCursor = () => {
     return null;
   }
 
-  return (
+  const cursorContent = (
     <>
       {/* Trail effect container */}
       <div
         ref={trailContainerRef}
-        className="fixed top-0 left-0 pointer-events-none z-[9998] will-change-transform"
-        style={{ width: "100%", height: "100%" }}
+        className="fixed top-0 left-0 pointer-events-none will-change-transform"
+        style={{ width: "100%", height: "100%", zIndex: 99998 }}
       >
         {trail.map((point, index) => (
           <div
@@ -196,10 +197,11 @@ export const CustomCursor = () => {
       {/* Main cursor dot */}
       <div
         ref={cursorRef}
-        className={`fixed top-0 left-0 pointer-events-none z-[9999] will-change-transform ${
+        className={`fixed top-0 left-0 pointer-events-none will-change-transform ${
           isVisible ? 'opacity-100' : 'opacity-0'
         }`}
         style={{
+          zIndex: 99999,
           transform: `translate3d(${displayPositionRef.current.x}px, ${displayPositionRef.current.y}px, 0) translate(-50%, -50%)`,
         }}
       >
@@ -223,6 +225,8 @@ export const CustomCursor = () => {
       `}</style>
     </>
   );
+
+  return createPortal(cursorContent, document.body);
 };
 
 export default CustomCursor;
