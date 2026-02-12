@@ -150,6 +150,8 @@ const Globe = () => {
   );
 };
 
+export { Globe as HeroGlobe };
+
 export const GlobeSection = () => {
   const { ref, style } = useClipReveal({ direction: "down", duration: 1000 });
 

@@ -1,8 +1,10 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, Suspense } from "react";
 import { cn } from "@/lib/utils";
 import { SignalButton } from "@/components/ui/SignalButton";
 import { Badge } from "@/components/ui/SignalBadge";
-import { HologramU } from "@/components/HologramU";
+import { Canvas } from "@react-three/fiber";
+import { OrbitControls } from "@react-three/drei";
+import { HeroGlobe } from "@/components/waitlist/GlobeSection";
 import { Starfield } from "@/components/Starfield";
 import { NebulaBackground } from "@/components/NebulaBackground";
 import { useParallax } from "@/hooks/useParallax";
@@ -62,10 +64,25 @@ export const WaitlistHero = () => {
         <div className="absolute inset-0 bg-gradient-radial from-primary/5 via-transparent to-transparent" />
       </div>
 
-      {/* 3D Hologram Background */}
+      {/* 3D Globe Background */}
       <div className="absolute inset-0 flex items-center justify-center pointer-events-none z-10">
         <div className="w-[500px] h-[500px] sm:w-[600px] sm:h-[600px] lg:w-[800px] lg:h-[800px] opacity-50">
-          <HologramU />
+          <Suspense fallback={null}>
+            <Canvas
+              camera={{ position: [0, 0, 5], fov: 45 }}
+              style={{ background: "transparent" }}
+              gl={{ alpha: true, antialias: true }}
+            >
+              <ambientLight intensity={0.3} />
+              <HeroGlobe />
+              <OrbitControls
+                enableZoom={false}
+                enablePan={false}
+                autoRotate={false}
+                rotateSpeed={0.3}
+              />
+            </Canvas>
+          </Suspense>
         </div>
       </div>
 
