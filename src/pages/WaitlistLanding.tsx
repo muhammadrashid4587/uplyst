@@ -12,6 +12,7 @@ import { WaitlistFAQ } from "@/components/waitlist/WaitlistFAQ";
 import { WaitlistForm } from "@/components/waitlist/WaitlistForm";
 import { FutureSignal } from "@/components/waitlist/FutureSignal";
 import { WaitlistFooter } from "@/components/waitlist/WaitlistFooter";
+import { CompanyMarquee } from "@/components/waitlist/CompanyMarquee";
 import { useSmoothScroll } from "@/hooks/useSmoothScroll";
 
 const WaitlistLanding = () => {
@@ -29,11 +30,14 @@ const WaitlistLanding = () => {
       <WaitlistNav />
       <main className="flex-1 pt-16 md:pt-20 relative z-10">
         <WaitlistHero />
+        <CompanyMarquee direction="left" speed={35} className="mt-8" />
         <HowItWorks />
+        <CompanyMarquee direction="right" speed={45} className="opacity-60" />
         <WhyThisExists />
         <div id="products">
           <ProductPreview />
         </div>
+        <CompanyMarquee direction="left" speed={50} className="opacity-40" />
         <WaitlistTrust />
         <RoadmapTimeline />
         <WaitlistFAQ />
