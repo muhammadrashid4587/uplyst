@@ -1,6 +1,8 @@
 import { useEffect } from "react";
 import { AnimatedBackground } from "@/components/AnimatedBackground";
 import { CustomCursor } from "@/components/CustomCursor";
+import { Starfield } from "@/components/Starfield";
+import { NebulaBackground } from "@/components/NebulaBackground";
 import { WaitlistNav } from "@/components/waitlist/WaitlistNav";
 import { WaitlistHero } from "@/components/waitlist/WaitlistHero";
 import { HowItWorks } from "@/components/waitlist/HowItWorks";
@@ -26,6 +28,8 @@ const WaitlistLanding = () => {
     <div className="min-h-screen flex flex-col noise-overlay relative animate-fade-in">
       <CustomCursor />
       <AnimatedBackground />
+      <NebulaBackground className="opacity-60 fixed inset-0 z-0" />
+      <Starfield starCount={200} className="opacity-40 fixed inset-0 z-0" />
       <WaitlistNav />
       <main className="flex-1 pt-16 md:pt-20 relative z-10">
         <WaitlistHero />
