@@ -37,7 +37,7 @@ export const WaitlistTrust = () => {
     <section className="py-24 relative overflow-hidden" id="trust" ref={parallaxRef} style={parallaxStyle}>
       <CelestialBackground variant="radiance" intensity="medium" />
       <div className="absolute inset-0 bg-gradient-to-b from-background via-card/30 to-background pointer-events-none" />
-      <div className="absolute top-0 left-0 w-full h-px bg-gradient-to-r from-transparent via-primary/30 to-transparent" />
+      
       <div className="container mx-auto px-4 relative z-10">
         <div className="text-center mb-16" ref={titleRef} style={titleStyle}>
           <Badge variant="primary" className="mb-6">

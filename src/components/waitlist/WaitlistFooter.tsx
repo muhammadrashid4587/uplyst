@@ -10,7 +10,7 @@ const footerLinks = [
 
 export const WaitlistFooter = () => {
   return (
-    <footer className="py-12 relative border-t border-border/30">
+    <footer className="py-12 relative">
       <div className="container mx-auto px-4">
         <div className="flex flex-col md:flex-row items-center justify-between gap-6">
           {/* Logo */}
