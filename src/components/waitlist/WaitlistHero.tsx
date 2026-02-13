@@ -110,7 +110,7 @@ export const WaitlistHero = () => {
             >
               Land Your Next
               <br />
-              <span className="text-primary text-glow">Senior Role</span>
+              <span className="text-primary text-glow">Role</span>
             </h1>
 
             <p 
